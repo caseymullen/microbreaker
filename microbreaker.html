@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Practice Timer">
+<meta name="theme-color" content="#1a0a2e">
+<title>Practice Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–work-bg: #1a0a2e;
+–work-bg2: #2d1057;
+–work-accent: #e8a020;
+–work-accent2: #ff6b35;
+–work-text: #f5e6d0;
+–work-dim: rgba(245,230,208,0.45);
+
+```
+--break-bg: #051a12;
+--break-bg2: #093d28;
+--break-accent: #3dffc0;
+--break-accent2: #00d4aa;
+--break-text: #c8ffe8;
+--break-dim: rgba(200,255,232,0.45);
+
+--rest-bg: #0a0a1a;
+--rest-bg2: #151535;
+--rest-accent: #7b8fff;
+--rest-accent2: #4a5fff;
+--rest-text: #d8dcff;
+--rest-dim: rgba(216,220,255,0.45);
+
+--transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+```
+
+}
+
+html, body {
+height: 100%;
+overflow: hidden;
+font-family: ‘DM Mono’, monospace;
+touch-action: manipulation;
+}
+
+#app {
+height: 100%;
+display: flex;
+flex-direction: column;
+position: relative;
+transition: background var(–transition);
+}
+
+/* ── Background layers ── */
+.bg-layer {
+position: absolute; inset: 0;
+opacity: 0;
+transition: opacity var(–transition);
+pointer-events: none;
+}
+.bg-layer.active { opacity: 1; }
+
+.bg-work {
+background: radial-gradient(ellipse 80% 60% at 50% 30%, #3d1880 0%, #1a0a2e 60%, #0d0520 100%);
+}
+.bg-break {
+background: radial-gradient(ellipse 80% 60% at 50% 70%, #0a4030 0%, #051a12 60%, #020d09 100%);
+}
+.bg-rest {
+background: radial-gradient(ellipse 80% 60% at 50% 50%, #1a1a4a 0%, #0a0a1a 60%, #05050f 100%);
+}
+
+/* Noise texture overlay */
+.noise {
+position: absolute; inset: 0;
+opacity: 0.035;
+pointer-events: none;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’/%3E%3C/svg%3E”);
+background-size: 200px 200px;
+}
+
+/* ── Content ── */
+#main {
+position: relative;
+z-index: 10;
+height: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: space-between;
+padding: 48px 24px 36px;
+}
+
+/* ── Top: macro progress ── */
+#macro-section {
+width: 100%;
+max-width: 340px;
+text-align: center;
+transition: color var(–transition);
+}
+
+#macro-label {
+font-size: 10px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+opacity: 0.5;
+margin-bottom: 10px;
+transition: color var(–transition);
+}
+
+#macro-bar-track {
+width: 100%;
+height: 3px;
+border-radius: 2px;
+background: rgba(255,255,255,0.1);
+margin-bottom: 6px;
+overflow: hidden;
+}
+
+#macro-bar-fill {
+height: 100%;
+border-radius: 2px;
+transition: width 1s linear, background var(–transition);
+width: 0%;
+}
+
+#macro-time {
+font-size: 11px;
+letter-spacing: 0.1em;
+opacity: 0.4;
+}
+
+/* ── Center: main display ── */
+#center-section {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 16px;
+}
+
+#phase-label {
+font-family: ‘DM Serif Display’, serif;
+font-size: 13px;
+letter-spacing: 0.35em;
+text-transform: uppercase;
+transition: color var(–transition), opacity var(–transition);
+opacity: 0.7;
+}
+
+#phase-label.rest-label {
+font-style: italic;
+}
+
+#timer-ring {
+position: relative;
+width: 220px;
+height: 220px;
+}
+
+#ring-svg {
+width: 220px;
+height: 220px;
+transform: rotate(-90deg);
+}
+
+#ring-track {
+fill: none;
+stroke: rgba(255,255,255,0.08);
+stroke-width: 4;
+}
+
+#ring-fill {
+fill: none;
+stroke-width: 4;
+stroke-linecap: round;
+stroke-dasharray: 628;
+stroke-dashoffset: 0;
+transition: stroke var(–transition);
+}
+
+#timer-inner {
+position: absolute;
+inset: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 4px;
+}
+
+#time-display {
+font-family: ‘DM Serif Display’, serif;
+font-size: 64px;
+line-height: 1;
+letter-spacing: -0.02em;
+transition: color var(–transition);
+}
+
+#time-tenths {
+font-size: 13px;
+letter-spacing: 0.08em;
+opacity: 0.4;
+font-weight: 300;
+}
+
+/* ── Pulse dot ── */
+#pulse-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+margin-top: 4px;
+transition: background var(–transition);
+}
+#pulse-dot.pulsing {
+animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.3; transform: scale(0.6); }
+}
+
+/* ── Phase description ── */
+#phase-desc {
+font-size: 11px;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+opacity: 0.38;
+text-align: center;
+max-width: 200px;
+line-height: 1.6;
+transition: color var(–transition);
+}
+
+/* ── Bottom controls ── */
+#bottom-section {
+width: 100%;
+max-width: 340px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 16px;
+}
+
+#advance-btn {
+width: 100%;
+padding: 16px;
+border: 1px solid rgba(255,255,255,0.15);
+border-radius: 12px;
+background: rgba(255,255,255,0.06);
+font-family: ‘DM Mono’, monospace;
+font-size: 12px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+cursor: pointer;
+transition: background 0.2s, border-color 0.2s, color var(–transition);
+-webkit-tap-highlight-color: transparent;
+}
+#advance-btn:active {
+background: rgba(255,255,255,0.14);
+}
+
+#bottom-meta {
+display: flex;
+gap: 24px;
+align-items: center;
+}
+
+#pause-btn {
+background: none;
+border: none;
+cursor: pointer;
+font-family: ‘DM Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+opacity: 0.4;
+padding: 8px;
+transition: opacity 0.2s, color var(–transition);
+-webkit-tap-highlight-color: transparent;
+}
+#pause-btn:hover, #pause-btn:active { opacity: 0.8; }
+
+#settings-btn {
+background: none;
+border: none;
+cursor: pointer;
+font-family: ‘DM Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+opacity: 0.4;
+padding: 8px;
+transition: opacity 0.2s, color var(–transition);
+-webkit-tap-highlight-color: transparent;
+}
+#settings-btn:hover, #settings-btn:active { opacity: 0.8; }
+
+/* ── Theme application ── */
+.theme-work  { color: var(–work-text); }
+.theme-break { color: var(–break-text); }
+.theme-rest  { color: var(–rest-text); }
+
+#ring-fill.theme-work  { stroke: var(–work-accent); }
+#ring-fill.theme-break { stroke: var(–break-accent); }
+#ring-fill.theme-rest  { stroke: var(–rest-accent); }
+
+#macro-bar-fill.theme-work  { background: var(–work-accent); }
+#macro-bar-fill.theme-break { background: var(–break-accent); }
+#macro-bar-fill.theme-rest  { background: var(–rest-accent); }
+
+#pulse-dot.theme-work  { background: var(–work-accent); }
+#pulse-dot.theme-break { background: var(–break-accent); }
+#pulse-dot.theme-rest  { background: var(–rest-accent); }
+
+#advance-btn.theme-work  { color: var(–work-text); }
+#advance-btn.theme-break { color: var(–break-text); }
+#advance-btn.theme-rest  { color: var(–rest-text); }
+
+#pause-btn.theme-work  { color: var(–work-text); }
+#pause-btn.theme-break { color: var(–break-text); }
+#pause-btn.theme-rest  { color: var(–rest-text); }
+
+#settings-btn.theme-work  { color: var(–work-text); }
+#settings-btn.theme-break { color: var(–break-text); }
+#settings-btn.theme-rest  { color: var(–rest-text); }
+
+/* flash animation */
+@keyframes flashIn {
+0%   { opacity: 0; transform: scale(0.92); }
+40%  { opacity: 1; transform: scale(1.03); }
+100% { opacity: 1; transform: scale(1); }
+}
+.phase-transition {
+animation: flashIn 0.45s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+/* ── Settings panel ── */
+#settings-panel {
+position: absolute;
+inset: 0;
+z-index: 50;
+background: rgba(0,0,0,0.88);
+backdrop-filter: blur(12px);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 32px 28px;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s;
+}
+#settings-panel.open {
+opacity: 1;
+pointer-events: all;
+}
+
+#settings-title {
+font-family: ‘DM Serif Display’, serif;
+font-size: 22px;
+color: rgba(255,255,255,0.9);
+margin-bottom: 32px;
+letter-spacing: 0.05em;
+}
+
+.settings-group {
+width: 100%;
+max-width: 300px;
+margin-bottom: 28px;
+}
+.settings-group-title {
+font-size: 9px;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: rgba(255,255,255,0.35);
+margin-bottom: 14px;
+border-bottom: 1px solid rgba(255,255,255,0.08);
+padding-bottom: 6px;
+}
+
+.setting-row {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 14px;
+}
+.setting-label {
+font-size: 12px;
+letter-spacing: 0.08em;
+color: rgba(255,255,255,0.65);
+}
+.setting-control {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.setting-val {
+font-family: ‘DM Mono’, monospace;
+font-size: 16px;
+color: rgba(255,255,255,0.9);
+min-width: 42px;
+text-align: center;
+letter-spacing: 0.05em;
+}
+.adj-btn {
+width: 30px; height: 30px;
+border-radius: 6px;
+border: 1px solid rgba(255,255,255,0.15);
+background: rgba(255,255,255,0.06);
+color: rgba(255,255,255,0.7);
+font-size: 18px;
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+-webkit-tap-highlight-color: transparent;
+line-height: 1;
+}
+.adj-btn:active { background: rgba(255,255,255,0.15); }
+
+#close-settings {
+margin-top: 8px;
+padding: 14px 40px;
+border-radius: 10px;
+border: 1px solid rgba(255,255,255,0.2);
+background: rgba(255,255,255,0.08);
+color: rgba(255,255,255,0.8);
+font-family: ‘DM Mono’, monospace;
+font-size: 12px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+cursor: pointer;
+-webkit-tap-highlight-color: transparent;
+}
+#close-settings:active { background: rgba(255,255,255,0.18); }
+
+/* ── Mute toggle ── */
+.toggle-switch {
+width: 40px; height: 22px;
+border-radius: 11px;
+border: 1px solid rgba(255,255,255,0.2);
+background: rgba(255,255,255,0.08);
+position: relative;
+cursor: pointer;
+transition: background 0.25s;
+-webkit-tap-highlight-color: transparent;
+}
+.toggle-switch.on {
+background: rgba(100,200,160,0.35);
+border-color: rgba(100,200,160,0.5);
+}
+.toggle-knob {
+width: 16px; height: 16px;
+border-radius: 50%;
+background: rgba(255,255,255,0.5);
+position: absolute;
+top: 2px; left: 2px;
+transition: left 0.25s, background 0.25s;
+}
+.toggle-switch.on .toggle-knob {
+left: 20px;
+background: #3dffc0;
+}
+</style>
+
+</head>
+<body>
+<div id="app">
+
+  <!-- Background layers -->
+
+  <div class="bg-layer bg-work" id="bg-work"></div>
+  <div class="bg-layer bg-break" id="bg-break"></div>
+  <div class="bg-layer bg-rest" id="bg-rest"></div>
+  <div class="noise"></div>
+
+  <!-- Main UI -->
+
+  <div id="main">
+
+```
+<!-- Macro section -->
+<div id="macro-section">
+  <div id="macro-label" class="theme-work">Session block · 1 of 1</div>
+  <div id="macro-bar-track">
+    <div id="macro-bar-fill" class="theme-work"></div>
+  </div>
+  <div id="macro-time" class="theme-work">0:00 / 5:00</div>
+</div>
+
+<!-- Center section -->
+<div id="center-section">
+  <div id="phase-label" class="theme-work">Practice</div>
+
+  <div id="timer-ring">
+    <svg id="ring-svg" viewBox="0 0 220 220">
+      <circle id="ring-track" cx="110" cy="110" r="100"/>
+      <circle id="ring-fill" class="theme-work" cx="110" cy="110" r="100"/>
+    </svg>
+    <div id="timer-inner">
+      <div id="time-display" class="theme-work">0:25</div>
+      <div id="time-tenths" class="theme-work">· · ·</div>
+      <div id="pulse-dot" class="theme-work pulsing"></div>
+    </div>
+  </div>
+
+  <div id="phase-desc" class="theme-work">Focus on the phrase</div>
+</div>
+
+<!-- Bottom section -->
+<div id="bottom-section">
+  <button id="advance-btn" class="theme-work">↵ &nbsp; Advance Phase</button>
+  <div id="bottom-meta">
+    <button id="pause-btn" class="theme-work">⏸ Pause</button>
+    <button id="settings-btn" class="theme-work">⚙ Settings</button>
+  </div>
+</div>
+```
+
+  </div><!-- /main -->
+
+  <!-- Settings panel -->
+
+  <div id="settings-panel">
+    <div id="settings-title">Timer Settings</div>
+
+```
+<div class="settings-group">
+  <div class="settings-group-title">Micro Cycle</div>
+  <div class="setting-row">
+    <div class="setting-label">Practice duration</div>
+    <div class="setting-control">
+      <button class="adj-btn" data-target="workSec" data-delta="-5">−</button>
+      <div class="setting-val" id="val-workSec">25s</div>
+      <button class="adj-btn" data-target="workSec" data-delta="5">+</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <div class="setting-label">Micro-break duration</div>
+    <div class="setting-control">
+      <button class="adj-btn" data-target="breakSec" data-delta="-5">−</button>
+      <div class="setting-val" id="val-breakSec">15s</div>
+      <button class="adj-btn" data-target="breakSec" data-delta="5">+</button>
+    </div>
+  </div>
+</div>
+
+<div class="settings-group">
+  <div class="settings-group-title">Macro Cycle</div>
+  <div class="setting-row">
+    <div class="setting-label">Block length</div>
+    <div class="setting-control">
+      <button class="adj-btn" data-target="blockMin" data-delta="-1">−</button>
+      <div class="setting-val" id="val-blockMin">5m</div>
+      <button class="adj-btn" data-target="blockMin" data-delta="1">+</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <div class="setting-label">Long rest duration</div>
+    <div class="setting-control">
+      <button class="adj-btn" data-target="restMin" data-delta="-0.5">−</button>
+      <div class="setting-val" id="val-restMin">1.5m</div>
+      <button class="adj-btn" data-target="restMin" data-delta="0.5">+</button>
+    </div>
+  </div>
+</div>
+
+<div class="settings-group">
+  <div class="settings-group-title">Sound</div>
+  <div class="setting-row">
+    <div class="setting-label">Audio alerts</div>
+    <div class="setting-control">
+      <div class="toggle-switch on" id="sound-toggle"><div class="toggle-knob"></div></div>
+    </div>
+  </div>
+</div>
+
+<button id="close-settings">Done</button>
+```
+
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────
+const cfg = {
+  workSec:  25,
+  breakSec: 15,
+  blockMin: 5,
+  restMin:  1.5,
+  sound: true
+};
+
+const PHASES = { WORK: 'work', BREAK: 'break', REST: 'rest' };
+
+let phase       = PHASES.WORK;
+let microRemain = cfg.workSec;   // seconds remaining in micro phase
+let macroRemain = cfg.blockMin * 60; // seconds remaining in macro block
+let blockCount  = 1;
+let paused      = false;
+let tickInterval = null;
+let lastTick    = null;
+
+// ── DOM ────────────────────────────────────────────────────────────────
+const bgWork  = document.getElementById('bg-work');
+const bgBreak = document.getElementById('bg-break');
+const bgRest  = document.getElementById('bg-rest');
+const macroLabel  = document.getElementById('macro-label');
+const macroFill   = document.getElementById('macro-bar-fill');
+const macroTime   = document.getElementById('macro-time');
+const phaseLabel  = document.getElementById('phase-label');
+const timeDisplay = document.getElementById('time-display');
+const timeTenths  = document.getElementById('time-tenths');
+const pulseDot    = document.getElementById('pulse-dot');
+const phaseDesc   = document.getElementById('phase-desc');
+const advanceBtn  = document.getElementById('advance-btn');
+const pauseBtn    = document.getElementById('pause-btn');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsPanel = document.getElementById('settings-panel');
+const closeSettings = document.getElementById('close-settings');
+const soundToggle = document.getElementById('sound-toggle');
+const ringFill    = document.getElementById('ring-fill');
+
+const CIRCUMFERENCE = 2 * Math.PI * 100; // 628.3
+
+// ── Audio ──────────────────────────────────────────────────────────────
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playTone(freqs, durations, type='sine', gain=0.3) {
+  if (!cfg.sound) return;
+  try {
+    const ctx = getAudio();
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const vol = ctx.createGain();
+      osc.connect(vol); vol.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.value = freq;
+      const delay = durations.slice(0,i).reduce((a,b)=>a+b,0);
+      const dur   = durations[i];
+      vol.gain.setValueAtTime(0, ctx.currentTime + delay);
+      vol.gain.linearRampToValueAtTime(gain, ctx.currentTime + delay + 0.01);
+      vol.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + dur);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + dur + 0.02);
+    });
+  } catch(e) {}
+}
+
+function soundWorkStart()  { playTone([880, 1100], [0.1, 0.15], 'triangle', 0.25); }
+function soundBreakStart() { playTone([660, 440],  [0.1, 0.25], 'sine', 0.2); }
+function soundRestStart()  { playTone([440, 330, 220], [0.15, 0.15, 0.4], 'sine', 0.2); }
+function soundRestEnd()    { playTone([220, 330, 440, 660], [0.1, 0.1, 0.1, 0.2], 'triangle', 0.25); }
+function soundCountdown()  { playTone([520], [0.06], 'square', 0.12); }
+
+// ── Theme ──────────────────────────────────────────────────────────────
+const themeEls = () => [
+  macroLabel, macroFill, macroTime, phaseLabel, timeDisplay,
+  timeTenths, pulseDot, phaseDesc, advanceBtn, pauseBtn, settingsBtn, ringFill
+];
+
+function applyTheme(p) {
+  const cls = p === PHASES.WORK ? 'theme-work'
+            : p === PHASES.BREAK ? 'theme-break'
+            : 'theme-rest';
+  themeEls().forEach(el => {
+    el.classList.remove('theme-work','theme-break','theme-rest');
+    el.classList.add(cls);
+  });
+  bgWork.classList.toggle('active',  p === PHASES.WORK);
+  bgBreak.classList.toggle('active', p === PHASES.BREAK);
+  bgRest.classList.toggle('active',  p === PHASES.REST);
+}
+
+// ── Ring ───────────────────────────────────────────────────────────────
+function setRing(fraction) {
+  // fraction 1 = full, 0 = empty
+  const offset = CIRCUMFERENCE * (1 - Math.max(0, Math.min(1, fraction)));
+  ringFill.style.strokeDashoffset = offset;
+}
+
+// ── Formatting ─────────────────────────────────────────────────────────
+function fmtSec(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m > 0 ? `${m}:${String(sec).padStart(2,'0')}` : `0:${String(sec).padStart(2,'0')}`;
+}
+function fmtMin(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2,'0')}`;
+}
+
+// ── Phase transitions ──────────────────────────────────────────────────
+function goToPhase(newPhase, fromAdvance=false) {
+  phase = newPhase;
+  applyTheme(phase);
+
+  // Animate timer
+  document.getElementById('timer-ring').classList.remove('phase-transition');
+  void document.getElementById('timer-ring').offsetWidth;
+  document.getElementById('timer-ring').classList.add('phase-transition');
+
+  if (phase === PHASES.WORK) {
+    microRemain = cfg.workSec;
+    phaseLabel.textContent = 'Practice';
+    phaseLabel.classList.remove('rest-label');
+    phaseDesc.textContent = 'Focus on the phrase';
+    pulseDot.classList.add('pulsing');
+    if (!fromAdvance) soundWorkStart();
+  } else if (phase === PHASES.BREAK) {
+    microRemain = cfg.breakSec;
+    phaseLabel.textContent = 'Micro-Break';
+    phaseLabel.classList.remove('rest-label');
+    phaseDesc.textContent = 'Breathe · let it settle';
+    pulseDot.classList.remove('pulsing');
+    soundBreakStart();
+  } else {
+    microRemain = cfg.restMin * 60;
+    phaseLabel.textContent = 'Long Rest';
+    phaseLabel.classList.add('rest-label');
+    phaseDesc.textContent = 'Block complete · rest well';
+    pulseDot.classList.remove('pulsing');
+    soundRestStart();
+  }
+  renderMicro();
+}
+
+function advancePhase() {
+  if (phase === PHASES.WORK) {
+    goToPhase(PHASES.BREAK, true);
+    soundBreakStart();
+  } else if (phase === PHASES.BREAK) {
+    // check if macro block expired
+    if (macroRemain <= 0) {
+      startNewBlock(true);
+    } else {
+      goToPhase(PHASES.WORK, true);
+      soundWorkStart();
+    }
+  } else {
+    // REST → start fresh block
+    blockCount++;
+    macroRemain = cfg.blockMin * 60;
+    soundRestEnd();
+    goToPhase(PHASES.WORK, true);
+    soundWorkStart();
+  }
+}
+
+function startNewBlock(fromBreak=false) {
+  blockCount++;
+  macroRemain = cfg.blockMin * 60;
+  goToPhase(PHASES.REST, fromBreak);
+}
+
+// ── Render ─────────────────────────────────────────────────────────────
+function renderMicro() {
+  const total = phase === PHASES.WORK ? cfg.workSec
+              : phase === PHASES.BREAK ? cfg.breakSec
+              : cfg.restMin * 60;
+  const fraction = microRemain / total;
+  setRing(fraction);
+  timeDisplay.textContent = fmtSec(microRemain);
+
+  // Tenths dots as countdown indicator
+  const pct = Math.round(fraction * 5);
+  timeTenths.textContent = '· '.repeat(Math.max(0,pct)).trim() || '·';
+}
+
+function renderMacro() {
+  const total = cfg.blockMin * 60;
+  const elapsed = total - macroRemain;
+  const pct = Math.max(0, Math.min(100, (elapsed / total) * 100));
+  macroFill.style.width = pct + '%';
+  macroLabel.textContent = `Session block · ${blockCount}`;
+  macroTime.textContent = `${fmtMin(elapsed)} / ${fmtMin(total)}`;
+}
+
+// ── Tick ───────────────────────────────────────────────────────────────
+function tick() {
+  if (paused) { lastTick = performance.now(); return; }
+
+  const now = performance.now();
+  const dt = lastTick ? (now - lastTick) / 1000 : 0;
+  lastTick = now;
+
+  // countdown beeps at 3, 2, 1
+  const prevFloor = Math.ceil(microRemain);
+  microRemain = Math.max(0, microRemain - dt);
+
+  if (phase !== PHASES.REST) {
+    const newFloor = Math.ceil(microRemain);
+    if (prevFloor !== newFloor && newFloor <= 3 && newFloor > 0) soundCountdown();
+  }
+
+  // Macro clock only ticks during WORK and BREAK
+  if (phase === PHASES.WORK || phase === PHASES.BREAK) {
+    macroRemain = Math.max(0, macroRemain - dt);
+  }
+
+  if (microRemain <= 0) {
+    // Auto advance
+    if (phase === PHASES.WORK) {
+      goToPhase(PHASES.BREAK);
+    } else if (phase === PHASES.BREAK) {
+      if (macroRemain <= 0) {
+        startNewBlock();
+      } else {
+        goToPhase(PHASES.WORK);
+      }
+    } else {
+      // REST done
+      blockCount++;
+      macroRemain = cfg.blockMin * 60;
+      soundRestEnd();
+      goToPhase(PHASES.WORK);
+    }
+  }
+
+  renderMicro();
+  renderMacro();
+}
+
+// ── Settings ───────────────────────────────────────────────────────────
+const settingsMap = {
+  workSec:  { min: 5,   max: 120, step: 5,   fmt: v => v+'s' },
+  breakSec: { min: 5,   max: 60,  step: 5,   fmt: v => v+'s' },
+  blockMin: { min: 1,   max: 15,  step: 1,   fmt: v => v+'m' },
+  restMin:  { min: 0.5, max: 5,   step: 0.5, fmt: v => v+'m' },
+};
+
+function updateSettingsUI() {
+  for (const [key, meta] of Object.entries(settingsMap)) {
+    document.getElementById('val-'+key).textContent = meta.fmt(cfg[key]);
+  }
+}
+
+document.querySelectorAll('.adj-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.target;
+    const delta  = parseFloat(btn.dataset.delta);
+    const meta   = settingsMap[target];
+    cfg[target] = Math.max(meta.min, Math.min(meta.max, cfg[target] + delta));
+    updateSettingsUI();
+  });
+});
+
+soundToggle.addEventListener('click', () => {
+  cfg.sound = !cfg.sound;
+  soundToggle.classList.toggle('on', cfg.sound);
+});
+
+settingsBtn.addEventListener('click', () => {
+  paused = true;
+  pauseBtn.textContent = '▶ Resume';
+  settingsPanel.classList.add('open');
+  updateSettingsUI();
+});
+
+closeSettings.addEventListener('click', () => {
+  settingsPanel.classList.remove('open');
+  // Reset current micro phase with new duration
+  microRemain = Math.min(microRemain,
+    phase === PHASES.WORK ? cfg.workSec :
+    phase === PHASES.BREAK ? cfg.breakSec : cfg.restMin * 60
+  );
+  renderMicro();
+});
+
+// ── Pause ──────────────────────────────────────────────────────────────
+pauseBtn.addEventListener('click', () => {
+  paused = !paused;
+  pauseBtn.textContent = paused ? '▶ Resume' : '⏸ Pause';
+  if (!paused) {
+    lastTick = performance.now();
+    // Unlock audio context on iOS
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }
+});
+
+// ── Advance ────────────────────────────────────────────────────────────
+advanceBtn.addEventListener('click', advanceClick);
+function advanceClick() {
+  // unlock audio on first tap (iOS requirement)
+  if (!audioCtx) { getAudio(); }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (paused) {
+    paused = false;
+    pauseBtn.textContent = '⏸ Pause';
+    lastTick = performance.now();
+  }
+  advancePhase();
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (settingsPanel.classList.contains('open')) return;
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    advanceClick();
+  }
+  if (e.key === 'p' || e.key === 'P') {
+    pauseBtn.click();
+  }
+});
+
+// ── Init ───────────────────────────────────────────────────────────────
+applyTheme(PHASES.WORK);
+renderMicro();
+renderMacro();
+updateSettingsUI();
+
+tickInterval = setInterval(tick, 50); // 20fps is plenty
+</script>
+
+</body>
+</html>
