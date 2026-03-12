@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Practice">
+<meta name="theme-color" content="#000000">
+<title>Practice Timer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-work: #c0430a;
+    --color-break: #1a1f6e;
+    --color-rest: #000000;
+    --font-mono: 'DM Mono', monospace;
+    --safe-top: env(safe-area-inset-top, 44px);
+    --safe-bottom: env(safe-area-inset-bottom, 20px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #app {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+    transition: background-color 0.6s ease;
+    background-color: #000;
+    color: #fff;
+  }
+
+  /* ── Phase header ── */
+  #phase-label {
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-top: 14px;
+    min-height: 18px;
+  }
+
+  /* ── Macro progress bar ── */
+  #macro-bar-wrap {
+    width: calc(100% - 48px);
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  #macro-bar {
+    height: 100%;
+    background: rgba(255,255,255,0.75);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.5s linear;
+  }
+
+  /* ── Cycle counter ── */
+  #cycle-counter {
+    font-size: 13px;
+    font-weight: 300;
+    opacity: 0.5;
+    margin-top: 6px;
+    min-height: 18px;
+  }
+
+  /* ── Central timer area ── */
+  #timer-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 16px;
+  }
+
+  /* Ring */
+  #ring-container {
+    position: relative;
+    width: min(280px, 68vw);
+    height: min(280px, 68vw);
+  }
+  #ring-container svg {
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  #ring-bg { fill: none; stroke: rgba(255,255,255,0.1); }
+  #ring-fg { fill: none; stroke: rgba(255,255,255,0.85); stroke-linecap: round; transition: stroke-dashoffset 0.5s linear; }
+
+  #timer-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+  }
+  #time-display {
+    font-size: clamp(40px, 14vw, 64px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  #ready-text {
+    font-size: clamp(32px, 10vw, 52px);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    display: none;
+  }
+
+  /* ── Message ── */
+  #message {
+    font-size: clamp(16px, 4.5vw, 22px);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-align: center;
+    opacity: 0.9;
+    padding: 0 24px;
+    min-height: 28px;
+    line-height: 1.4;
+  }
+
+  /* ── Controls ── */
+  #controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 12px 0 6px;
+  }
+  .ctrl-btn {
+    background: none; border: none;
+    color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.9;
+    transition: opacity 0.15s, transform 0.1s;
+    -webkit-appearance: none;
+  }
+  .ctrl-btn:active { opacity: 0.5; transform: scale(0.93); }
+  .ctrl-btn svg { display: block; }
+  #btn-play-pause { width: 72px; height: 72px; }
+  #btn-prev, #btn-next { width: 52px; height: 52px; opacity: 0.75; }
+
+  /* Start button (shown during rest) */
+  #start-btn {
+    display: none;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 40px;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    padding: 14px 44px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-appearance: none;
+  }
+  #start-btn:active { background: rgba(255,255,255,0.22); transform: scale(0.97); }
+
+  /* Review Practice button */
+  #review-btn {
+    display: none;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 30px;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    padding: 10px 28px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.15s;
+    -webkit-appearance: none;
+  }
+  #review-btn:active { background: rgba(255,255,255,0.2); }
+
+  /* ── Settings button ── */
+  #settings-btn {
+    position: absolute;
+    bottom: calc(var(--safe-bottom) + 14px);
+    right: calc(var(--safe-right) + 18px);
+    background: none; border: none;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    padding: 8px;
+    -webkit-appearance: none;
+  }
+  #settings-btn:active { color: rgba(255,255,255,0.8); }
+
+  /* ── Settings Panel ── */
+  #settings-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+    flex-direction: column;
+    padding: calc(var(--safe-top) + 16px) 24px calc(var(--safe-bottom) + 16px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #settings-overlay.open { display: flex; }
+
+  .settings-title {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-bottom: 28px;
+    color: #fff;
+  }
+  .settings-section {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 12px;
+    margin-top: 20px;
+  }
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .setting-label {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+  }
+  .setting-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+  }
+  .setting-control {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .setting-control input[type=range] {
+    -webkit-appearance: none;
+    width: 130px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.2);
+    outline: none;
+  }
+  .setting-control input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+  }
+  .setting-value {
+    font-size: 14px;
+    font-weight: 400;
+    min-width: 48px;
+    text-align: right;
+    color: rgba(255,255,255,0.7);
+  }
+  .toggle-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .toggle-switch {
+    position: relative; width: 46px; height: 26px;
+    cursor: pointer;
+  }
+  .toggle-switch input { display: none; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 13px;
+    transition: background 0.2s;
+  }
+  .toggle-switch input:checked ~ .toggle-track { background: rgba(255,255,255,0.7); }
+  .toggle-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+  /* Messages editor */
+  #messages-list {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-top: 4px;
+  }
+  .msg-row {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .msg-input {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 8px 12px;
+    outline: none;
+  }
+  .msg-input:focus { border-color: rgba(255,255,255,0.35); }
+  .msg-del-btn {
+    background: none; border: none;
+    color: rgba(255,255,255,0.35);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+  #add-msg-btn, #settings-close-btn {
+    -webkit-appearance: none;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  #add-msg-btn {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    margin-top: 10px;
+    letter-spacing: 0.05em;
+  }
+  #settings-close-btn {
+    background: #fff;
+    color: #000;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-top: 24px;
+    padding: 14px 20px;
+  }
+  #settings-close-btn:active, #add-msg-btn:active { opacity: 0.7; }
+
+  /* ── Audio review overlay ── */
+  #review-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 200;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--safe-top) + 20px) 24px calc(var(--safe-bottom) + 20px);
+    gap: 24px;
+  }
+  #review-overlay.open { display: flex; }
+
+  #review-title {
+    font-size: 15px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+  #review-time-display {
+    font-size: 52px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  #review-waveform {
+    width: 100%;
+    height: 64px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    overflow: hidden;
+    position: relative;
+  }
+  #review-progress-bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: rgba(255,255,255,0.12);
+    transition: width 0.1s linear;
+    width: 0%;
+  }
+  #review-controls {
+    display: flex; align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+  }
+  .rev-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-appearance: none;
+    transition: background 0.12s, transform 0.1s;
+  }
+  .rev-btn:active { background: rgba(255,255,255,0.25); transform: scale(0.92); }
+  .rev-btn-lg { width: 70px; height: 70px; }
+  .rev-btn-sm { width: 56px; height: 56px; }
+  #rev-exit-btn {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 30px;
+    color: rgba(255,255,255,0.6);
+    padding: 10px 28px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    -webkit-appearance: none;
+  }
+  #rev-exit-btn:active { background: rgba(255,255,255,0.15); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="phase-label">Long Rest</div>
+  <div id="macro-bar-wrap"><div id="macro-bar"></div></div>
+  <div id="cycle-counter"></div>
+
+  <div id="timer-area">
+    <div id="ring-container">
+      <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+        <circle id="ring-bg" cx="140" cy="140" r="120" stroke-width="8"/>
+        <circle id="ring-fg" cx="140" cy="140" r="120" stroke-width="8"
+          stroke-dasharray="753.98"
+          stroke-dashoffset="0"/>
+      </svg>
+      <div id="timer-center">
+        <div id="time-display">2:00</div>
+        <div id="ready-text">Ready?</div>
+      </div>
+    </div>
+    <div id="message">What is the goal of your next practice block? How will you achieve it?</div>
+  </div>
+
+  <div id="controls">
+    <button class="ctrl-btn" id="btn-prev" aria-label="Restart phase">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <rect x="10" y="13" width="5" height="26" rx="2.5" fill="white"/>
+        <path d="M42 13 L18 26 L42 39 Z" fill="white"/>
+      </svg>
+    </button>
+    <button class="ctrl-btn" id="btn-play-pause" aria-label="Play/Pause">
+      <svg id="icon-play" width="72" height="72" viewBox="0 0 72 72" fill="none" style="display:none">
+        <circle cx="36" cy="36" r="34" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.08)"/>
+        <path d="M28 22 L54 36 L28 50 Z" fill="white"/>
+      </svg>
+      <svg id="icon-pause" width="72" height="72" viewBox="0 0 72 72" fill="none">
+        <circle cx="36" cy="36" r="34" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.08)"/>
+        <rect x="22" y="21" width="10" height="30" rx="3" fill="white"/>
+        <rect x="40" y="21" width="10" height="30" rx="3" fill="white"/>
+      </svg>
+    </button>
+    <button class="ctrl-btn" id="btn-next" aria-label="Next phase">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <path d="M10 13 L34 26 L10 39 Z" fill="white"/>
+        <rect x="37" y="13" width="5" height="26" rx="2.5" fill="white"/>
+      </svg>
+    </button>
+  </div>
+
+  <button id="start-btn">Start</button>
+  <button id="review-btn">Review Practice</button>
+
+  <button id="settings-btn" aria-label="Settings">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <circle cx="13" cy="13" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M13 2v3M13 21v3M2 13h3M21 13h3M4.93 4.93l2.12 2.12M18.95 18.95l2.12 2.12M4.93 21.07l2.12-2.12M18.95 7.05l2.12-2.12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Settings Panel -->
+<div id="settings-overlay">
+  <div class="settings-title">Settings</div>
+
+  <div class="settings-section">Durations</div>
+
+  <div class="setting-row">
+    <div><div class="setting-label">Practice</div></div>
+    <div class="setting-control">
+      <input type="range" id="s-work" min="15" max="120" step="5" value="45">
+      <div class="setting-value" id="sv-work">45s</div>
+    </div>
+  </div>
+  <div class="setting-row">
+    <div><div class="setting-label">μBreak</div></div>
+    <div class="setting-control">
+      <input type="range" id="s-break" min="10" max="60" step="5" value="15">
+      <div class="setting-value" id="sv-break">15s</div>
+    </div>
+  </div>
+  <div class="setting-row">
+    <div><div class="setting-label">Block length</div><div class="setting-sub" id="sv-cycles-sub">≈ 5:00</div></div>
+    <div class="setting-control">
+      <input type="range" id="s-cycles" min="3" max="15" step="1" value="5">
+      <div class="setting-value" id="sv-cycles">5 cycles</div>
+    </div>
+  </div>
+  <div class="setting-row">
+    <div><div class="setting-label">Long Rest</div></div>
+    <div class="setting-control">
+      <input type="range" id="s-rest" min="60" max="300" step="15" value="120">
+      <div class="setting-value" id="sv-rest">2:00</div>
+    </div>
+  </div>
+
+  <div class="settings-section">Audio</div>
+  <div class="toggle-row">
+    <div class="setting-label">Mute sounds</div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="s-mute">
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb"></div>
+    </label>
+  </div>
+
+  <div class="settings-section">Break Messages</div>
+  <div id="messages-list"></div>
+  <button id="add-msg-btn">+ Add message</button>
+
+  <button id="settings-close-btn">Done</button>
+</div>
+
+<!-- Review Overlay -->
+<div id="review-overlay">
+  <div id="review-title">Review Practice</div>
+  <div id="review-time-display">0:00</div>
+  <div id="review-waveform"><div id="review-progress-bar"></div></div>
+  <div id="review-controls">
+    <button class="rev-btn rev-btn-sm" id="rev-restart" aria-label="Back to start">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <rect x="4" y="5" width="3.5" height="16" rx="1.5" fill="white"/>
+        <path d="M22 5 L10 13 L22 21 Z" fill="white"/>
+      </svg>
+    </button>
+    <button class="rev-btn rev-btn-sm" id="rev-back5" aria-label="Back 5s">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M13 4 A9 9 0 1 0 4 13" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M4 7 L4 13 L10 13" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="13" y="16.5" text-anchor="middle" fill="white" font-size="7" font-family="DM Mono,monospace">5</text>
+      </svg>
+    </button>
+    <button class="rev-btn rev-btn-lg" id="rev-playpause" aria-label="Play/Pause">
+      <svg id="rev-icon-play" width="30" height="30" viewBox="0 0 30 30" fill="none" style="display:none">
+        <path d="M8 5 L26 15 L8 25 Z" fill="white"/>
+      </svg>
+      <svg id="rev-icon-pause" width="30" height="30" viewBox="0 0 30 30" fill="none">
+        <rect x="5" y="4" width="8" height="22" rx="2" fill="white"/>
+        <rect x="17" y="4" width="8" height="22" rx="2" fill="white"/>
+      </svg>
+    </button>
+    <button class="rev-btn rev-btn-sm" id="rev-fwd5" aria-label="Forward 5s">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M13 4 A9 9 0 1 1 22 13" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M22 7 L22 13 L16 13" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="13" y="16.5" text-anchor="middle" fill="white" font-size="7" font-family="DM Mono,monospace">5</text>
+      </svg>
+    </button>
+    <button class="rev-btn rev-btn-sm" id="rev-exit" aria-label="Exit">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M4 4 L18 18M18 4 L4 18" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <button id="rev-exit-btn">Close</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STORAGE & SETTINGS
+// ═══════════════════════════════════════════════
+const DEFAULTS = {
+  workDur: 45,
+  breakDur: 15,
+  cycles: 5,
+  restDur: 120,
+  muted: false,
+  messages: ['Goal?','Wrist flex','Audiate → Intonate','Beat/Off-beat emphasis']
+};
+
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem('pt_settings') || '{}');
+    return Object.assign({}, DEFAULTS, s);
+  } catch(e) { return { ...DEFAULTS }; }
+}
+function saveSettings() {
+  localStorage.setItem('pt_settings', JSON.stringify(settings));
+}
+
+let settings = loadSettings();
+
+// ═══════════════════════════════════════════════
+// AUDIO ENGINE
+// ═══════════════════════════════════════════════
+let audioCtx = null;
+let audioUnlocked = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let reviewBlob = null;
+let reviewAudio = null;
+let reviewPlaying = false;
+let micStream = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  audioUnlocked = true;
+}
+
+function playTone(freq, duration, type='sine', gainVal=0.35, delay=0) {
+  if (settings.muted || !audioUnlocked) return;
+  ensureAudio();
+  const g = audioCtx.createGain();
+  const o = audioCtx.createOscillator();
+  o.type = type;
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0, audioCtx.currentTime + delay);
+  g.gain.linearRampToValueAtTime(gainVal, audioCtx.currentTime + delay + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delay + duration);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(audioCtx.currentTime + delay);
+  o.stop(audioCtx.currentTime + delay + duration + 0.05);
+}
+
+function playChord(freqs, duration, type='sine', gainVal=0.22, delay=0) {
+  freqs.forEach(f => playTone(f, duration, type, gainVal, delay));
+}
+
+function playCountdownBeep(n) { // n = 3,2,1
+  const f = n === 1 ? 1046 : 880;
+  playTone(f, 0.12, 'sine', 0.4);
+}
+
+function playWorkStart() {
+  // crisp ascending double-beep
+  playTone(660, 0.1, 'sine', 0.35, 0);
+  playTone(880, 0.18, 'sine', 0.35, 0.12);
+}
+
+function playBreakStart() {
+  // meditation chime: sustained bell-like chord
+  const now = audioCtx ? audioCtx.currentTime : 0;
+  playChord([523, 659, 784], 1.8, 'sine', 0.18, 0);
+  playChord([523, 659, 784], 1.4, 'sine', 0.1, 0.4);
+}
+
+function playSuccessFanfare() {
+  // ascending celebratory arpeggio
+  const notes = [523, 659, 784, 1046, 784, 1046];
+  const durs  = [0.12,0.12,0.12,0.5, 0.1, 0.55];
+  let t = 0;
+  notes.forEach((f, i) => { playTone(f, durs[i], 'sine', 0.3, t); t += durs[i] * 0.7; });
+}
+
+function playBackToWork() {
+  // "da-da-da  da-da  DA!" rhythm
+  const beats = [
+    {f:440, d:0.12, g:0.3, t:0},
+    {f:440, d:0.12, g:0.3, t:0.2},
+    {f:440, d:0.12, g:0.3, t:0.4},
+    {f:523, d:0.14, g:0.32, t:0.7},
+    {f:523, d:0.14, g:0.32, t:0.9},
+    {f:660, d:0.45, g:0.5,  t:1.2},
+  ];
+  beats.forEach(b => playTone(b.f, b.d, 'sine', b.g, b.t));
+}
+
+// Microphone recording
+async function startRecording() {
+  try {
+    if (!micStream) micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(micStream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      reviewBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+    };
+    mediaRecorder.start();
+  } catch(e) { /* mic not available */ }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+}
+
+// ═══════════════════════════════════════════════
+// TIMER STATE MACHINE
+// ═══════════════════════════════════════════════
+// Phases: 'rest' | 'work' | 'break'
+let phase = 'rest';
+let running = false; // paused?
+let currentCycle = 0; // 0-based
+let phaseTimeLeft = 0;
+let blockTimeLeft = 0;
+let blockTotalTime = 0;
+let countdownArmed = false; // for 3-2-1
+let countdownFired = { 3: false, 2: false, 1: false };
+let messageIndex = 0;
+let wasRunning = false;
+let tickInterval = null;
+let isPaused = false;
+
+function totalBlockDuration() {
+  return settings.cycles * (settings.workDur + settings.breakDur);
+}
+
+function initBlock() {
+  currentCycle = 0;
+  blockTotalTime = totalBlockDuration();
+  blockTimeLeft = blockTotalTime;
+  startPhase('work');
+}
+
+function startPhase(p) {
+  phase = p;
+  isPaused = false;
+
+  if (p === 'work') {
+    phaseTimeLeft = settings.workDur;
+    countdownFired = { 3: false, 2: false, 1: false };
+    startRecording();
+  } else if (p === 'break') {
+    stopRecording();
+    messageIndex++; // advance to next message each break
+    phaseTimeLeft = settings.breakDur;
+    countdownFired = { 3: false, 2: false, 1: false };
+    if (audioUnlocked) playBreakStart();
+  } else if (p === 'rest') {
+    stopRecording();
+    phaseTimeLeft = settings.restDur;
+    countdownFired = { 3: false, 2: false, 1: false };
+    blockTimeLeft = 0;
+  }
+  updateUI();
+}
+
+function tick() {
+  if (!running || isPaused) return;
+
+  // countdown beeps
+  if (phase !== 'rest') {
+    [3,2,1].forEach(n => {
+      if (!countdownFired[n] && phaseTimeLeft <= n && phaseTimeLeft > n - 1) {
+        countdownFired[n] = true;
+        if (audioUnlocked) playCountdownBeep(n);
+      }
+    });
+  }
+
+  phaseTimeLeft -= 0.1;
+  if (phase === 'work') blockTimeLeft = Math.max(0, blockTimeLeft - 0.1);
+
+  if (phaseTimeLeft <= 0) advancePhase();
+  else updateTimerDisplay();
+}
+
+function advancePhase() {
+  if (phase === 'work') {
+    if (currentCycle >= settings.cycles - 1) {
+      // Last work cycle done — fanfare then go to rest
+      stopRecording();
+      if (audioUnlocked) playSuccessFanfare();
+      phase = 'rest';
+      running = false;
+      isPaused = false;
+      phaseTimeLeft = settings.restDur;
+      blockTimeLeft = 0;
+      currentCycle = 0;
+      updateUI();
+    } else {
+      // Advance to break
+      startPhase('break');
+    }
+  } else if (phase === 'break') {
+    currentCycle++;
+    startPhase('work');
+    if (audioUnlocked) playWorkStart();
+  } else if (phase === 'rest') {
+    running = false;
+    updateUI();
+  }
+}
+
+function togglePlayPause() {
+  ensureAudio();
+  if (phase === 'rest' && !running) {
+    // Start button was effectively "start" — do nothing here, handled by startBtn
+    return;
+  }
+  isPaused = !isPaused;
+  if (!isPaused) {
+    // resumed
+    if (phase === 'work' && mediaRecorder && mediaRecorder.state === 'paused') {
+      mediaRecorder.resume();
+    }
+  } else {
+    // paused
+    if (phase === 'work' && mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.pause();
+    }
+  }
+  updateUI();
+}
+
+function restartPhase() {
+  ensureAudio();
+  if (phase === 'work') {
+    phaseTimeLeft = settings.workDur;
+    countdownFired = { 3: false, 2: false, 1: false };
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+      recordedChunks = [];
+    }
+    startRecording();
+  } else if (phase === 'break') {
+    phaseTimeLeft = settings.breakDur;
+    countdownFired = { 3: false, 2: false, 1: false };
+  } else if (phase === 'rest') {
+    phaseTimeLeft = settings.restDur;
+  }
+  isPaused = false;
+  updateTimerDisplay();
+  updatePlayPauseIcon();
+}
+
+function nextPhase() {
+  ensureAudio();
+  phaseTimeLeft = 0;
+  advancePhase();
+}
+
+function startBlock() {
+  ensureAudio();
+  if (audioUnlocked) {
+    playBackToWork();
+    setTimeout(() => { initBlock(); running = true; updateUI(); }, 1700);
+  } else {
+    initBlock(); running = true; updateUI();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// UI UPDATE
+// ═══════════════════════════════════════════════
+const app = document.getElementById('app');
+const phaseLabel = document.getElementById('phase-label');
+const macroBar = document.getElementById('macro-bar');
+const cycleCounter = document.getElementById('cycle-counter');
+const timeDisplay = document.getElementById('time-display');
+const readyText = document.getElementById('ready-text');
+const ringFg = document.getElementById('ring-fg');
+const messageEl = document.getElementById('message');
+const controls = document.getElementById('controls');
+const startBtn = document.getElementById('start-btn');
+const reviewBtn = document.getElementById('review-btn');
+const iconPlay = document.getElementById('icon-play');
+const iconPause = document.getElementById('icon-pause');
+const CIRCUMFERENCE = 2 * Math.PI * 120; // r=120
+
+function fmtTime(sec) {
+  const s = Math.ceil(sec);
+  const m = Math.floor(s / 60);
+  const ss = s % 60;
+  return `${m}:${ss.toString().padStart(2,'0')}`;
+}
+
+function updateUI() {
+  // Background color
+  const bg = phase === 'work' ? 'var(--color-work)' :
+             phase === 'break' ? 'var(--color-break)' : 'var(--color-rest)';
+  app.style.backgroundColor = bg;
+  document.querySelector('meta[name=theme-color]').setAttribute('content',
+    phase === 'work' ? '#c0430a' : phase === 'break' ? '#1a1f6e' : '#000000');
+
+  // Phase label
+  phaseLabel.textContent = phase === 'work' ? 'Practice' :
+                           phase === 'break' ? 'μBreak' : 'Long Rest';
+
+  // Macro progress bar (only during block)
+  if (phase !== 'rest') {
+    const pct = 100 * (1 - blockTimeLeft / blockTotalTime);
+    macroBar.style.width = pct + '%';
+    const cycleNum = phase === 'work' ? currentCycle + 1 : currentCycle + 1;
+    cycleCounter.textContent = `cycle ${Math.min(cycleNum, settings.cycles)} of ${settings.cycles}`;
+  } else {
+    macroBar.style.width = '0%';
+    cycleCounter.textContent = '';
+  }
+
+  // Timer ring & display
+  const ringContainer = document.getElementById('ring-container');
+  ringContainer.style.display = (phase === 'rest' && !running) ? 'none' : 'block';
+  readyText.style.display = (phase === 'rest' && !running) ? 'block' : 'none';
+  timeDisplay.style.display = (phase === 'rest' && !running) ? 'none' : 'block';
+
+  // If in rest and NOT yet started (waiting), show "Ready?" and hide ring
+  if (phase === 'rest' && !running) {
+    readyText.style.display = 'block';
+    document.getElementById('ring-container').style.display = 'none';
+  } else {
+    readyText.style.display = 'none';
+    document.getElementById('ring-container').style.display = 'block';
+  }
+
+  updateTimerDisplay();
+  updatePlayPauseIcon();
+
+  // Controls vs start button
+  if (phase === 'rest' && !running) {
+    controls.style.display = 'none';
+    startBtn.style.display = 'block';
+  } else {
+    controls.style.display = 'flex';
+    startBtn.style.display = 'none';
+  }
+
+  // Review button — show when paused and we have a recording
+  reviewBtn.style.display = (isPaused && reviewBlob) ? 'block' : 'none';
+
+  // Message
+  if (phase === 'rest') {
+    messageEl.textContent = 'What is the goal of your next practice block? How will you achieve it?';
+  } else if (phase === 'break') {
+    const msgs = settings.messages;
+    messageEl.textContent = msgs.length ? msgs[messageIndex % msgs.length] : '';
+  } else {
+    messageEl.textContent = '';
+  }
+}
+
+function updateTimerDisplay() {
+  const total = phase === 'work' ? settings.workDur :
+                phase === 'break' ? settings.breakDur : settings.restDur;
+  const left = Math.max(0, phaseTimeLeft);
+  const frac = left / total;
+  const offset = CIRCUMFERENCE * (1 - frac);
+  ringFg.setAttribute('stroke-dashoffset', offset.toFixed(3));
+  timeDisplay.textContent = fmtTime(left);
+
+  if (phase !== 'rest') {
+    const pct = 100 * (1 - blockTimeLeft / blockTotalTime);
+    macroBar.style.width = Math.min(100, pct) + '%';
+  }
+}
+
+function updatePlayPauseIcon() {
+  if (isPaused || !running) {
+    iconPlay.style.display = 'block';
+    iconPause.style.display = 'none';
+  } else {
+    iconPlay.style.display = 'none';
+    iconPause.style.display = 'block';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS PANEL
+// ═══════════════════════════════════════════════
+const settingsOverlay = document.getElementById('settings-overlay');
+const sWork = document.getElementById('s-work');
+const sBreak = document.getElementById('s-break');
+const sCycles = document.getElementById('s-cycles');
+const sRest = document.getElementById('s-rest');
+const sMute = document.getElementById('s-mute');
+const svWork = document.getElementById('sv-work');
+const svBreak = document.getElementById('sv-break');
+const svCycles = document.getElementById('sv-cycles');
+const svCyclesSub = document.getElementById('sv-cycles-sub');
+const svRest = document.getElementById('sv-rest');
+const messagesList = document.getElementById('messages-list');
+
+function fmtDur(sec) {
+  if (sec < 60) return sec + 's';
+  const m = Math.floor(sec/60), s = sec%60;
+  return s ? `${m}:${s.toString().padStart(2,'0')}` : `${m}:00`;
+}
+
+function updateSettingsSliders() {
+  sWork.value = settings.workDur;
+  sBreak.value = settings.breakDur;
+  sCycles.value = settings.cycles;
+  sRest.value = settings.restDur;
+  sMute.checked = settings.muted;
+  svWork.textContent = settings.workDur + 's';
+  svBreak.textContent = settings.breakDur + 's';
+  svCycles.textContent = settings.cycles + ' cycles';
+  svRest.textContent = fmtDur(settings.restDur);
+  const totalSec = settings.cycles * (settings.workDur + settings.breakDur);
+  svCyclesSub.textContent = '≈ ' + fmtDur(totalSec);
+}
+
+function renderMessages() {
+  messagesList.innerHTML = '';
+  settings.messages.forEach((msg, i) => {
+    const row = document.createElement('div');
+    row.className = 'msg-row';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.className = 'msg-input'; inp.value = msg;
+    inp.addEventListener('input', () => { settings.messages[i] = inp.value; saveSettings(); });
+    const del = document.createElement('button');
+    del.className = 'msg-del-btn'; del.textContent = '×';
+    del.addEventListener('click', () => {
+      settings.messages.splice(i, 1);
+      saveSettings(); renderMessages();
+    });
+    row.appendChild(inp); row.appendChild(del);
+    messagesList.appendChild(row);
+  });
+}
+
+sWork.addEventListener('input', () => {
+  settings.workDur = parseInt(sWork.value);
+  svWork.textContent = settings.workDur + 's';
+  const t = settings.cycles * (settings.workDur + settings.breakDur);
+  svCyclesSub.textContent = '≈ ' + fmtDur(t);
+  saveSettings();
+});
+sBreak.addEventListener('input', () => {
+  settings.breakDur = parseInt(sBreak.value);
+  svBreak.textContent = settings.breakDur + 's';
+  const t = settings.cycles * (settings.workDur + settings.breakDur);
+  svCyclesSub.textContent = '≈ ' + fmtDur(t);
+  saveSettings();
+});
+sCycles.addEventListener('input', () => {
+  settings.cycles = parseInt(sCycles.value);
+  svCycles.textContent = settings.cycles + ' cycles';
+  const t = settings.cycles * (settings.workDur + settings.breakDur);
+  svCyclesSub.textContent = '≈ ' + fmtDur(t);
+  saveSettings();
+});
+sRest.addEventListener('input', () => {
+  settings.restDur = parseInt(sRest.value);
+  svRest.textContent = fmtDur(settings.restDur);
+  saveSettings();
+});
+sMute.addEventListener('change', () => {
+  settings.muted = sMute.checked; saveSettings();
+});
+
+document.getElementById('settings-btn').addEventListener('click', () => {
+  wasRunning = running && !isPaused;
+  isPaused = true;
+  updatePlayPauseIcon();
+  updateSettingsSliders();
+  renderMessages();
+  settingsOverlay.classList.add('open');
+});
+
+document.getElementById('settings-close-btn').addEventListener('click', () => {
+  settingsOverlay.classList.remove('open');
+  updateUI();
+});
+
+document.getElementById('add-msg-btn').addEventListener('click', () => {
+  settings.messages.push('');
+  saveSettings(); renderMessages();
+  // focus last
+  const inputs = messagesList.querySelectorAll('.msg-input');
+  if (inputs.length) inputs[inputs.length-1].focus();
+});
+
+// ═══════════════════════════════════════════════
+// REVIEW AUDIO PLAYER
+// ═══════════════════════════════════════════════
+const reviewOverlay = document.getElementById('review-overlay');
+const reviewTimeDisplay = document.getElementById('review-time-display');
+const reviewProgressBar = document.getElementById('review-progress-bar');
+const revIconPlay = document.getElementById('rev-icon-play');
+const revIconPause = document.getElementById('rev-icon-pause');
+
+function openReview() {
+  if (!reviewBlob) return;
+  const url = URL.createObjectURL(reviewBlob);
+  reviewAudio = new Audio(url);
+  reviewAudio.ontimeupdate = updateReviewDisplay;
+  reviewAudio.onended = () => { revIconPlay.style.display='block'; revIconPause.style.display='none'; };
+  reviewOverlay.classList.add('open');
+  updateReviewDisplay();
+}
+
+function updateReviewDisplay() {
+  if (!reviewAudio) return;
+  const cur = reviewAudio.currentTime || 0;
+  const dur = reviewAudio.duration || 0;
+  reviewTimeDisplay.textContent = fmtTime(cur);
+  reviewProgressBar.style.width = dur ? (100 * cur / dur) + '%' : '0%';
+}
+
+document.getElementById('rev-restart').addEventListener('click', () => {
+  if (reviewAudio) { reviewAudio.currentTime = 0; }
+});
+document.getElementById('rev-back5').addEventListener('click', () => {
+  if (reviewAudio) reviewAudio.currentTime = Math.max(0, reviewAudio.currentTime - 5);
+});
+document.getElementById('rev-playpause').addEventListener('click', () => {
+  if (!reviewAudio) return;
+  if (reviewAudio.paused) {
+    reviewAudio.play();
+    revIconPlay.style.display='none'; revIconPause.style.display='block';
+  } else {
+    reviewAudio.pause();
+    revIconPlay.style.display='block'; revIconPause.style.display='none';
+  }
+});
+document.getElementById('rev-fwd5').addEventListener('click', () => {
+  if (reviewAudio) reviewAudio.currentTime = Math.min(reviewAudio.duration||0, reviewAudio.currentTime + 5);
+});
+function closeReview() {
+  if (reviewAudio) { reviewAudio.pause(); reviewAudio = null; }
+  reviewOverlay.classList.remove('open');
+}
+document.getElementById('rev-exit').addEventListener('click', closeReview);
+document.getElementById('rev-exit-btn').addEventListener('click', closeReview);
+
+// ═══════════════════════════════════════════════
+// CONTROL LISTENERS
+// ═══════════════════════════════════════════════
+document.getElementById('btn-play-pause').addEventListener('click', () => {
+  ensureAudio();
+  if (!running) return;
+  togglePlayPause();
+  updateUI();
+});
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (!running || phase === 'rest') return;
+  restartPhase();
+});
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (!running) return;
+  nextPhase();
+});
+
+startBtn.addEventListener('click', () => {
+  startBlock();
+});
+reviewBtn.addEventListener('click', openReview);
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (settingsOverlay.classList.contains('open')) return;
+  if (reviewOverlay.classList.contains('open')) {
+    if (e.code === 'Space') { e.preventDefault(); document.getElementById('rev-playpause').click(); }
+    if (e.code === 'Enter') { e.preventDefault(); document.getElementById('rev-restart').click(); }
+    return;
+  }
+  if (e.code === 'Space') { e.preventDefault(); document.getElementById('btn-play-pause').click(); }
+  if (e.code === 'Enter') { e.preventDefault(); document.getElementById('btn-next').click(); }
+});
+
+// ═══════════════════════════════════════════════
+// MAIN TICK LOOP
+// ═══════════════════════════════════════════════
+tickInterval = setInterval(tick, 100);
+
+// ═══════════════════════════════════════════════
+// INITIAL STATE
+// ═══════════════════════════════════════════════
+phase = 'rest';
+running = false;
+isPaused = false;
+phaseTimeLeft = settings.restDur;
+blockTotalTime = totalBlockDuration();
+blockTimeLeft = blockTotalTime;
+updateUI();
+
+// Recalculate ring circumference and set SVG properly
+const RING_R = 120;
+const RING_C = 2 * Math.PI * RING_R;
+ringFg.setAttribute('stroke-dasharray', RING_C.toFixed(3));
+ringFg.setAttribute('stroke-dashoffset', '0');
+
+// Handle visibility change (tab switching, screen lock)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && audioCtx && audioCtx.state === 'running') {
+    // nothing
+  } else if (!document.hidden && audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+});
+</script>
+</body>
+</html>
