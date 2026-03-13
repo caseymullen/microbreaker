@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_28.html -->
-<html lang="en" style="background-color: rgb(13, 13, 13);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_35.html -->
+<html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" id="meta-theme" content="#0d0d0d">
+<meta name="theme-color" id="meta-theme" content="#4d1903">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -53,54 +53,61 @@ html, body {
   min-height: 1.2em; text-align: center;
   flex-shrink: 0;
 }
+/* Gap between phase label and progress bar — ~one line of elapsed-time font */
+#label-gap {
+  height: clamp(28px, 7.5vw, 36px);
+  flex-shrink: 0;
+}
 /* Progress bar */
 #progress-section {
-  width: 100%; max-width: 320px;
-  margin-top: 8px;
+  width: 100%; max-width: 340px;
   flex-shrink: 0;
   visibility: hidden;
 }
 #macro-bar-track {
-  width: 100%; height: 3px;
-  background: rgba(255,255,255,0.18); border-radius: 2px;
+  width: 100%; height: 6px;
+  background: rgba(255,255,255,0.18); border-radius: 3px;
 }
 #macro-bar {
   height: 100%; width: 0%;
-  background: rgba(255,255,255,0.70); border-radius: 2px;
+  background: rgba(255,255,255,0.70); border-radius: 3px;
   transition: width 0.4s linear;
 }
 #time-progress {
-  font-size: clamp(11px, 3vw, 14px);
+  font-size: clamp(22px, 6vw, 28px);
   color: rgba(255,255,255,0.45);
-  text-align: right; margin-top: 4px;
+  text-align: center; margin-top: 6px;
 }
-/* Rest questions */
+/* Mid-zone: between progress bar and ring.
+   Content sits in the lower half. */
+#mid-zone {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-end;
+  flex: 1; min-height: 20px; width: 100%;
+  padding-bottom: 16px;
+}
+/* Rest questions — 80% of round counter font size */
 #rest-questions {
   display: none; flex-direction: column; align-items: center;
-  gap: 6px; text-align: center;
-  max-width: 300px; margin-top: 10px;
-  flex-shrink: 0;
+  gap: 8px; text-align: center;
+  max-width: 88vw; width: 100%;
 }
 #rest-questions p {
-  font-size: clamp(14px, 4vw, 18px); font-weight: 300;
-  color: #e8d5b0; letter-spacing: 0.02em; line-height: 1.35;
+  font-size: clamp(22px, 6.6vw, 31px); font-weight: 300;
+  color: #e8d5b0; letter-spacing: 0.02em; line-height: 1.2;
 }
 /* Round counter */
 #round-counter {
-  font-size: clamp(18px, 5.5vw, 26px); font-weight: 300;
+  font-size: clamp(27px, 8.2vw, 39px); font-weight: 300;
   letter-spacing: 0.04em; text-align: center;
   color: rgba(255,255,255,0.55); line-height: 1.2;
-  margin-top: 6px; min-height: 2.5em;
-  flex-shrink: 0;
 }
-/* Spacer above ring — grows to push ring toward center */
-#top-spacer { flex: 1; min-height: 4px; }
 /* Ring */
 #ring-wrap {
   position: relative;
   display: flex; align-items: center; justify-content: center;
   width: min(260px, 72vw); height: min(260px, 72vw);
-  flex-shrink: 0; margin: 6px 0;
+  flex-shrink: 0;
 }
 #ring-wrap svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 #ring-bg { fill: none; stroke: rgba(255,255,255,0.10); stroke-width: 10; }
@@ -108,8 +115,6 @@ html, body {
   fill: none; stroke: rgba(255,255,255,0.72); stroke-width: 10;
   stroke-linecap: round;
   stroke-dasharray: 691.150;
-  stroke-dashoffset: 0;
-  transform: rotate(-90deg); transform-origin: 50% 50%;
   transition: stroke-dashoffset 0.4s linear;
 }
 #time-display {
@@ -122,15 +127,21 @@ html, body {
   font-size: clamp(38px, 11vw, 54px); font-weight: 300;
   letter-spacing: 0.03em; display: none;
 }
+/* Lower-zone: between ring and controls.
+   Micro-break message sits in the upper half. */
+#lower-zone {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-start;
+  flex: 1; min-height: 20px; width: 100%;
+  padding-top: 16px;
+}
 /* Message */
 #message {
   font-size: clamp(15px, 4.2vw, 20px); font-weight: 300;
   letter-spacing: 0.06em; text-align: center;
-  color: rgba(255,255,255,0.60); min-height: 1.4em;
-  max-width: 280px; flex-shrink: 0;
+  color: rgba(255,255,255,0.60);
+  max-width: 280px;
 }
-/* Spacer below ring — grows to push controls toward bottom */
-#bottom-spacer { flex: 1; min-height: 4px; }
 /* Controls row */
 #controls {
   display: flex; align-items: center; gap: clamp(18px, 5vw, 32px);
@@ -142,7 +153,7 @@ html, body {
   transition: color 0.12s;
 }
 .ctrl-btn:active { color: #fff; }
-/* Start button */
+/* Start button — pill shape */
 #start-btn {
   display: none; flex-direction: column; align-items: center;
   flex-shrink: 0;
@@ -153,7 +164,8 @@ html, body {
   font-weight: 300; letter-spacing: 0.10em;
   background: rgba(255,255,255,0.12);
   color: #fff; border: 1.5px solid rgba(255,255,255,0.30);
-  border-radius: 12px; padding: 14px 32px;
+  border-radius: 100px;
+  padding: 14px 36px;
   cursor: pointer; -webkit-appearance: none;
   transition: background 0.15s;
 }
@@ -364,32 +376,35 @@ html, body {
 #info-content a { color: #1a5c9a; text-decoration: underline; }
 </style>
 </head>
-<body style="background-color: rgb(13, 13, 13);">
-<div id="bg-fill" style="background-color: rgb(13, 13, 13);"></div>
-<div id="app" style="background-color: rgb(30, 30, 30);">
-  <div id="phase-label"></div>
-  <div id="progress-section" style="visibility: hidden;">
-    <div id="macro-bar-track"><div id="macro-bar" style="width: 95.7341%;"></div></div>
+<body style="background-color: rgb(77, 25, 3);">
+<div id="bg-fill" style="background-color: rgb(77, 25, 3);"></div>
+<div id="app" style="background-color: rgb(184, 60, 8);">
+  <div id="phase-label">Practice</div>
+  <div id="label-gap"></div>
+  <div id="progress-section" style="visibility: visible;">
+    <div id="macro-bar-track"><div id="macro-bar" style="width: 26.0336%;"></div></div>
     <div id="time-progress">0:34 of 5:00</div>
   </div>
-  <div id="rest-questions" style="display: flex;">
-    <p>What is your goal?</p>
-    <p>How will you achieve it?</p>
-    <p style="display: none;"></p>
+  <div id="mid-zone">
+    <div id="rest-questions" style="display: none;">
+      <p>What is your goal?</p>
+      <p>How will you achieve it?</p>
+      <p style="display: none;"></p>
+    </div>
+    <div id="round-counter">Round<br>2 of 5</div>
   </div>
-  <div id="round-counter"></div>
-  <div id="top-spacer"></div>
   <div id="ring-wrap">
     <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-      <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" style="opacity: 0;"></circle>
-      <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke-dasharray="691.150" stroke-dashoffset="84.369" style="opacity: 0;"></circle>
+      <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" style="opacity: 1;"></circle>
+      <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 277.772; opacity: 1;"></circle>
     </svg>
-    <div id="time-display" style="display: none;">1:46</div>
-    <div id="ready-ring-text" style="display: block;">Ready?</div>
+    <div id="time-display" style="display: block;">0:27</div>
+    <div id="ready-ring-text" style="display: none;">Ready?</div>
   </div>
-  <div id="message"></div>
-  <div id="bottom-spacer"></div>
-  <div id="controls" style="display: none;">
+  <div id="lower-zone">
+    <div id="message"></div>
+  </div>
+  <div id="controls" style="display: flex;">
     <button class="ctrl-btn" id="btn-prev" aria-label="Restart phase">
       <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
         <rect x="7" y="8" width="3.5" height="22" rx="1.5" fill="white"></rect>
@@ -397,10 +412,10 @@ html, body {
       </svg>
     </button>
     <button class="ctrl-btn" id="btn-play-pause" aria-label="Play/Pause">
-      <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
+      <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
         <path d="M16 8 L60 34 L16 60 Z" fill="white"></path>
       </svg>
-      <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
+      <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
         <rect x="10" y="8" width="16" height="52" rx="4" fill="white"></rect>
         <rect x="42" y="8" width="16" height="52" rx="4" fill="white"></rect>
       </svg>
@@ -412,7 +427,7 @@ html, body {
       </svg>
     </button>
   </div>
-  <div id="start-btn" style="display: flex;">
+  <div id="start-btn" style="display: none;">
     <button id="start-btn-inner">Start Practice</button>
   </div>
   <div id="review-slot">
@@ -421,7 +436,7 @@ html, body {
 </div>
 
 <!-- Close button (fixed, lower left) -->
-<button id="close-btn" aria-label="Close app" style="opacity: 0; pointer-events: none;">
+<button id="close-btn" aria-label="Close app" style="opacity: 1; pointer-events: auto;">
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
     <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
     <path d="M13 13 L25 25M25 13 L13 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
@@ -429,7 +444,7 @@ html, body {
 </button>
 
 <!-- Info button (fixed, lower left — shown in rest/ready phases) -->
-<button id="info-btn" aria-label="About this app" style="opacity: 1; pointer-events: auto;">
+<button id="info-btn" aria-label="About this app" style="opacity: 0; pointer-events: none;">
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
     <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
     <text x="19" y="25" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-style="italic" fill="currentColor">i</text>
@@ -447,7 +462,7 @@ html, body {
 </button>
 
 <!-- INFO OVERLAY -->
-<div id="info-overlay" class="">
+<div id="info-overlay">
   <button id="info-close-btn" aria-label="Close">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
@@ -462,7 +477,7 @@ html, body {
     <p><strong>Recording yourself</strong> is encouraged! Turn on "record/review practice" in settings. Your practice will always be recorded, and you can review it during the micro-break. Click the recording waveform to jump around during playback.</p>
     <p>There are <strong>keyboard shortcuts</strong> designed to be used with a "page turner" foot pedal that can emulate a "space bar" or "enter" key. The "space" generally acts as play/pause. "Enter" triggers "skip to the end". Both keys trigger the "Start Practice" button in the "rest" phase. "Enter" skips back 5 seconds in the "review" phase.</p>
     <p>It is impossible to guess the "right" amount of time for a round of practice. If you turn off "Automatically advance" in settings, you will get an audible notification that the phase has ended, but it will wait for you to manually advance to the next phase (by hitting the "next track" button).</p>
-    <p>If you have feedback or suggestions, email <a href="file:///C:/cdn-cgi/l/email-protection#3f52565c4d505d4d5a5e545a4d7f58525e5653115c5052"><span class="__cf_email__" data-cfemail="c9a4a0aabba6abbbaca8a2acbb89aea4a8a0a5e7aaa6a4">[email&nbsp;protected]</span></a>.</p>
+    <p>If you have feedback or suggestions, email <a href="file:///C:/cdn-cgi/l/email-protection#98f5f1fbeaf7faeafdf9f3fdead8fff5f9f1f4b6fbf7f5"><span class="__cf_email__" data-cfemail="99f4f0faebf6fbebfcf8f2fcebd9fef4f8f0f5b7faf6f4">[email&nbsp;protected]</span></a>.</p>
   </div>
 </div>
 
@@ -612,7 +627,7 @@ html, body {
   <div id="rev-spacer-bottom"></div>
 </div>
 
-<script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 'use strict';
 
 // =================================================
@@ -691,10 +706,8 @@ function playWorkStart() {
 }
 
 function playBreakStart() {
-  // Calm meditation chime: C2 G2 C3, fades over 3s
-  beep(65.4,  2.8, 0.30, 'sine', 0.0);
-  beep(98.0,  2.4, 0.22, 'sine', 0.3);
-  beep(130.8, 2.0, 0.18, 'sine', 0.6);
+  // Single C3 tone, fading out over 3s
+  beep(130.8, 3.0, 0.35, 'sine', 0.0);
 }
 
 function playFanfare() {
@@ -1012,7 +1025,7 @@ function render() {
     const total  = isWork ? settings.workDur : isBreak ? settings.breakDur : settings.restDur;
     const frac   = total > 0 ? phaseTimeLeft / total : 0;
     const offset = (RING_C * (1 - Math.min(1, Math.max(0, frac)))).toFixed(3);
-    elRingFg.setAttribute('stroke-dashoffset', offset);
+    elRingFg.style.strokeDashoffset = offset;
     elTimeDisplay.textContent = fmt(phaseTimeLeft);
   }
 
@@ -1036,8 +1049,9 @@ function render() {
 
   elReviewBtn.style.display = (settings.recording && isBreak && reviewBlob) ? 'block' : 'none';
 
-  $('close-btn').style.opacity      = isReady ? '0' : '1';
-  $('close-btn').style.pointerEvents = isReady ? 'none' : 'auto';
+  const hideClose = isReady || isRest;
+  $('close-btn').style.opacity      = hideClose ? '0' : '1';
+  $('close-btn').style.pointerEvents = hideClose ? 'none' : 'auto';
 
   const showInfo = isReady || isRest;
   $('info-btn').style.opacity      = showInfo ? '1' : '0';
