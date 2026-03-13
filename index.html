@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_19.html -->
-<html lang="en" style="background-color: rgb(13, 13, 13);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_26.html -->
+<html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Practice">
-<meta name="theme-color" id="meta-theme" content="#0d0d0d">
+<meta name="theme-color" id="meta-theme" content="#4d1903">
 <title>Practice Timer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="./index_files/css2" rel="stylesheet">
@@ -23,13 +26,22 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1e1e; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background-color: #0d0d0d; /* rest edge color — updated dynamically */
+  /* Prevent overscroll bounce revealing background */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  position: fixed; inset: 0;
+}
 
-/* Full-bleed background — covers entire screen including safe areas */
+/* Full-bleed background — covers entire screen including safe areas.
+   Uses the vignette-darkened edge color so any glimpse around #app edges
+   (e.g. during iOS overscroll bounce) matches the vignette exactly. */
 #bg-fill {
   position: fixed; inset: 0;
   z-index: -1;
-  background-color: #1e1e1e;
+  background-color: #0d0d0d; /* default: rest edge color */
   transition: background-color 0.65s ease;
 }
 
@@ -67,7 +79,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
   width: 100%; display: flex; flex-direction: column;
   align-items: center; gap: 4px;
   margin-top: 8px;
-  visibility: hidden; /* shown only in block */
+  visibility: hidden; /* shown only in chunk */
 }
 #macro-bar-track {
   width: 100%; height: 4px;
@@ -183,15 +195,43 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
 
 #bottom-spacer { height: 12px; flex-shrink: 0; }
 
-/* ══ Close button (fixed, lower left) ══ */
-#close-btn {
+/* ══ Close & Info buttons (fixed, lower left) ══ */
+#close-btn, #info-btn {
   position: fixed;
   bottom: calc(var(--safe-bot) + 16px); left: calc(var(--safe-l) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
-  transition: color 0.15s;
+  transition: color 0.15s, opacity 0.2s;
 }
-#close-btn:active { color: rgba(255,255,255,0.72); }
+#close-btn:active, #info-btn:active { color: rgba(255,255,255,0.72); }
+
+/* Info overlay — white screen with black text */
+#info-overlay {
+  display: none; position: fixed; inset: 0; z-index: 250;
+  background: #fff; color: #111;
+  font-family: var(--font);
+  padding: calc(var(--safe-top) + 14px) 28px calc(var(--safe-bot) + 28px);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  flex-direction: column;
+}
+#info-overlay.open { display: flex; }
+#info-close-btn {
+  align-self: flex-end;
+  background: none; border: none; color: rgba(0,0,0,0.45);
+  cursor: pointer; padding: 4px; margin-bottom: 18px;
+  -webkit-appearance: none; transition: color 0.15s; flex-shrink: 0;
+}
+#info-close-btn:active { color: #000; }
+#info-content {
+  display: flex; flex-direction: column; gap: 20px;
+  max-width: 600px; align-self: center; width: 100%;
+}
+#info-content p {
+  font-size: clamp(12px, 3.2vw, 16px); font-weight: 300;
+  line-height: 1.6; color: #111;
+}
+#info-content strong { font-weight: 600; }
+#info-content a { color: #1a5c9a; text-decoration: underline; }
 
 /* ══ Settings gear (fixed) ══ */
 #settings-btn {
@@ -216,7 +256,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
   font-family: var(--font); color: #fff;
 }
 #settings-overlay.open { display: flex; }
-.s-title { font-size: clamp(19px, 5.5vw, 25px); font-weight: 600; letter-spacing: 0.04em; margin-bottom: 24px; }
+.s-title-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.s-title { font-size: clamp(19px, 5.5vw, 25px); font-weight: 600; letter-spacing: 0.04em; }
+#s-done-btn {
+  background: none; border: none; color: rgba(255,255,255,0.75);
+  cursor: pointer; padding: 4px; -webkit-appearance: none;
+  transition: color 0.15s; flex-shrink: 0;
+}
+#s-done-btn:active { color: #fff; }
 .s-sec { font-size: clamp(11px, 3vw, 14px); letter-spacing: 0.2em; text-transform: uppercase;
   color: rgba(255,255,255,0.38); margin: 20px 0 8px; }
 .s-row {
@@ -225,16 +275,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
 }
 .s-label { font-size: clamp(16px, 4.5vw, 20px); font-weight: 300; color: rgba(255,255,255,0.85); }
 .s-sub   { font-size: clamp(14px, 3.8vw, 17px); color: rgba(255,255,255,0.35); margin-top: 2px; }
-.s-ctrl  { display: flex; align-items: center; gap: 12px; }
-.s-ctrl input[type=range] {
-  -webkit-appearance: none; width: 118px; height: 4px;
-  border-radius: 2px; background: rgba(255,255,255,0.20); outline: none;
+.s-stepper { display: flex; align-items: center; gap: 10px; }
+.step-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff; font-size: 22px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-appearance: none; transition: background 0.12s;
+  font-family: var(--font); padding-bottom: 2px;
 }
-.s-ctrl input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 22px; height: 22px;
-  border-radius: 50%; background: #fff; cursor: pointer;
-}
-.s-val { font-size: clamp(14px, 3.8vw, 17px); font-weight: 400; min-width: 54px; text-align: right; color: rgba(255,255,255,0.62); }
+.step-btn:active { background: rgba(255,255,255,0.28); }
+.s-val { font-size: clamp(14px, 3.8vw, 17px); font-weight: 400; min-width: 50px; text-align: center; color: rgba(255,255,255,0.85); }
 .tog-row {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -259,7 +310,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
 .msg-inp:focus { border-color: rgba(255,255,255,0.38); }
 .msg-del { background: none; border: none; color: rgba(255,255,255,0.32);
   font-size: clamp(18px, 5vw, 24px); cursor: pointer; padding: 4px; line-height: 1; }
-#add-msg-btn, #s-done-btn {
+#add-msg-btn {
   -webkit-appearance: none; font-family: var(--font); cursor: pointer;
   border-radius: 10px; font-size: clamp(15px, 4.2vw, 19px); padding: 11px 22px; border: none;
   transition: opacity 0.15s; letter-spacing: 0.04em;
@@ -270,8 +321,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
   letter-spacing: 0.04em; cursor: pointer; margin-top: 28px; padding: 6px 0;
   text-decoration: underline; text-underline-offset: 3px; -webkit-appearance: none; }
 #s-reset-btn:active { color: rgba(255,255,255,0.65); }
-#s-done-btn  { background: #fff; color: #000; font-weight: 600; margin-top: 12px; padding: 15px 22px; }
-#add-msg-btn:active, #s-done-btn:active { opacity: 0.7; }
+#add-msg-btn:active { opacity: 0.7; }
 
 /* Reset confirmation dialog */
 #reset-overlay {
@@ -380,33 +430,34 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
 .rev-exit-btn:active { background: rgba(200,40,40,0.25); }
 </style>
 </head>
-<body style="background-color: rgb(13, 13, 13);">
-<div id="bg-fill" style="background-color: rgb(13, 13, 13);"></div>
-<div id="app" style="background-color: rgb(30, 30, 30);">
+<body style="background-color: rgb(77, 25, 3);">
+<div id="bg-fill" style="background-color: rgb(77, 25, 3);"></div>
+<div id="app" style="background-color: rgb(184, 60, 8);">
   <!-- TOP -->
   <div id="top-section">
-    <div id="phase-label"></div>
-    <div id="progress-section" style="visibility: hidden;">
-      <div id="macro-bar-track"><div id="macro-bar"></div></div>
-      <div id="time-progress"></div>
+    <div id="phase-label">Practice</div>
+    <div id="progress-section" style="visibility: visible;">
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 23.7983%;"></div></div>
+      <div id="time-progress">0:29 of 5:00</div>
     </div>
   </div>
 
   <!-- MIDDLE -->
   <div id="mid-section">
-    <div id="rest-questions" style="display: flex;">
-      <p>What is the goal of your practice?</p>
+    <div id="rest-questions" style="display: none;">
+      <p>What is your goal?</p>
       <p>How will you achieve it?</p>
+      <p style="display: none;"></p>
     </div>
-    <div id="round-counter"></div>
+    <div id="round-counter">Round<br>2 of 5</div>
     <div id="ring-wrap" style="visibility: visible;">
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-        <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="7" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 0;"></circle>
-        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="7" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" stroke-dashoffset="0" style="opacity: 0;"></circle>
+        <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="7" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 1;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="7" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" stroke-dashoffset="175.013" style="opacity: 1;"></circle>
       </svg>
       <div id="ring-center">
-        <div id="time-display" style="display: none;"></div>
-        <div id="ready-ring-text" style="display: block;">Ready?</div>
+        <div id="time-display" style="display: block;">0:34</div>
+        <div id="ready-ring-text" style="display: none;">Ready?</div>
       </div>
     </div>
     <div id="message"></div>
@@ -415,7 +466,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
   <!-- BOTTOM -->
   <div id="bottom-section">
     <!-- Controls (shown during work/break/rest-count) -->
-    <div id="controls" style="display: none;">
+    <div id="controls" style="display: flex;">
       <button class="ctrl-btn" id="btn-prev" aria-label="Restart phase">
         <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
           <rect x="7" y="11" width="5" height="24" rx="2" fill="white"></rect>
@@ -423,11 +474,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
         </svg>
       </button>
       <button class="ctrl-btn" id="btn-play-pause" aria-label="Play/Pause">
-        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
+        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <path d="M26 20 L50 34 L26 48 Z" fill="white"></path>
         </svg>
-        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
+        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <rect x="20" y="19" width="10" height="30" rx="3" fill="white"></rect>
           <rect x="38" y="19" width="10" height="30" rx="3" fill="white"></rect>
@@ -441,7 +492,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
       </button>
     </div>
     <!-- Start Practice button (shown in ready phase) — same height slot -->
-    <div id="start-btn" style="display: flex;">
+    <div id="start-btn" style="display: none;">
       <button id="start-btn-inner">Start Practice</button>
     </div>
     <!-- Review Recording button — always reserves space -->
@@ -453,10 +504,18 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
 </div>
 
 <!-- Close button (fixed, lower left) -->
-<button id="close-btn" aria-label="Close app" style="opacity: 0; pointer-events: none;">
+<button id="close-btn" aria-label="Close app" style="opacity: 1; pointer-events: auto;">
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
     <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
     <path d="M13 13 L25 25M25 13 L13 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+  </svg>
+</button>
+
+<!-- Info button (fixed, lower left — shown in rest/ready phases) -->
+<button id="info-btn" aria-label="About this app" style="opacity: 0; pointer-events: none;">
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
+    <text x="19" y="25" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-style="italic" fill="currentColor">i</text>
   </svg>
 </button>
 
@@ -470,49 +529,88 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
   </svg>
 </button>
 
+<!-- INFORMATION OVERLAY -->
+<div id="info-overlay" class="">
+  <button id="info-close-btn" aria-label="Close">
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+      <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
+      <path d="M11 11 L23 23M23 11 L11 23" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  <div id="info-content">
+    <p>This music practice timer is inspired by the work of <a href="https://www.mollygebrian.com/" target="_blank">Molly Gebrian</a> and incorporates some of her suggestions for efficient music practice.</p>
+    <p><strong>"Micro-breaks"</strong> are 10-20 second breaks that allow your brain to begin incorporating what you were learning just before the micro-break.</p>
+    <p>The app encourages working in <strong>chunks</strong> of 5-10 minutes, with 1-3 minute rests between chunks.</p>
+    <p><strong>Interleaved practice</strong> is encouraged! Choose different pieces/passages/etudes/goals for each practice chunk. See Molly's work for the compelling motivation for this.</p>
+    <p><strong>Recording yourself</strong> is encouraged! Turn on "record/review practice" in settings. Your practice will always be recorded, and you can review it during the micro-break. Click the recording waveform to jump around during playback.</p>
+    <p>There are <strong>keyboard shortcuts</strong> designed to be used with a "page turner" foot pedal that can emulate a "space bar" or "enter" key. The "space" generally acts as play/pause. "Enter" triggers "skip to the end". Both keys trigger the "Start Practice" button in the "rest" phase. "Enter" skips back 5 seconds in the "review" phase.</p>
+    <p>It is impossible to guess the "right" amount of time for a round of practice. If you turn off "Automatically advance" in settings, you will get an audible notification that the phase has ended, but it will wait for you to manually advance to the next phase (by hitting the "next track" button).</p>
+    <p>If you have feedback or suggestions, email <a href="mailto:microbreaker@gmail.com">microbreaker@gmail.com</a>.</p>
+  </div>
+</div>
+
 <!-- SETTINGS PANEL -->
-<div id="settings-overlay">
-  <div class="s-title">Settings</div>
+<div id="settings-overlay" class="">
+  <div class="s-title-row">
+    <div class="s-title">Settings</div>
+    <button id="s-done-btn" aria-label="Done">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
+        <path d="M10 17 L15 22 L24 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+  </div>
 
   <div class="s-sec">Durations</div>
   <div class="s-row">
-    <div><div class="s-label">Practice</div></div>
-    <div class="s-ctrl">
-      <input type="range" id="s-work" min="15" max="120" step="5" value="45">
+    <div class="s-label">Practice</div>
+    <div class="s-stepper">
+      <button class="step-btn" data-field="workDur" data-dir="-1">−</button>
       <div class="s-val" id="sv-work">45s</div>
+      <button class="step-btn" data-field="workDur" data-dir="1">+</button>
     </div>
   </div>
   <div class="s-row">
-    <div><div class="s-label">Micro-break</div></div>
-    <div class="s-ctrl">
-      <input type="range" id="s-break" min="10" max="60" step="5" value="15">
+    <div class="s-label">Micro-break</div>
+    <div class="s-stepper">
+      <button class="step-btn" data-field="breakDur" data-dir="-1">−</button>
       <div class="s-val" id="sv-break">15s</div>
+      <button class="step-btn" data-field="breakDur" data-dir="1">+</button>
     </div>
   </div>
   <div class="s-row">
     <div>
-      <div class="s-label">Block</div>
-      <div class="s-sub" id="sv-rounds-sub">5 rounds</div>
-      <div class="s-sub" id="sv-block-dur">≈ 5:00</div>
+      <div class="s-label">Rounds per chunk</div>
+      <div class="s-sub" id="sv-chunk-dur">≈ 5:00</div>
     </div>
-    <div class="s-ctrl">
-      <input type="range" id="s-rounds" min="3" max="15" step="1" value="5">
+    <div class="s-stepper">
+      <button class="step-btn" data-field="rounds" data-dir="-1">−</button>
       <div class="s-val" id="sv-rounds">5</div>
+      <button class="step-btn" data-field="rounds" data-dir="1">+</button>
     </div>
   </div>
   <div class="s-row">
-    <div><div class="s-label">Rest</div></div>
-    <div class="s-ctrl">
-      <input type="range" id="s-rest" min="60" max="300" step="15" value="120">
+    <div class="s-label">Rest between chunks</div>
+    <div class="s-stepper">
+      <button class="step-btn" data-field="restDur" data-dir="-1">−</button>
       <div class="s-val" id="sv-rest">2:00</div>
+      <button class="step-btn" data-field="restDur" data-dir="1">+</button>
     </div>
   </div>
-
-  <div class="s-sec">Audio</div>
   <div class="tog-row">
-    <div class="tog-label">Mute sounds</div>
+    <div class="tog-label">Automatically advance</div>
     <label class="tog-sw">
-      <input type="checkbox" id="s-mute">
+      <input type="checkbox" id="s-auto" checked="">
+      <div class="tog-track"></div>
+      <div class="tog-thumb"></div>
+    </label>
+  </div>
+
+  <div class="s-sec">Notifications</div>
+  <div class="tog-row">
+    <div class="tog-label">Play audible notifications</div>
+    <label class="tog-sw">
+      <input type="checkbox" id="s-notify" checked="">
       <div class="tog-track"></div>
       <div class="tog-thumb"></div>
     </label>
@@ -532,14 +630,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
   <div class="s-row" style="flex-direction:column; align-items:stretch; gap:8px; padding: 10px 0;">
     <input type="text" class="msg-inp" id="s-restq1" placeholder="Question 1">
     <input type="text" class="msg-inp" id="s-restq2" placeholder="Question 2">
+    <input type="text" class="msg-inp" id="s-restq3" placeholder="Question 3 (optional)">
   </div>
 
-  <div class="s-sec">Micro-break Messages</div>
-  <div id="msg-list"></div>
-  <button id="add-msg-btn">+ Add message</button>
+  <div class="s-sec">Micro-break reminders</div>
+  <div id="msg-list"><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div></div>
+  <button id="add-msg-btn">+ Add reminder</button>
 
   <button id="s-reset-btn">Reset to defaults…</button>
-  <button id="s-done-btn">Done</button>
+  <div style="height:20px"></div>
 </div>
 
 <!-- Reset confirmation dialog -->
@@ -556,13 +655,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
 </div>
 
 <!-- REVIEW OVERLAY -->
-<div id="review-overlay">
+<div id="review-overlay" class="">
   <div id="rev-title">Review</div>
   <div id="rev-spacer-top"></div>
-  <div id="rev-times"><span id="rev-cur">0:00</span><span id="rev-sep"> / </span><span id="rev-dur">--:--</span></div>
+  <div id="rev-times"><span id="rev-cur">0:03</span><span id="rev-sep"> / </span><span id="rev-dur">0:03</span></div>
   <div id="rev-wave">
-    <canvas id="rev-canvas"></canvas>
-    <div id="rev-prog"></div>
+    <canvas id="rev-canvas" width="1864" height="72"></canvas>
+    <div id="rev-prog" style="width: 100%;"></div>
   </div>
   <div id="rev-controls">
     <!-- Back to start -->
@@ -580,10 +679,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
     </button>
     <!-- Play/Pause -->
     <button class="rev-btn rev-lg" id="rev-playpause" aria-label="Play/Pause">
-      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
         <path d="M8 4 L28 16 L8 28 Z" fill="white"></path>
       </svg>
-      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:none">
+      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
         <rect x="4" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
         <rect x="19" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
       </svg>
@@ -604,7 +703,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background-color: #1e1
   <div id="rev-spacer-bottom"></div>
 </div>
 
-<script>
+<script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 'use strict';
 
 // ═══════════════════════════════════════════════════
@@ -615,10 +714,11 @@ const DEFAULTS = {
   breakDur:  15,
   rounds:    5,
   restDur:   120,
-  muted:     false,
+  notify:    true,
   recording: false,
-  messages:  ['Focus on your goal','Flex your wrist','Audiate to intonate','Create emphasis'],
-  restQ: ['What is the goal of your practice?', 'How will you achieve it?']
+  messages:    ['Focus on your goal','Flex your wrist','Audiate to intonate','Create emphasis'],
+  restQ:       ['What is your goal?', 'How will you achieve it?', ''],
+  autoAdvance: true
 };
 
 let settings = (() => {
@@ -630,9 +730,10 @@ function saveSettings() {
   const s = {
     workDur: settings.workDur, breakDur: settings.breakDur,
     rounds: settings.rounds, restDur: settings.restDur,
-    muted: settings.muted, recording: settings.recording,
-    messages: settings.messages,
-    restQ: settings.restQ
+    notify: settings.notify, recording: settings.recording,
+    messages:    settings.messages,
+    restQ:       settings.restQ,
+    autoAdvance: settings.autoAdvance
   };
   localStorage.setItem('pt_v3', JSON.stringify(s));
 }
@@ -650,7 +751,7 @@ function ensureAudio() {
 }
 
 function beep(freq, dur, gain, type, delay) {
-  if (settings.muted || !audioUnlocked) return;
+  if (!settings.notify || !audioUnlocked) return;
   const ctx = audioCtx;
   const t = ctx.currentTime + (delay || 0);
   const g = ctx.createGain();
@@ -673,7 +774,7 @@ function playWorkStart() {
 
 function playBreakStart() {
   // Calm low-frequency meditation chime, fades over 3 seconds
-  if (settings.muted || !audioUnlocked) return;
+  if (!settings.notify || !audioUnlocked) return;
   const ctx = audioCtx;
   const t0  = ctx.currentTime;
   [[130, 0.22], [196, 0.17], [261, 0.13]].forEach(([f, g], i) => {
@@ -719,9 +820,11 @@ let reviewAudio   = null;
 let recCapTimer   = null;  // 5-min safety cap
 
 async function acquireMic() {
-  // Always get a fresh stream — we release tracks after each recording
-  // so the OS mic indicator turns off between work phases.
-  // iOS remembers the permission grant, so no re-prompt after first allow.
+  // Reuse existing stream if still alive — avoids re-prompting on Chrome/iPad
+  // which treats each getUserMedia call as a fresh request.
+  // Stream is released only when recording is toggled off or app is reset.
+  if (micStream && micStream.getTracks().some(t => t.readyState === 'live')) return true;
+  micStream = null; // old stream is dead, get a new one
   try {
     micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
     return true;
@@ -773,12 +876,8 @@ function stopRecording() {
     // We null the global here; the onstop closure holds its own ref via mr.
   }
   mediaRecorder = null;
-  // Release mic stream tracks so the iOS mic indicator turns off.
-  // Permission is remembered by iOS, so next getUserMedia won't re-prompt.
-  if (micStream) {
-    micStream.getTracks().forEach(t => t.stop());
-    micStream = null;
-  }
+  // Keep micStream alive to avoid re-prompting on Chrome/iPadOS.
+  // The stream is only released when recording is toggled off.
 }
 
 // ═══════════════════════════════════════════════════
@@ -798,10 +897,10 @@ let phaseTimeLeft = 0;   // seconds left in current phase
 
 // Block timing
 let currentRound  = 0;   // 0-based
-let blockTotal    = 0;   // total seconds in a full block
-let progressTime  = 0;   // counts down; affected by skip/restart
-let elapsedTime   = 0;   // real wall-clock seconds since block started
-let blockStartTime = null; // Date.now() at block start; drives elapsedTime
+let chunkTotal    = 0;   // total seconds in a full chunk
+let progressTime  = 0;   // counts down; affected by skip/restart (chunk)
+let elapsedTime   = 0;   // real wall-clock seconds since chunk started
+let chunkStartTime = null; // Date.now() at chunk start; drives elapsedTime
 
 // Countdown beep state
 let cntFired = {3:false, 2:false, 1:false};
@@ -813,17 +912,17 @@ let msgIndex = 0;
 let lastTickTime = null;
 let rafId        = null;
 
-function blockDuration() {
+function chunkDuration() {
   return settings.rounds * (settings.workDur + settings.breakDur);
 }
 
 // ─── Start block ────────────────────────────────────
-function startBlock() {
+function startChunk() {
   currentRound   = 0;
-  blockTotal     = blockDuration();
-  progressTime   = blockTotal;
+  chunkTotal     = chunkDuration();
+  progressTime   = chunkTotal;
   elapsedTime    = 0;
-  blockStartTime = Date.now();
+  chunkStartTime = Date.now();
   _enterPhase('work');
 }
 
@@ -886,17 +985,24 @@ function tick(now) {
 }
 
 // ─── Advance to next phase ──────────────────────────
+// When autoAdvance is off, play the appropriate sound at phase end but
+// pause and wait for the user to manually press skip.
 function _advance() {
   if (phase === 'work') {
-    // Always do the micro-break after work, even on the final round.
-    // The final break is the user's only chance to review their recording.
-    // The break→next transition handles the block-complete fanfare instead.
+    if (!settings.autoAdvance) {
+      // Play break-start sound but stay in work phase, paused
+      if (audioUnlocked) playBreakStart();
+      isPaused = true; render(); return;
+    }
     _enterPhase('break');
   } else if (phase === 'break') {
     if (currentRound >= settings.rounds - 1) {
-      // Final break just ended — block complete
+      // Final break just ended — chunk complete
       stopRecording();
       if (audioUnlocked) playFanfare();
+      if (!settings.autoAdvance) {
+        isPaused = true; render(); return;
+      }
       phase = 'rest-count';
       isPaused = false;
       phaseTimeLeft = settings.restDur;
@@ -904,11 +1010,16 @@ function _advance() {
       lastTickTime = null;
       render();
     } else {
+      if (!settings.autoAdvance) {
+        // Play work-start sound but stay in break phase, paused
+        if (audioUnlocked) playWorkStart();
+        isPaused = true; render(); return;
+      }
       currentRound++;
       _enterPhase('work');
     }
   } else if (phase === 'rest-count') {
-    // Rest countdown done → play alarm → go to ready
+    // Rest countdown done → play alarm → go to ready (autoAdvance doesn't apply here)
     if (audioUnlocked) playBackToWork();
     _enterPhase('ready');
   }
@@ -938,8 +1049,8 @@ function restartPhase() {
   }
   const phaseDur = phase === 'work' ? settings.workDur : settings.breakDur;
   const elapsed  = phaseDur - phaseTimeLeft;
-  // Add back the elapsed time to progressTime (capped at blockTotal)
-  progressTime = Math.min(blockTotal, progressTime + elapsed);
+  // Add back the elapsed time to progressTime (capped at chunkTotal)
+  progressTime = Math.min(chunkTotal, progressTime + elapsed);
   phaseTimeLeft = phaseDur;
   cntFired = {3:false, 2:false, 1:false};
   if (phase === 'work') { stopRecording(); startRecording(); }
@@ -998,7 +1109,7 @@ function render() {
   const isRest  = phase === 'rest-count';
   const isWork  = phase === 'work';
   const isBreak = phase === 'break';
-  const inBlock = isWork || isBreak;
+  const inChunk = isWork || isBreak;
 
   // Background — bg-fill covers full screen including safe areas; #app sits on top
   const bg      = isWork ? '#b83c08' : isBreak ? '#141560' : '#1e1e1e';
@@ -1017,28 +1128,30 @@ function render() {
     isWork   ? 'Practice' : 'Micro-break';
 
   // Progress bar — only in block
-  elProgressSec.style.visibility = inBlock ? 'visible' : 'hidden';
-  if (inBlock) {
-    const pct = 100 * (1 - progressTime / blockTotal);
+  elProgressSec.style.visibility = inChunk ? 'visible' : 'hidden';
+  if (inChunk) {
+    const pct = 100 * (1 - progressTime / chunkTotal);
     elMacroBar.style.width = Math.min(100, Math.max(0, pct)) + '%';
     // elapsedTime is true wall-clock time — recompute fresh on every render
-    const wallElapsed = blockStartTime ? (Date.now() - blockStartTime) / 1000 : 0;
-    elTimeProgress.textContent = fmtF(wallElapsed) + ' of ' + fmt(blockTotal);
+    const wallElapsed = chunkStartTime ? (Date.now() - chunkStartTime) / 1000 : 0;
+    elTimeProgress.textContent = fmtF(wallElapsed) + ' of ' + fmt(chunkTotal);
   }
 
   // Rest questions
   elRestQ.style.display = (isReady || isRest) ? 'flex' : 'none';
   if (isReady || isRest) {
     const ps = elRestQ.querySelectorAll('p');
-    const q  = settings.restQ || ['', ''];
-    ps[0].textContent = q[0] || '';
-    ps[1].textContent = q[1] || '';
-    ps[0].style.display = q[0] ? '' : 'none';
-    ps[1].style.display = q[1] ? '' : 'none';
+    const q  = settings.restQ || ['', '', ''];
+    for (let i = 0; i < 3; i++) {
+      if (ps[i]) {
+        ps[i].textContent  = q[i] || '';
+        ps[i].style.display = q[i] ? '' : 'none';
+      }
+    }
   }
 
   // Round counter
-  elRoundCtr.innerHTML = inBlock ? 'Round<br>' + (currentRound + 1) + ' of ' + settings.rounds : '';
+  elRoundCtr.innerHTML = inChunk ? 'Round<br>' + (currentRound + 1) + ' of ' + settings.rounds : '';
 
   // Ring — wrap always visible; SVG ring hidden in ready phase; text swaps
   elRingWrap.style.visibility = 'visible';
@@ -1083,10 +1196,14 @@ function render() {
   // No pause required; tapping it will pause the phase automatically.
   elReviewBtn.style.display = (settings.recording && isBreak && reviewBlob) ? 'block' : 'none';
 
-  // Close button — hidden in ready phase (where it would just re-enter ready)
-  // In all other phases it resets the session back to ready.
+  // Close button — hidden in ready phase; resets session in all other phases
   $('close-btn').style.opacity = isReady ? '0' : '1';
   $('close-btn').style.pointerEvents = isReady ? 'none' : 'auto';
+
+  // Info button — shown only in rest-count and ready phases, hidden otherwise
+  const showInfo = isReady || isRest;
+  $('info-btn').style.opacity = showInfo ? '1' : '0';
+  $('info-btn').style.pointerEvents = showInfo ? 'auto' : 'none';
 }
 
 // ═══════════════════════════════════════════════════
@@ -1099,7 +1216,7 @@ $('start-btn-inner').addEventListener('click', () => {
   ensureAudio();
   // acquireMic() is called inside startRecording() → _beginRec() when needed.
   // Calling it here too causes two simultaneous getUserMedia prompts on iOS.
-  startBlock();
+  startChunk();
 });
 $('review-btn').addEventListener('click', openReview);
 
@@ -1108,6 +1225,12 @@ document.addEventListener('keydown', e => {
   if ($('review-overlay').classList.contains('open')) {
     if (e.code === 'Space') { e.preventDefault(); $('rev-playpause').click(); }
     if (e.code === 'Enter') { e.preventDefault(); $('rev-back5').click(); }
+    return;
+  }
+  if (phase === 'ready') {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      e.preventDefault(); $('start-btn-inner').click();
+    }
     return;
   }
   if (e.code === 'Space') { e.preventDefault(); $('btn-play-pause').click(); }
@@ -1126,38 +1249,48 @@ function fmtDur(sec) {
   const m = Math.floor(sec/60), s = sec%60;
   return m + ':' + (s ? s.toString().padStart(2,'0') : '00');
 }
+// Stepper field config: field name → {min, max, step, display fn}
+const STEP_CFG = {
+  workDur:  { min: 15,  max: 120, step: 5,  fmt: v => v + 's',      el: 'sv-work'   },
+  breakDur: { min: 10,  max: 60,  step: 5,  fmt: v => v + 's',      el: 'sv-break'  },
+  rounds:   { min: 2,   max: 20,  step: 1,  fmt: v => v + '',        el: 'sv-rounds' },
+  restDur:  { min: 30,  max: 600, step: 15, fmt: v => fmtDur(v),    el: 'sv-rest'   },
+};
+
 function syncSettingsUI() {
-  $('s-work').value    = settings.workDur;
-  $('s-break').value   = settings.breakDur;
-  $('s-rounds').value  = settings.rounds;
-  $('s-rest').value    = settings.restDur;
-  $('s-mute').checked  = settings.muted;
-  $('s-record').checked= settings.recording;
-  const rq = settings.restQ || ['', ''];
+  refreshCalc();
+  $('s-notify').checked = settings.notify !== false;
+  $('s-record').checked = settings.recording;
+  $('s-auto').checked   = settings.autoAdvance !== false; // default true
+  const rq = settings.restQ || ['', '', ''];
   $('s-restq1').value = rq[0] || '';
   $('s-restq2').value = rq[1] || '';
-  refreshCalc();
+  $('s-restq3').value = rq[2] || '';
 }
 function refreshCalc() {
-  const w = +$('s-work').value, b = +$('s-break').value,
-        r = +$('s-rounds').value, rest = +$('s-rest').value;
-  $('sv-work').textContent       = w + 's';
-  $('sv-break').textContent      = b + 's';
-  $('sv-rounds').textContent     = r;
-  $('sv-rounds-sub').textContent = r + ' round' + (r!==1?'s':'');
-  $('sv-block-dur').textContent  = '≈ ' + fmtDur(r*(w+b));
-  $('sv-rest').textContent       = fmtDur(rest);
+  const w = settings.workDur, b = settings.breakDur,
+        r = settings.rounds,  rest = settings.restDur;
+  $('sv-work').textContent    = w + 's';
+  $('sv-break').textContent   = b + 's';
+  $('sv-rounds').textContent  = r;
+  $('sv-chunk-dur').textContent = '≈ ' + fmtDur(r*(w+b));
+  $('sv-rest').textContent    = fmtDur(rest);
 }
-['s-work','s-break','s-rounds','s-rest'].forEach(id => {
-  $(id).addEventListener('input', () => {
-    settings.workDur  = +$('s-work').value;
-    settings.breakDur = +$('s-break').value;
-    settings.rounds   = +$('s-rounds').value;
-    settings.restDur  = +$('s-rest').value;
+
+// Wire stepper buttons
+document.querySelectorAll('.step-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const field = btn.dataset.field;
+    const dir   = parseInt(btn.dataset.dir);
+    const cfg   = STEP_CFG[field];
+    if (!cfg) return;
+    settings[field] = Math.min(cfg.max, Math.max(cfg.min, settings[field] + dir * cfg.step));
+    $(cfg.el).textContent = cfg.fmt(settings[field]);
     refreshCalc(); saveSettings();
   });
 });
-$('s-mute').addEventListener('change',   e => { settings.muted   = e.target.checked; saveSettings(); });
+$('s-notify').addEventListener('change', e => { settings.notify = e.target.checked; saveSettings(); });
+$('s-auto').addEventListener('change', e => { settings.autoAdvance = e.target.checked; saveSettings(); });
 $('s-reset-btn').addEventListener('click', () => {
   $('reset-overlay').classList.add('open');
 });
@@ -1168,9 +1301,10 @@ function doReset(clearMessages) {
   settings.breakDur  = DEFAULTS.breakDur;
   settings.rounds    = DEFAULTS.rounds;
   settings.restDur   = DEFAULTS.restDur;
-  settings.muted     = DEFAULTS.muted;
-  settings.recording = DEFAULTS.recording;
-  settings.restQ     = [...DEFAULTS.restQ];
+  settings.notify    = DEFAULTS.notify;
+  settings.recording   = DEFAULTS.recording;
+  settings.autoAdvance = DEFAULTS.autoAdvance;
+  settings.restQ       = [...DEFAULTS.restQ];
   if (clearMessages) settings.messages = [...DEFAULTS.messages];
   saveSettings();
   syncSettingsUI();
@@ -1190,27 +1324,29 @@ $('reset-cancel').addEventListener('click', () => {
   $('reset-overlay').classList.remove('open');
 });
 
-['s-restq1','s-restq2'].forEach((id, i) => {
+['s-restq1','s-restq2','s-restq3'].forEach((id, i) => {
   $(id).addEventListener('input', () => {
-    if (!settings.restQ) settings.restQ = ['', ''];
+    if (!settings.restQ) settings.restQ = ['', '', ''];
     settings.restQ[i] = $(id).value;
     saveSettings(); render();
   });
 });
 
-$('s-record').addEventListener('change', e => {
+$('s-record').addEventListener('change', async e => {
   settings.recording = e.target.checked;
   if (settings.recording) {
-    // Turned ON — request mic access immediately
-    acquireMic().then(ok => {
-      if (ok && phase === 'work') {
-        // If we're currently in the work phase, start recording right away
-        startRecording();
-      }
-    });
+    // Turned ON — call getUserMedia directly within the user-gesture event handler.
+    // Using async/await (rather than .then()) keeps execution within the gesture
+    // context on iPadOS, which requires a direct call chain from the user event.
+    const ok = await acquireMic();
+    if (ok && phase === 'work') startRecording();
   } else {
-    // Turned OFF — stop any active recording and discard it
+    // Turned OFF — stop recording, discard clip, and release mic stream
     stopRecording();
+    if (micStream) {
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
+    }
     reviewBlob = null;
     recChunks  = [];
   }
@@ -1410,6 +1546,16 @@ $('rev-exit').addEventListener('click', () => {
 });
 
 // ═══════════════════════════════════════════════════
+// INFO BUTTON
+// ═══════════════════════════════════════════════════
+$('info-btn').addEventListener('click', () => {
+  $('info-overlay').classList.add('open');
+});
+$('info-close-btn').addEventListener('click', () => {
+  $('info-overlay').classList.remove('open');
+});
+
+// ═══════════════════════════════════════════════════
 // CLOSE BUTTON
 // ═══════════════════════════════════════════════════
 $('close-btn').addEventListener('click', () => {
@@ -1427,10 +1573,10 @@ $('close-btn').addEventListener('click', () => {
     stopRecording();
     reviewBlob = null;
     currentRound = 0;
-    blockTotal     = blockDuration();
-    progressTime   = blockTotal;
+    chunkTotal     = chunkDuration();
+    progressTime   = chunkTotal;
     elapsedTime    = 0;
-    blockStartTime = null;
+    chunkStartTime = null;
     setTimeout(() => {
       phase        = 'ready';
       isPaused     = false;
@@ -1440,16 +1586,17 @@ $('close-btn').addEventListener('click', () => {
   }
 });
 
-// ═══════════════════════════════════════════════════
+
+// =================================================
 // BOOT
-// ═══════════════════════════════════════════════════
-phase         = 'ready';
-isPaused      = false;
-phaseTimeLeft = 0;
-blockTotal    = blockDuration();
-progressTime   = blockTotal;
+// =================================================
+phase          = 'ready';
+isPaused       = false;
+phaseTimeLeft  = 0;
+chunkTotal     = chunkDuration();
+progressTime   = chunkTotal;
 elapsedTime    = 0;
-blockStartTime = null;
+chunkStartTime = null;
 render();
 rafId = requestAnimationFrame(tick);
 </script>

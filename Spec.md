@@ -2,14 +2,14 @@
 
 ## Concept
 
-A Progressive Web App (PWA) designed for musicians to encourage structured micro-breaks during practice. Modeled on HIIT-style interval training: short focused work bursts alternating with brief mental resets (micro-breaks), grouped into larger timed blocks.
+A Progressive Web App (PWA) designed for musicians to encourage structured micro-breaks during practice. Modeled on HIIT-style interval training: short focused work bursts alternating with brief mental resets (micro-breaks), grouped into larger timed chunks.
 
 -----
 
 ## Intended deployment environment
 Optimize for an iPhone or iPhone mini. Use UI techniques that will work reliabily in Safari on an iPhone. Use WebKit-compatible patterns. Ensure that the iPhone status bar color matches the color of the app. 
 
-Try to make it look "native" on the iPhone. For example, you might need to do something like is shown in the code block, below. If the app is displaying "under" the status bar, ensure that we don't try to show actual content under the status bar.
+Try to make it look "native" on the iPhone. For example, you might need to do something like is shown in the code chunk, below. If the app is displaying "under" the status bar, ensure that we don't try to show actual content under the status bar.
 ```code
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 ```
@@ -21,26 +21,55 @@ Try to make it look "native" on the iPhone. For example, you might need to do so
 
 - **Practice phase** — active playing/work. AKA "work"
 - **Micro-break phase** — brief mental rest; brain consolidates recent practice. AKA "break"
-- rounds repeat automatically until the macro block is done
-- The length of a block is specified in rounds, but also show the user the duration in minutes and seconds.
+- rounds repeat automatically until the macro chunk is done
+- The length of a chunk is specified in rounds, but also show the user the duration in minutes and seconds.
 - After the final work round, do NOT skip the micro-break. The micro-break is the only opportunity the user has to review their recording.
 
 
-### Block (outer loop)
+### Chunk (outer loop)
 
-- A timed block containing many rounds
-- When the block expires, play a small "success fanfare" and then begin the "rest" phase.
+- A timed chunk containing many rounds
+- When the chunk expires, play a small "success fanfare" and then begin the "rest" phase.
 
 
 ### REST phase
 The rest phase is a bit odd because there are essentially two sub-phases that share the same background color and some UI elements. There is the rest-countdown phase, where the user sees a countdown timer (with the two questions above it). When the rest-countdown phase ends, then the "back to work" alarm goes off (that's the one with the "da-da-da da-da DA!" rhythm). This alarm marks the end of the rest-countdown phase and the start of the rest-waiting phase, where we are just waiting for the user to hit the "Start Practice" button.
 
-A "start practice" button is visible during the entire Rest phase (both sub-phases). Pressing it will start the block (the first work phase of the block). The button appears where the "audio player" controls appear during other phases (see below).
+A "start practice" button is visible during the entire Rest phase (both sub-phases). Pressing it will start the chunk (the first work phase of the chunk). The button appears where the "audio player" controls appear during other phases (see below).
 
 During the rest-countdown phase, the phase label is "REST".
 During the rest-waiting phase, omit the phase label. The user will see the large "Ready?" text in the countdown ring (as described elsewhere).
 
 When the user first opens the app, it starts in the rest-waiting phase. The user sees "Ready?" in the "countdown timer ring" area, and they contemplate the two questions until they hit the "Start Practice" button.
+
+In rest-countdown and rest-waiting phases, show an "information" button (a circle with an "i" in it) in the lower-left. Clicking it opens a "nested" "information" phase.
+
+-----
+
+## Information phase
+
+This shows a white screen with black text.
+
+The text should be derived from the contents of this code block:
+
+```md
+This music practice timer is inspired by the work of [Molly Gebrian](https://www.mollygebrian.com/) and incorporates some of her suggestions for efficent music practice.
+
+**"Micro-breaks"** are 10-20 second breaks that allow your brain to begin incorporating what you were learning just before the micro-break. 
+
+The app encourages working in **chuncks** of 5-10 minutes, with 1-3 minute rests between chunks.
+
+**Interleaved practice** is encouraged! Choose different pieces/passages/etudes/goals for each practice chunk. See Molly's work for the compelling motivation for this.
+
+**Recording yourself** is encouraged! Turn on "record/review practice" in settings. Your practice will always be recorded, and you can review it during the micro-break. Click the recording waveform to jump around during playback.
+
+There are **keyboard shortcuts** designed to be used with a "page turner" footpedal that can emulate a "space bar" or "enter" key. The "space" generally acts as play/pause. "Enter" triggers "skip to the end". Both keys trigger the "Start Practice" button in the "rest" phase. "Enter" skips back 5 seconds in the "review" phase.
+
+It is impossible to guess the "right" amount of time for a round of practice. If you turn off "Automatically advance" in settings, you will get an audible notification that the phase has ended, but it will wait for you to manually advance to the next phase (by hitting the "next track" button).
+
+If you have feedback or suggestions, email [microbreaker@gmail.com](mailto:microbreaker@gmail.com).
+```
+
 
 -----
 
@@ -50,7 +79,7 @@ When the user first opens the app, it starts in the rest-waiting phase. The user
 |--------------|-------|---------|
 |Practice phase|45 sec |15–120 sec|
 |Micro-break   |15 sec |10–60 sec |
-|Block length  |5 rounds |3–15 rounds |
+|Chunk length  |5 rounds |3–15 rounds |
 |Rest     |2 min|1–5 min|
 
 -----
@@ -58,22 +87,47 @@ When the user first opens the app, it starts in the rest-waiting phase. The user
 ## Controls
 
 The main controls look like audio-player controls
-- A "next track" button skips to the next phase (work → break → work, or rest when you reach the end of the last work phase in the block)
+- A "next track" button skips to the next phase (work → break → work, or rest when you reach the end of the last work phase in the chunk)
 - A "Play/Pause" button — freezes all timers
 - A "Previous track" button restarts the current phase
 
-Note that when the user hits the "Next track" and "previous track" buttons, the real elapsed time starts diverging from the time that should be used for displaying the block progress bar. We have two time concepts: progressTime and elapsedTime
+Note that when the user hits the "Next track" and "previous track" buttons, the real elapsed time starts diverging from the time that should be used for displaying the chunk progress bar. We have two time concepts: progressTime and elapsedTime
 - progressTime gets decremented or incrementted appropriately when the user hits "previous track" or "next track". Hitting "pause" also stops the progressTime
 - elapsedTime shows the real-world elapsed clock time and is unaffected by "previous track", "next track" or "play pause" or going into review mode or settings.
 
 Leave space below the "audio-player" controls for the "Review Recording" button to appear. Also leave a little bit of "blank" space at the bottom of the screen, even when the "Review Recording" is showing.
 
+-----
+
+## Settings Controls
+
 A **Settings button** is in the lower right. It should look like a gear. It opens the settings panel; pauses timer while open
 
-Listen for keyboard input: "Space bar" will play/pause. "Enter" acts like "next track" (play/pause)
+In "settings", display the duration of the chunk directly below where you display the text showing the number of rounds.
+In "settings", just use the label "Chunk", rather than "Chunk length".
 
-In "settings", display the duration of the block directly below where you display the text showing the number of rounds.
-In "settings", just use the label "Block", rather than "Block length".
+To save/close settings, use a circle button with a check mark in the upper right.
+
+The "Recording" setting should come after the "audio" setting.
+
+The Audio setting section should be labeled "Notifications" and the setting should "Play audible notifications" and should default to "on".
+
+## Keyboard input
+
+Listen for keyboard input. We really only listen for "Space" and "Enter", which are coming from a foot pedal, not a real keyboard.
+All editable text fields should support virtual keyboard input with "Assistive Touch" turn on the iPhone/iPad. Basically there should be some way (ideally a standard iOS based way) to bring up the on-screen keyboard even though the system thinks that there is a keyboard attached, because that "keyboard" is likely to just be a foot pedal.
+
+The "keys" act differently in different phases:
+
+ will play/pause. "Enter" acts like "next track" (play/pause)
+
+| Phase         | Space | Enter    |
+|--------------|-------|---------|
+|Work | Pause/Play |"next track"|
+|Break | Pause/Play |"next track" |
+|Review | Pause/Play |restart from beginning |
+|Rest-coundown     |Pause/Play|"next track"|
+|Rest-waiting|"Start Practice"|"Start Practice"|
 
 -----
 
@@ -83,10 +137,10 @@ In "settings", just use the label "Block", rather than "Block length".
   - **Practice** — warm rusty deep orange
   - **Micro-break** — deep blue/indigo
   - **Rest** — black
-- Circular countdown ring for the timer during work, break, and rest. Either use a CSS-based approach or, if you use a SVG approach, ensure that SVG values are mathematically precise and declared inline rather than via stylesheet. The same applies to the "block progress bar", discussed next.
-- Display a progress bar near the top of the screen to show progress towards completion of the block. In addition to the moving bar:
+- Circular countdown ring for the timer during work, break, and rest. Either use a CSS-based approach or, if you use a SVG approach, ensure that SVG values are mathematically precise and declared inline rather than via stylesheet. The same applies to the "chunk progress bar", discussed next.
+- Display a progress bar near the top of the screen to show progress towards completion of the chunk. In addition to the moving bar:
   - Below the bar show the time progress, e.g. "0:23 of 5:00
-  - The graphical progress bar is governed by the progressTime, whilse the textual time progress shows elapsedTime. This way the user can see how much time they actually spent in the block, compared to how much time was allocated to the block.
+  - The graphical progress bar is governed by the progressTime, whilse the textual time progress shows elapsedTime. This way the user can see how much time they actually spent in the chunk, compared to how much time was allocated to the chunk.
   - Halfway between the progress bar and the countdown ring, display the current progress in terms of rounds. For example "Round 2 of 5". The font size of this text should be larger than the size of the time progress text.
 
 
@@ -111,7 +165,7 @@ During the rest-waiting phase, display the text "Ready?" in the same font size a
 
 - Distinct tones for each phase transition
 - 3-2-1 countdown beeps before each phase ends
-- A small "success fanfare" plays at the end of the block
+- A small "success fanfare" plays at the end of the chunk
 - The "alarm" at the end of rest timer has a rhythm like "da-da-da da-da DA!"
 - When a "work" phase starts, play a crisp double-beep
 - The "break" begins with a meditation chime, which should be a calm, low frequency tone fading over 3 seconds.
@@ -128,17 +182,29 @@ During the break phase, display one of the reminders below. Cycle through them, 
 - Audiate to intonate
 - Create emphasis
 
-During "rest" display these questions, on separate lines, in a beige font, halfway between the "countdown timer ring" area and the top phase label:
-- What is the goal of your practice?
+During "rest" display these "rest questions", on separate lines, in a beige font, halfway between the "countdown timer ring" area and the top phase label:
+- What is your goal?
 - How will you achieve it?"
 
-That is the default list of phrases. They can be edited in settings. There can be  All settings are stored in local storage and thus stay in place when the app reloads on the same device.
+Those are the default messages. They can be edited in settings.
 
-Also make the "two questions" editable in the settings. There can only be two. It is ok if one or both is blank.
+
+-----
+## Settings
+
+All settings are stored in local storage and thus stay in place when the app reloads on the same device.
+
+The "rest questions" are editable in the settings. There can be three. It is ok if some blank.
+
+For durations in settings, do not use a slider. Show the value with a button to the left to decrement it and a button to the right to increment. Time durations increment/decrement by 5 seconds.
+
+In settings, label the "break" reminders as "Micro-break reminders"
 
 Have a button to reset all settings to their defaults. Ask the user if they also want to clear the "micro-break messages". Allow the to answer yes, no, or cancel.
 
+At the end of the "durations", add a "Automatically advance" toggle that defaults to "on". When it is "off", in work and break phases, when the countdown timer finishes, play the appropriate sound, but don't actually advance to the next phase. Wait for the user to manually hit the "skip" button.
 
+Below the "
 -----
 
 ## Recording Audio
@@ -192,7 +258,7 @@ Regarding the recording player itself:
 
 ## Other notes
 
-Do not remember the current state of progress through a given block in localStorage.
+Do not remember the current state of progress through a given chunk in localStorage.
 
 
 
@@ -201,7 +267,7 @@ Do not remember the current state of progress through a given block in localStor
 
 ### Recording lifecycle
 - Recording starts when the **work phase begins** and stops when that phase ends
-  (i.e. when the break phase starts, or the block completes).
+  (i.e. when the break phase starts, or the chunk completes).
 - Hitting **pause does NOT pause the recorder** — it continues running independently
   of the timer. This keeps the logic simple and avoids state-sync bugs.
 - A **hard 5-minute cap** (`setTimeout → stopRecording()`) prevents runaway recording
@@ -258,3 +324,55 @@ Blob URL audio. The standard workaround is:
    the scan completes. Seek back to 0 there.
 3. Never use `audio.duration` directly for display or seek math; use a
    separate `knownDuration` variable that is only set when `isFinite(duration)`.
+
+
+## Implementation Notes: iOS PWA Visual & Hardware Edge Cases
+
+### White bar at bottom (safe area background)
+When running as an iOS home screen PWA with `apple-mobile-web-app-status-bar-style`
+set to `black-translucent`, the system can show a white or mismatched strip at the
+bottom of the screen (behind the home indicator) if only the main app element has a
+background color set.
+
+Fixes applied:
+1. **`html` and `body`** both get `background-color` set and updated dynamically
+   to match the current phase, with `overscroll-behavior: none` and
+   `position: fixed; inset: 0` to suppress iOS bounce revealing the background.
+2. **`#bg-fill`** — a separate `position: fixed; inset: 0; z-index: -1` div sits
+   behind everything and is updated to the *vignette-darkened* edge color on each
+   phase transition, not the raw base color. Since the vignette is
+   `rgba(0,0,0,0.58)` over the base, the edge color = `base * 0.42`. Example values:
+   - Rest `#1e1e1e` → edge `#0d0d0d`
+   - Work `#b83c08` → edge `#4d1903`
+   - Break `#141560` → edge `#080928`
+3. **No-cache meta tags** prevent Safari from serving a stale cached version when
+   the PWA is killed and reopened from the home screen:
+```html
+   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+   <meta http-equiv="Pragma" content="no-cache">
+   <meta http-equiv="Expires" content="0">
+```
+   Note: to force a reload of an already-installed PWA, open the URL directly in
+   Safari (not via the home screen icon) and reload there, then re-add to home screen.
+
+### iOS microphone status indicator
+The orange microphone dot stays visible as long as any `MediaStream` track is live,
+even if no `MediaRecorder` is actively recording. To turn it off between work phases:
+
+- Call `micStream.getTracks().forEach(t => t.stop())` and set `micStream = null`
+  inside `stopRecording()`, immediately after stopping the `MediaRecorder`.
+- Do **not** cache `micStream` between recordings — always call `getUserMedia` fresh
+  at the start of each work phase via `acquireMic()`.
+- iOS remembers the permission grant for the origin, so subsequent `getUserMedia`
+  calls after the first user approval are silent — no re-prompt dialog.
+```js
+function stopRecording() {
+  // ... stop MediaRecorder ...
+  mediaRecorder = null;
+  // Release stream so the iOS mic indicator turns off
+  if (micStream) {
+    micStream.getTracks().forEach(t => t.stop());
+    micStream = null;
+  }
+}
+```
