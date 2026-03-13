@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Microbreaker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap');
+
+    :root {
+      --font-main: 'Inconsolata', monospace;
+      --color-work: #b83c08;
+      --color-break: #141560;
+      --color-rest: #1e1e1e;
+      --color-review: #0f3d1b;
+      --text-light: #ffffff;
+      --text-dim: #f5f5dc; /* beige */
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      font-family: var(--font-main);
+      color: var(--text-light);
+      overscroll-behavior: none;
+      position: fixed;
+      inset: 0;
+      background-color: var(--color-rest);
+      transition: background-color 0.5s ease;
+      user-select: none;
+    }
+
+    /* Vignette Background layer */
+    #bg-fill {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.58) 100%);
+      background-color: #0d0d0d; /* Edge color */
+      transition: background-color 0.5s ease;
+    }
+
+    /* Layout */
+    #app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: clamp(20px, 5vh, 40px) 20px;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Top Section */
+    #top-section {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--text-light);
+      width: 0%;
+      transition: width 0.3s linear;
+    }
+
+    #progress-text { font-size: clamp(16px, 2vh, 20px); opacity: 0.8; }
+    #round-text { font-size: clamp(20px, 3vh, 26px); font-weight: bold; margin-top: 15px; }
+
+    /* Center Section (Timer) */
+    #center-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 100%;
+    }
+
+    #phase-label {
+      font-size: clamp(24px, 4vh, 32px);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    #rest-questions, #break-reminder {
+      color: var(--text-dim);
+      font-size: clamp(16px, 2.5vh, 22px);
+      text-align: center;
+      margin-bottom: 20px;
+      min-height: 50px;
+    }
+
+    .timer-ring {
+      width: clamp(200px, 40vw, 300px);
+      height: clamp(200px, 40vw, 300px);
+      position: relative;
+    }
+    .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .timer-ring circle {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+    .timer-ring .bg { stroke: rgba(255,255,255,0.1); }
+    .timer-ring .fg {
+      stroke: var(--text-light);
+      stroke-dasharray: 283; /* 2 * pi * 45 */
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.1s linear;
+    }
+    #timer-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(40px, 8vh, 60px);
+      font-weight: bold;
+    }
+
+    /* Bottom Section (Controls) */
+    #bottom-section {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 20px;
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-icon { width: 48px; height: 48px; fill: white; }
+    .btn-play { width: 64px; height: 64px; }
+    .btn-start {
+      font-size: 24px;
+      border: 2px solid white;
+      padding: 15px 30px;
+      border-radius: 30px;
+      text-transform: uppercase;
+    }
+    
+    .btn-secondary {
+      font-size: 18px;
+      border: 1px solid rgba(255,255,255,0.5);
+      padding: 10px 20px;
+      border-radius: 20px;
+      margin-top: 10px;
+      background: rgba(0,0,0,0.2);
+    }
+
+    /* Corner Buttons */
+    .corner-btn {
+      position: absolute;
+      bottom: 30px;
+      width: 40px; height: 40px;
+      border: 1px solid white;
+      border-radius: 50%;
+      font-size: 20px;
+    }
+    #btn-info { left: 30px; }
+    #btn-settings { right: 30px; }
+    #btn-close { left: 30px; border-color: rgba(255,255,255,0.5); }
+
+    /* Overlays */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--color-rest);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      padding: 40px 20px;
+      overflow-y: auto;
+    }
+    .overlay.active { display: flex; }
+    
+    #info-overlay { background: white; color: black; }
+    #info-overlay a { color: #b83c08; }
+    
+    #review-overlay { background-color: var(--color-review); }
+
+    .close-overlay {
+      position: absolute;
+      top: 30px; right: 30px;
+      width: 40px; height: 40px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      font-size: 20px;
+    }
+    #btn-close-review { color: #ff4d4d; border-color: #ff4d4d; }
+
+    /* Hidden Utilities */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div id="bg-fill"></div>
+
+  <div id="app-container">
+    <div id="top-section">
+      <div class="progress-bar-container"><div class="progress-bar-fill" id="chunk-progress-bar"></div></div>
+      <div id="progress-text">0:00 of 5:00</div>
+      <div id="round-text">Round 1 of 5</div>
+    </div>
+
+    <div id="center-section">
+      <div id="phase-label">REST</div>
+      <div id="rest-questions" class="hidden">What is your goal?<br>How will you achieve it?</div>
+      <div id="break-reminder" class="hidden"></div>
+      
+      <div class="timer-ring">
+        <svg viewBox="0 0 100 100">
+          <circle class="bg" cx="50" cy="50" r="45"></circle>
+          <circle class="fg" id="timer-path" cx="50" cy="50" r="45"></circle>
+        </svg>
+        <div id="timer-text">Ready?</div>
+      </div>
+    </div>
+
+    <div id="bottom-section">
+      <div class="controls-row" id="player-controls" class="hidden">
+        <button id="btn-prev"><svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+        <button id="btn-playpause"><svg class="btn-play" id="icon-playpause" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button id="btn-next"><svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+      </div>
+      <button id="btn-start-practice" class="btn-start">Start Practice</button>
+      <button id="btn-review" class="btn-secondary hidden">Review Recording</button>
+    </div>
+
+    <button id="btn-close" class="corner-btn hidden">✕</button>
+    <button id="btn-info" class="corner-btn">i</button>
+    <button id="btn-settings" class="corner-btn">⚙</button>
+  </div>
+
+  <div id="review-overlay" class="overlay">
+    <button id="btn-close-review" class="close-overlay">✕</button>
+    <h2 style="text-align:center; margin-top: 40px;">REVIEW</h2>
+    <div style="flex-grow:1; display:flex; align-items:center; justify-content:center;">
+       <audio id="review-audio" style="width: 100%;"></audio>
+    </div>
+    <div class="controls-row" style="margin-bottom: 40px;">
+        <button id="btn-rev-start"><svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+        <button id="btn-rev-back"><svg class="btn-icon" viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
+        <button id="btn-rev-playpause"><svg class="btn-play" id="icon-rev-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button id="btn-rev-fwd"><svg class="btn-icon" viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
+    </div>
+  </div>
+
+  <script>
+    // --- State & Settings ---
+    const DEFAULTS = {
+      workDuration: 45, breakDuration: 15, restDuration: 120,
+      chunkRounds: 5, audioOn: true, recordOn: false, autoAdvance: true,
+      restQuestions: ["What is your goal?", "How will you achieve it?"],
+      breakReminders: ["Focus on your goal", "Flex your wrist", "Audiate to intonate", "Create emphasis"]
+    };
+    
+    let settings = { ...DEFAULTS }; // In a full app, load from localStorage here
+
+    let state = {
+      phase: 'rest-waiting', // rest-waiting, rest-countdown, work, break
+      isPaused: false,
+      currentRound: 1,
+      timeLeft: 0,
+      progressTime: 0, // Time spent in Work/Break for chunk progress
+      elapsedTime: 0,  // Actual wall-clock time in chunk
+      chunkTotalTime: 0,
+      reminderIndex: 0
+    };
+
+    let timerInterval = null;
+    let audioCtx = null;
+    
+    // MediaRecorder State
+    let micStream = null;
+    let mediaRecorder = null;
+    let recChunks = [];
+    let reviewBlob = null;
+    let recordingTimeout = null;
+
+    // --- DOM Elements ---
+    const el = {
+      body: document.body, bgFill: document.getElementById('bg-fill'),
+      phaseLabel: document.getElementById('phase-label'), timerText: document.getElementById('timer-text'),
+      timerPath: document.getElementById('timer-path'), roundText: document.getElementById('round-text'),
+      progressText: document.getElementById('progress-text'), chunkProgressBar: document.getElementById('chunk-progress-bar'),
+      restQuestions: document.getElementById('rest-questions'), breakReminder: document.getElementById('break-reminder'),
+      playerControls: document.getElementById('player-controls'), btnStartPractice: document.getElementById('btn-start-practice'),
+      btnReview: document.getElementById('btn-review'), iconPlayPause: document.getElementById('icon-playpause'),
+      btnInfo: document.getElementById('btn-info'), btnClose: document.getElementById('btn-close'),
+      reviewOverlay: document.getElementById('review-overlay'), reviewAudio: document.getElementById('review-audio')
+    };
+
+    // --- Audio API (Tones) ---
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTone(freq, duration, gainStart) {
+      if (!settings.audioOn) return;
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      
+      const now = audioCtx.currentTime;
+      gainNode.gain.setValueAtTime(gainStart, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      
+      osc.start(now);
+      osc.stop(now + duration);
+    }
+
+    function playSoundSequence(sequence) {
+      if (!settings.audioOn) return;
+      initAudio();
+      const now = audioCtx.currentTime;
+      sequence.forEach(note => {
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        osc.type = 'sine';
+        osc.frequency.value = note.f;
+        
+        gainNode.gain.setValueAtTime(note.g, now + note.t);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+        
+        osc.start(now + note.t);
+        osc.stop(now + note.t + note.d);
+      });
+    }
+
+    const Sounds = {
+      workStart: () => playSoundSequence([{f:660, d:0.1, g:0.32, t:0}, {f:880, d:0.18, g:0.32, t:0.13}]),
+      breakStart: () => playTone(65.4, 3, 0.30), // C2
+      countdown: (isLast) => playTone(isLast ? 1047 : 880, 0.11, 0.42),
+      fanfare: () => playSoundSequence([
+        {f:261.6, d:0.18, g:0.35, t:0}, {f:329.6, d:0.18, g:0.35, t:0.16},
+        {f:392.0, d:0.18, g:0.35, t:0.32}, {f:523.3, d:0.18, g:0.35, t:0.48},
+        {f:523.3, d:0.60, g:0.40, t:0.70}
+      ]),
+      alarm: () => playSoundSequence([
+        {f:440, d:0.1, g:0.28, t:0}, {f:440, d:0.1, g:0.28, t:0.2}, {f:440, d:0.1, g:0.28, t:0.4},
+        {f:523, d:0.1, g:0.30, t:0.6}, {f:523, d:0.1, g:0.30, t:0.8},
+        {f:660, d:0.5, g:0.50, t:1.2}
+      ]),
+      closeApp: () => playSoundSequence([{f:196, d:0.45, g:0.3, t:0}, {f:131, d:0.9, g:0.28, t:0.5}]),
+      closeReview: () => playSoundSequence([{f:392, d:0.4, g:0.28, t:0}, {f:261.6, d:0.8, g:0.25, t:0.45}])
+    };
+
+    // --- Recording ---
+    async function acquireMic() {
+      if (!settings.recordOn) return false;
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        return true;
+      } catch (e) {
+        console.error("Mic access denied", e);
+        return false;
+      }
+    }
+
+    function startRecording() {
+      if (!micStream || !settings.recordOn) return;
+      recChunks = [];
+      reviewBlob = null;
+      
+      const mr = new MediaRecorder(micStream);
+      mediaRecorder = mr;
+      
+      mr.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
+      mr.onstop = () => {
+        // Safe reference to local mr
+        if (recChunks.length) {
+          reviewBlob = new Blob(recChunks, { type: mr.mimeType || 'audio/webm' });
+          render(); // Trigger UI update to show Review button
+        }
+      };
+      mr.start(250);
+      
+      // Hard 5 min cap
+      clearTimeout(recordingTimeout);
+      recordingTimeout = setTimeout(stopRecording, 5 * 60 * 1000);
+    }
+
+    function stopRecording() {
+      clearTimeout(recordingTimeout);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop(); // Async onstop
+      }
+      mediaRecorder = null;
+      
+      // Release iOS mic indicator
+      if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+      }
+    }
+
+    // --- Core Logic ---
+    function setPhase(newPhase) {
+      state.phase = newPhase;
+      state.isPaused = false;
+      
+      if (newPhase === 'work') {
+        state.timeLeft = settings.workDuration;
+        Sounds.workStart();
+        if (settings.recordOn) {
+           acquireMic().then(success => { if(success) startRecording(); });
+        } else {
+           reviewBlob = null;
+        }
+      } else if (newPhase === 'break') {
+        state.timeLeft = settings.breakDuration;
+        stopRecording(); // Stops mic, builds blob async
+        Sounds.breakStart();
+        state.reminderIndex = (state.reminderIndex + 1) % settings.breakReminders.length;
+      } else if (newPhase === 'rest-countdown') {
+        state.timeLeft = settings.restDuration;
+        state.currentRound = 1;
+        state.progressTime = 0;
+        state.elapsedTime = 0;
+        stopRecording();
+      } else if (newPhase === 'rest-waiting') {
+        state.timeLeft = 0;
+        state.currentRound = 1;
+        state.progressTime = 0;
+        state.elapsedTime = 0;
+        stopRecording();
+      }
+      render();
+    }
+
+    function nextPhase() {
+      if (state.phase === 'work') {
+        if (state.currentRound >= settings.chunkRounds) {
+          Sounds.fanfare();
+          setPhase('rest-countdown');
+        } else {
+          setPhase('break');
+        }
+      } else if (state.phase === 'break') {
+        state.currentRound++;
+        setPhase('work');
+      } else if (state.phase === 'rest-countdown') {
+        setPhase('rest-waiting');
+      }
+    }
+
+    function prevPhase() {
+      // Simplistic restart phase
+      if (state.phase === 'work') state.timeLeft = settings.workDuration;
+      if (state.phase === 'break') state.timeLeft = settings.breakDuration;
+      if (state.phase === 'rest-countdown') state.timeLeft = settings.restDuration;
+      render();
+    }
+
+    function togglePlayPause() {
+      state.isPaused = !state.isPaused;
+      render();
+    }
+
+    function tick() {
+      if (state.phase === 'rest-waiting' || state.isPaused) return;
+
+      state.timeLeft--;
+      if (state.phase === 'work' || state.phase === 'break') {
+        state.progressTime++;
+      }
+      state.elapsedTime++;
+
+      // 3-2-1 Countdown
+      if (state.timeLeft === 3 || state.timeLeft === 2) Sounds.countdown(false);
+      if (state.timeLeft === 1) Sounds.countdown(true);
+
+      if (state.timeLeft <= 0) {
+        if (state.phase === 'rest-countdown') {
+          Sounds.alarm();
+          setPhase('rest-waiting');
+        } else {
+          if (settings.autoAdvance) {
+            nextPhase();
+          } else {
+            state.isPaused = true; // Wait for manual advance
+          }
+        }
+      } else {
+        render();
+      }
+    }
+
+    // --- Visuals & Rendering ---
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function getPhaseColors(phase) {
+      switch(phase) {
+        case 'work': return { base: 'var(--color-work)', edge: '#4d1903' };
+        case 'break': return { base: 'var(--color-break)', edge: '#080928' };
+        default: return { base: 'var(--color-rest)', edge: '#0d0d0d' };
+      }
+    }
+
+    function render() {
+      // Backgrounds
+      const colors = getPhaseColors(state.phase);
+      el.body.style.backgroundColor = colors.base;
+      el.bgFill.style.backgroundColor = colors.edge;
+
+      // Labels & Text
+      el.phaseLabel.textContent = state.phase === 'rest-waiting' || state.phase === 'rest-countdown' 
+        ? (state.phase === 'rest-countdown' ? 'REST' : '') 
+        : state.phase.toUpperCase();
+      
+      el.roundText.textContent = `Round ${state.currentRound} of ${settings.chunkRounds}`;
+      
+      const chunkTotal = (settings.workDuration + settings.breakDuration) * settings.chunkRounds - settings.breakDuration;
+      el.progressText.textContent = `${formatTime(state.elapsedTime)} of ${formatTime(chunkTotal)}`;
+      el.chunkProgressBar.style.width = `${Math.min(100, (state.progressTime / chunkTotal) * 100)}%`;
+
+      // Timer Ring
+      let totalPhaseTime = 1;
+      if (state.phase === 'work') totalPhaseTime = settings.workDuration;
+      if (state.phase === 'break') totalPhaseTime = settings.breakDuration;
+      if (state.phase === 'rest-countdown') totalPhaseTime = settings.restDuration;
+
+      if (state.phase === 'rest-waiting') {
+        el.timerText.textContent = "Ready?";
+        el.timerPath.style.strokeDashoffset = 283;
+      } else {
+        el.timerText.textContent = formatTime(state.timeLeft);
+        const dashOffset = 283 - (283 * (state.timeLeft / totalPhaseTime));
+        el.timerPath.style.strokeDashoffset = dashOffset;
+      }
+
+      // UI Visibility
+      const isRest = state.phase.startsWith('rest');
+      el.restQuestions.classList.toggle('hidden', !isRest);
+      el.breakReminder.classList.toggle('hidden', state.phase !== 'break');
+      if (state.phase === 'break') el.breakReminder.textContent = settings.breakReminders[state.reminderIndex];
+
+      el.playerControls.classList.toggle('hidden', isRest);
+      el.btnStartPractice.classList.toggle('hidden', !isRest);
+      
+      // Review Button Logic (Only in break, if blob exists, if setting is on)
+      const showReview = state.phase === 'break' && settings.recordOn && reviewBlob !== null;
+      el.btnReview.classList.toggle('hidden', !showReview);
+
+      el.btnClose.classList.toggle('hidden', state.phase === 'rest-waiting');
+
+      // Play/Pause Icon
+      el.iconPlayPause.innerHTML = state.isPaused 
+        ? `<path d="M8 5v14l11-7z"/>` 
+        : `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>`;
+    }
+
+    // --- Event Listeners ---
+    el.btnStartPractice.addEventListener('click', () => {
+      initAudio();
+      state.chunkTotalTime = (settings.workDuration + settings.breakDuration) * settings.chunkRounds;
+      setPhase('work');
+    });
+
+    el.btnPlayPause.addEventListener('click', togglePlayPause);
+    el.btnNext.addEventListener('click', nextPhase);
+    el.btnPrev.addEventListener('click', prevPhase);
+    
+    el.btnClose.addEventListener('click', () => {
+      Sounds.closeApp();
+      setPhase('rest-waiting');
+    });
+
+    el.btnReview.addEventListener('click', () => {
+      state.isPaused = true; // Pause break timer
+      render();
+      el.reviewOverlay.classList.add('active');
+      el.reviewAudio.src = URL.createObjectURL(reviewBlob);
+      el.reviewAudio.play();
+    });
+
+    document.getElementById('btn-close-review').addEventListener('click', () => {
+      Sounds.closeReview();
+      el.reviewAudio.pause();
+      el.reviewOverlay.classList.remove('active');
+    });
+
+    // Keyboard (Space/Enter)
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (state.phase.startsWith('rest')) el.btnStartPractice.click();
+        else togglePlayPause();
+      } else if (e.code === 'Enter') {
+        e.preventDefault();
+        if (state.phase.startsWith('rest')) el.btnStartPractice.click();
+        else nextPhase();
+      }
+    });
+
+    // Init
+    setInterval(tick, 1000);
+    render();
+  </script>
+</body>
+</html>
