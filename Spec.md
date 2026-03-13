@@ -448,3 +448,180 @@ Same descending two-note shape as app close, but an octave higher and slightly s
 
 ### Mute behavior
 All sounds are suppressed when "Audible notifications" is off in Settings. Sounds also require the audio context to have been unlocked by at least one user gesture before they will play (standard browser autoplay policy).
+
+-----
+
+# Additional spec information
+If the following information contradicts information from above, give this information higher priority
+
+Here's a spec section covering layout, typography, and buttons:
+
+---
+
+## Layout
+
+The main screen is a single vertical flex column (`flex-direction: column`, `align-items: center`) that fills the full viewport. Safe-area insets are applied as padding on all sides. The column has no overall `justify-content` — spacing is governed by two flex-grow zones described below. Overflow is hidden.
+
+The elements in order from top to bottom:
+
+1. **Phase label** — `flex-shrink: 0`
+2. **Label gap** — a fixed-height spacer equal to approximately one line of the elapsed-time font (`clamp(28px, 7.5vw, 36px)`), always present, creates breathing room below the phase label
+3. **Progress section** — `flex-shrink: 0`, hidden (`visibility: hidden`) in ready and rest phases
+4. **Mid-zone** — `flex: 1`, `justify-content: flex-end`, `padding-bottom: 16px`. This is the growing space between the progress bar and the ring. Its content (rest questions or round counter) sits in the lower half of the zone, near the top of the ring.
+5. **Ring wrap** — `flex-shrink: 0`
+6. **Lower-zone** — `flex: 1`, `justify-content: flex-start`, `padding-top: 16px`. This is the growing space between the ring and the controls. The micro-break reminder message sits in the upper half of the zone, just below the ring.
+7. **Controls row** (or Start Practice button in ready phase) — `flex-shrink: 0`
+8. **Review slot** — `flex-shrink: 0`, fixed `min-height: 48px`, always reserves space so controls don't shift
+
+The mid-zone and lower-zone each get an equal share of remaining vertical space, so the ring sits centered between the progress bar area and the controls.
+
+---
+
+## Progress Section
+
+The progress bar track is 6px tall with `border-radius: 3px`. The fill uses the same radius. The elapsed-time counter below it is centered, not right-aligned.
+
+---
+
+## Typography
+
+All font sizes use `clamp()` for fluid scaling. The font is Inconsolata throughout.
+
+| Element | Size |
+|---|---|
+| Phase label | `clamp(26px, 8vw, 36px)`, weight 300, uppercase, letter-spacing 0.12em |
+| Elapsed time (`0:32 of 5:00`) | `clamp(22px, 6vw, 28px)`, weight 300 |
+| Rest questions | 80% of round counter size, i.e. `clamp(22px, 6.6vw, 31px)`, weight 300, color `#e8d5b0` |
+| Round counter | `clamp(27px, 8.2vw, 39px)`, weight 300, color `rgba(255,255,255,0.55)`, two lines: "Round" / "N of M" |
+| Countdown ring digits | `clamp(38px, 11vw, 54px)`, weight 300 |
+| "Ready?" ring text | Same as countdown ring digits |
+| Micro-break message | `clamp(15px, 4.2vw, 20px)`, weight 300, color `rgba(255,255,255,0.60)`, letter-spacing 0.06em |
+| Start Practice button | `clamp(18px, 5vw, 24px)`, weight 300, letter-spacing 0.10em |
+
+---
+
+## Buttons
+
+### Playback controls (restart / play-pause / skip)
+
+Three buttons in a horizontal row, centered, with `gap: clamp(18px, 5vw, 32px)`. Each is a bare `<button>` with no background or border (`background: none`, `border: none`). Color is `rgba(255,255,255,0.75)`, brightening to `#fff` on press. Padding 8px on all sides.
+
+- **Restart (previous)**: SVG 38×38. A vertical bar (rect, width 3.5, rounded ends, rx 1.5) on the left, and a left-pointing filled triangle to its right. The triangle's right vertex touches the right edge of the viewbox.
+- **Play/Pause**: SVG 68×68 — noticeably larger than the flanking buttons. Two states, toggled by showing/hiding:
+  - *Play*: a right-pointing filled triangle with generous margins
+  - *Pause*: two vertical rounded rectangles (rx 4), width 16 each, at x=10 and x=42
+- **Skip (next)**: SVG 38×38. Mirror of restart — vertical bar on the right, right-pointing filled triangle to its left.
+
+### Start Practice button
+
+Pill-shaped (`border-radius: 100px`). Background `rgba(255,255,255,0.12)`, border `1.5px solid rgba(255,255,255,0.30)`. Padding `14px 36px`. Brightens on press to `rgba(255,255,255,0.24)`. Occupies the same vertical slot as the playback controls row (both are `flex-shrink: 0` siblings; only one is visible at a time via `display: none` / `display: flex`).
+
+### Close button (lower-left, fixed)
+
+Circle with X inside. SVG 38×38. Circle is `r=17`, stroke `rgba(255,255,255,0.36)` weight 1.8, no fill. X is two diagonal lines, stroke weight 2, `stroke-linecap: round`. Color `rgba(255,255,255,0.36)`, brightens on press. **Hidden** (`opacity: 0`, `pointer-events: none`) during ready and rest-countdown phases. Sits at `fixed` position `bottom: safe-bot + 16px`, `left: safe-l + 18px`, z-index 10.
+
+### Info button (lower-left, fixed — same slot as close button)
+
+Circle with italic *i* inside. SVG 38×38. Same circle as close button. The *i* is a `<text>` element, font Georgia serif, italic, 18px. Shown only during ready and rest-countdown phases (close button hidden in those same phases, so they don't overlap). Same position as close button.
+
+### Settings gear (lower-right, fixed)
+
+SVG 28×28 rendering a gear/cog shape. Color `rgba(255,255,255,0.36)`, brightens on press. Position `bottom: safe-bot + 18px`, `right: safe-r + 20px`, z-index 10.
+
+### Settings done button (upper-right of settings header)
+
+Circle with a checkmark inside. SVG 34×34. Circle `r=15`, stroke weight 1.8. Checkmark path: `M10 17 L15 22 L24 12`, stroke weight 2.2, `stroke-linecap: round`, `stroke-linejoin: round`. Color `rgba(255,255,255,0.75)`.
+
+### Info overlay close button (upper-right)
+
+Circle with X inside. SVG 34×34. Circle `r=15`, stroke weight 1.8. X path identical in style to the main close button but scaled to the smaller circle. Color `rgba(0,0,0,0.45)` (dark, since the info overlay is white).
+
+### Review Recording button
+
+Appears during micro-break phase only, in the review slot below the controls. Rounded rectangle (`border-radius: 8px`), background `rgba(255,255,255,0.10)`, border `1px solid rgba(255,255,255,0.22)`, padding `9px 20px`.
+
+### Review player controls
+
+Five buttons in a horizontal row inside the green review overlay. All `background: none`, `border: none`, color `rgba(255,255,255,0.80)`. The play/pause button has extra padding (`padding: 12px`) making it the visual focal point.
+
+- **Back to start**: SVG 32×32. Vertical bar on left (rect 3.5 wide, rounded), left-pointing filled triangle.
+- **Back 5s**: SVG 26×26. Left-pointing filled triangle only (smaller, no bar).
+- **Play/Pause**: SVG 32×32. Same two-state toggle as main play/pause but scaled down. The play triangle and pause rectangles are proportionally sized for the 32×32 viewbox.
+- **Forward 5s**: SVG 26×26. Right-pointing filled triangle (mirror of back 5s).
+- **Close (red X)**: Two diagonal lines, stroke `#e03030`, weight 2.6, `stroke-linecap: round`. No circle. SVG 22×22.
+
+---
+
+## Visibility Rules
+
+| Element | ready | rest-countdown | work | break |
+|---|---|---|---|---|
+| Phase label | blank | "Rest" | "Practice" | "Micro-break" |
+| Progress section | hidden | hidden | visible | visible |
+| Mid-zone content | rest questions | rest questions | round counter | round counter |
+| Ring strokes | opacity 0 | visible | visible | visible |
+| "Ready?" ring text | visible | hidden | hidden | hidden |
+| Countdown digits | hidden | visible | visible | visible |
+| Micro-break message | — | — | — | visible |
+| Controls row | hidden | visible | visible | visible |
+| Start Practice button | visible | hidden | hidden | hidden |
+| Close button | hidden | hidden | visible | visible |
+| Info button | visible | visible | hidden | hidden |
+| Review Recording button | hidden | hidden | hidden | visible (if recording enabled and blob ready) |
+
+---
+
+# Details for the countdown ring timer
+
+## Countdown Ring Timer — Robust Implementation
+
+### SVG Structure
+
+The ring is an SVG `<circle>` element. The circumference is `2 * π * r`. For `r = 110` in a `256×256` viewBox, this is `691.150`. The circle must start at the 12 o'clock position, which requires a **native SVG transform attribute** — not a CSS `transform` — on the `<circle>` element itself:
+
+```html
+<circle id="ring-fg" cx="128" cy="128" r="110"
+  stroke-width="10" fill="none"
+  stroke-dasharray="691.150"
+  transform="rotate(-90 128 128)"
+  style="stroke-dashoffset: 691.150"/>
+```
+
+The initial `stroke-dashoffset` must be set as an **inline style** (not a presentation attribute, and not in the stylesheet), so that CSS transitions see it as a style-layer value from the start.
+
+### Why CSS `transform` Fails
+
+Applying `transform: rotate(-90deg); transform-origin: 50% 50%` via a CSS rule to an SVG element is unreliable in Chrome and Safari — the rotation may be ignored or misapplied. Always use the SVG `transform` attribute with an explicit rotation center: `rotate(degrees cx cy)`.
+
+### Animating the Ring
+
+The `stroke-dashoffset` must be updated via **`element.style.strokeDashoffset`**, not via `element.setAttribute('stroke-dashoffset', value)`. Presentation attributes set via `setAttribute` sit below the CSS cascade and do **not** trigger CSS `transition` in Chrome or Safari. Setting via `.style` places the value in the inline style layer, which does participate in transitions.
+
+```js
+const RING_R = 110;
+const RING_C = +(2 * Math.PI * RING_R).toFixed(3); // 691.150
+
+// In render(), when updating the ring:
+const frac   = phaseTimeLeft / phaseTotalDuration;          // 1.0 = full, 0.0 = empty
+const offset = RING_C * (1 - Math.min(1, Math.max(0, frac)));
+elRingFg.style.strokeDashoffset = offset.toFixed(3);
+```
+
+A `frac` of `1.0` gives offset `0` (full ring drawn). A `frac` of `0.0` gives offset `691.150` (ring fully hidden). This is the correct direction for a countdown.
+
+### CSS for the Ring
+
+```css
+#ring-fg {
+  fill: none;
+  stroke: rgba(255,255,255,0.72);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 691.150;
+  transition: stroke-dashoffset 0.4s linear;
+  /* No stroke-dashoffset here — set it via inline style on the element */
+  /* No transform here — set it via SVG transform attribute on the element */
+}
+```
+
+Do **not** include `stroke-dashoffset` or `transform` in the CSS rule. Both must live on the element itself (as shown above) to work correctly cross-browser.
