@@ -23,16 +23,24 @@ Try to make it look "native" on the iPhone. For example, you might need to do so
 - **Micro-break phase** — brief mental rest; brain consolidates recent practice. AKA "break"
 - rounds repeat automatically until the macro block is done
 - The length of a block is specified in rounds, but also show the user the duration in minutes and seconds.
+- After the final work round, do NOT skip the micro-break. The micro-break is the only opportunity the user has to review their recording.
 
 
 ### Block (outer loop)
 
 - A timed block containing many rounds
 - When the block expires, play a small "success fanfare" and then begin the "rest" phase.
-- A "start practice" button is visible during the Rest phase. Pressing it will start the block. It appears where the "audio player" controls appear during other phases (see below).
-- When the app first loads, it essentially starts in the "Rest" phase, as if the "back to work" alarm had already played.
-- When in the "back to work", hide the countdown timer. In its place, display "Ready?"
 
+
+### REST phase
+The rest phase is a bit odd because there are essentially two sub-phases that share the same background color and some UI elements. There is the rest-countdown phase, where the user sees a countdown timer (with the two questions above it). When the rest-countdown phase ends, then the "back to work" alarm goes off (that's the one with the "da-da-da da-da DA!" rhythm). This alarm marks the end of the rest-countdown phase and the start of the rest-waiting phase, where we are just waiting for the user to hit the "Start Practice" button.
+
+A "start practice" button is visible during the entire Rest phase (both sub-phases). Pressing it will start the block (the first work phase of the block). The button appears where the "audio player" controls appear during other phases (see below).
+
+During the rest-countdown phase, the phase label is "REST".
+During the rest-waiting phase, omit the phase label. The user will see the large "Ready?" text in the countdown ring (as described elsewhere).
+
+When the user first opens the app, it starts in the rest-waiting phase. The user sees "Ready?" in the "countdown timer ring" area, and they contemplate the two questions until they hit the "Start Practice" button.
 
 -----
 
@@ -56,7 +64,7 @@ The main controls look like audio-player controls
 
 Note that when the user hits the "Next track" and "previous track" buttons, the real elapsed time starts diverging from the time that should be used for displaying the block progress bar. We have two time concepts: progressTime and elapsedTime
 - progressTime gets decremented or incrementted appropriately when the user hits "previous track" or "next track". Hitting "pause" also stops the progressTime
-- elapsedTime shows the real elapsed clock time and is unaffected by "previous track", "next track" or "play pause".
+- elapsedTime shows the real-world elapsed clock time and is unaffected by "previous track", "next track" or "play pause" or going into review mode or settings.
 
 Leave space below the "audio-player" controls for the "Review Recording" button to appear. Also leave a little bit of "blank" space at the bottom of the screen, even when the "Review Recording" is showing.
 
@@ -80,14 +88,22 @@ In "settings", just use the label "Block", rather than "Block length".
   - Below the bar show the time progress, e.g. "0:23 of 5:00
   - The graphical progress bar is governed by the progressTime, whilse the textual time progress shows elapsedTime. This way the user can see how much time they actually spent in the block, compared to how much time was allocated to the block.
   - Halfway between the progress bar and the countdown ring, display the current progress in terms of rounds. For example "Round 2 of 5". The font size of this text should be larger than the size of the time progress text.
-- When the "rest" countdown ring finishes, play an "alarm" evocative of "back to work".
-- After the alarm, we are in a rest-waiting-to-start phase. The top label still shows "Rest", but the countdown ring disappears and is replaced by the text "Ready?" in the same font and size used for the countdown.
+
 
 
 Make fonts large enough for easy readability. No font should be smaller than 16px. 
-Use "DM Mono" for all text other than "messages"
+Use "Inconsolata" font for all text.
+Use "clamp()" pattern for font sizes. The two target form-factors are an iPhone in vertical layout and an iPad in landscape layout.
 
 Add subtle and gradual darkness variation to the background so that it is darker at the edges of the screeen than at the center. In the "Rest" phase, this means the base background color should be dark grey (fading to black at the edges).
+
+Leave some space between the phase label and the progress bar to give it some visual separation from the phase label.
+
+Add a "close" button in the lower left. (Maybe a circle with an X in it, but don't make it red.) When it is pressed play the "goodbye" notes C1 G2 with the second note being twice as long as the first.
+The "Close" button should not appear in the  rest-waiting phase, because pressing it should reset all of the timers and put the app in the rest-waiting phase.
+
+During the rest-waiting phase, display the text "Ready?" in the same font size and color that you use for the countdown timer ring, and in the exact same location as the text in the countdown timer ring. Essentially, the timer ring goes away, but the countdown text remains but changes to "Ready?" instead of displaying a time.
+
 
 -----
 
@@ -118,29 +134,50 @@ During "rest" display these questions, on separate lines, in a beige font, halfw
 
 That is the default list of phrases. They can be edited in settings. There can be  All settings are stored in local storage and thus stay in place when the app reloads on the same device.
 
+Also make the "two questions" editable in the settings. There can only be two. It is ok if one or both is blank.
+
+Have a button to reset all settings to their defaults. Ask the user if they also want to clear the "micro-break messages". Allow the to answer yes, no, or cancel.
+
 
 -----
 
 ## Recording Audio
 
-Always be recording audio during the work phase. If the user pauses during the work or break phase, display a "Review Recording" button below the "audio player" controls. If user hits "Review Practime", pop up a mini audio player that covers as much of the screen as needed. The audio clip is only for the most-recent work phase. It will have its own "audio player" controls that are not just an analogy, but control the playing of the audio clip. The controls Include:
+Always be recording audio during the work phase (if the settings toggle has the "record/review" toggle on).
+
+- Recording starts when the "work" phase starts and ends when that phase ends. Hitting "pause" does NOT pause the recording. They may pause because they want more time before taking a micro-break. If the elapsed clock time reaches 5 minutes, stop the recording. If a user hits "pause" and goes to lunch, we don't want to keep recording for hours.
+- A "Review Recording" button ONLY appears during the "break" phase, and (if the "record/review" toggle is on in settings) it ALWAYS appears in that phase. The user does not have to pause first. They just hit "Review Recording" (and that will automatically pause the phase while they listen to the recording. 
+- When they exit the recording, the "break" phase should remain paused.
+
+ The "Review Recording" button appears below the "audio player" controls. If user hits "Review Recording", we enter a nested "review" phase, with its own screen.
+ 
+ The recorded audio clip is only for the most-recent work phase.
+ 
+ The screen for the "review" phase will have its own "audio player" controls that are not just an analogy, but control the playing of the audio clip. The controls Include:
 - Back to the start
 - Jump back 5 seconds (a simple small triangular arrow pointing to the left)
 - Play/Pause
 - Jump forward 5 seconds (a simple small triangular arrow pointing to the left)
+- A "X" button that will close the screen/phase. It should be a deep red. When the user clicks it, play the notes C2 G3 as a "goodbye", with the G2 twice as long as the C1.
 
-A "Close" button at the bottom.
-
-In "settings" there should be a toggle "Record/review practice" that defaults to "on". When it is off, never show the "Review Recording" button.
+In "settings" there should be a toggle "Record/review practice" that defaults to "off". When it is off, never show the "Review Recording" button.
+- If the user turns the "record/review" setting on, immediately trigger a request to access the microphone. If they entered settings from the work phase, then immediately start recording.
+- If the user turns off the "record/review" setting, if there is a recording in progress, then stop it immediately and disgard it.
 
 The controls during review of the recording should be large for easy clicking. The user is probably holding their violin and bow while operating the controls.
-While the "Review Recording" audio player is active, the space bar will trigger play/pause and the "Enter" key will restart the audio from the beginning.
+While the "Review Recording" audio player is active, the space bar will trigger play/pause and the "Enter" key will act like the "jump back 5 seconds" button.
 
 While reviewing the recording, make sure that screen does now allow the user to zoom the web page in or out.
 
-When the user pauses during the practice phase, also pause audio recording, and restart it when they un-pause.
-When the user hits "Review Recording", stop recording in order to make the audio clip available for playback.
-When a new practice phase starts, discard any old recordings.
+When a new work/practice phase starts, discard any old recordings.
+
+Regarding the recording player itself:
+- It would be nice to show progress through the recording as it plays. It would be awesome to display the waveform.
+- Clicking on the waveform should jump the playback to that location and started playing.
+- The background color should be a rich forest green with the same effect of blending to darker shades near the edge of the screen.
+- The phase label should be sized and positioned like the other "phase" labels.
+- Show both the current time in the recording and the total time of the recording.
+- When we enter the phase, start it in "play" mode
 
 -----
 
@@ -157,8 +194,67 @@ When a new practice phase starts, discard any old recordings.
 
 Do not remember the current state of progress through a given block in localStorage.
 
-The rest phase is a bit odd because there are essentially two sub-phases. There is the rest-countdown phase, where the user sees a countdown timer (with the two questions above it). When the rest-countdown phase ends, then the "back to work" alarm goes off (that's the one with the "da-da-da da-da DA!" rhythm). This alarm marks the end of the rest-countdown phase and the start of the rest-waiting phase, where we are just waiting for the user to hit the "Start Practice" button.
 
-Actually, it might be clearer if we actually make these two more distinct phases from the user's perspective, by giving the rest-waiting phase the label "Ready?" to be displayed at the top of the screen.
 
-When the user first opens the app, it starts in the rest-waiting phase. The user sees "Ready?" at the top and in the "countdown timer ring" area, and they contemplate the two questions until they hit the "Start Practice" button.
+
+## Implementation Notes: Audio Recording
+
+### Recording lifecycle
+- Recording starts when the **work phase begins** and stops when that phase ends
+  (i.e. when the break phase starts, or the block completes).
+- Hitting **pause does NOT pause the recorder** — it continues running independently
+  of the timer. This keeps the logic simple and avoids state-sync bugs.
+- A **hard 5-minute cap** (`setTimeout → stopRecording()`) prevents runaway recording
+  if a user pauses and walks away.
+- The **Review Recording button** is shown only during the **break phase**,
+  always (no pause required), provided a recording blob is available and the
+  record/review toggle is enabled. The user does not need to pause first.
+- Tapping **Review Recording** automatically pauses the break phase.
+  When the review overlay is closed, the break phase remains paused.
+
+### Critical: MediaRecorder async onstop
+`MediaRecorder.stop()` is **asynchronous** — the `onstop` event fires after the
+browser finishes encoding, which may be many milliseconds after `.stop()` returns.
+This has two important consequences:
+
+1. **Never null `mediaRecorder` before `onstop` fires and you still need the mimeType.**
+   Capture the recorder in a local `const mr = new MediaRecorder(...)` and reference
+   `mr.mimeType` inside the `onstop` closure — not the global `mediaRecorder`, which
+   may already be `null` by the time `onstop` runs.
+
+2. **Never call `render()` synchronously after `.stop()` expecting `reviewBlob` to
+   be set yet.** Instead, call `render()` from *inside* the `onstop` handler, after
+   assigning `reviewBlob`. That way the UI updates (e.g. showing the Review button)
+   happen at the exact moment the blob is ready.
+```js
+function _beginRec() {
+  const mr = new MediaRecorder(micStream);
+  mediaRecorder = mr;
+  mr.ondataavailable = e => { if (e.data?.size > 0) recChunks.push(e.data); };
+  mr.onstop = () => {
+    // mr (local) is safe here even if mediaRecorder (global) has been nulled
+    if (recChunks.length) {
+      reviewBlob = new Blob(recChunks, { type: mr.mimeType || 'audio/webm' });
+      render(); // ← update UI here, not after calling .stop()
+    }
+  };
+  mr.start(250); // timesliced so ondataavailable fires regularly
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop(); // onstop fires async; closure holds ref via mr
+  }
+  mediaRecorder = null; // safe to null here — onstop uses mr, not this global
+}
+```
+
+### Safari/iOS: Blob audio duration is Infinity
+Safari reports `audio.duration === Infinity` after `onloadedmetadata` fires on
+Blob URL audio. The standard workaround is:
+1. In `onloadedmetadata`, check `if (!isFinite(duration))` and set
+   `audio.currentTime = 1e9` to force a full scan.
+2. Listen for `ondurationchange` — it fires with the real duration once
+   the scan completes. Seek back to 0 there.
+3. Never use `audio.duration` directly for display or seek math; use a
+   separate `knownDuration` variable that is only set when `isFinite(duration)`.

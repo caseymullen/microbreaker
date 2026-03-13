@@ -1,928 +1,1436 @@
 <!DOCTYPE html>
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_15.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Practice Timer">
-<meta name="theme-color" content="#1a0a2e">
+<meta name="apple-mobile-web-app-title" content="Practice">
+<meta name="theme-color" id="meta-theme" content="#1e1e1e">
 <title>Practice Timer</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./index_files/css2" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-–work-bg: #1a0a2e;
-–work-bg2: #2d1057;
-–work-accent: #e8a020;
-–work-accent2: #ff6b35;
-–work-text: #f5e6d0;
-–work-dim: rgba(245,230,208,0.45);
-
-```
---break-bg: #051a12;
---break-bg2: #093d28;
---break-accent: #3dffc0;
---break-accent2: #00d4aa;
---break-text: #c8ffe8;
---break-dim: rgba(200,255,232,0.45);
-
---rest-bg: #0a0a1a;
---rest-bg2: #151535;
---rest-accent: #7b8fff;
---rest-accent2: #4a5fff;
---rest-text: #d8dcff;
---rest-dim: rgba(216,220,255,0.45);
-
---transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-```
-
+  --font: 'Inconsolata', monospace;
+  --safe-top: env(safe-area-inset-top, 44px);
+  --safe-bot: env(safe-area-inset-bottom, 20px);
+  --safe-l:   env(safe-area-inset-left,  0px);
+  --safe-r:   env(safe-area-inset-right, 0px);
 }
-
-html, body {
-height: 100%;
-overflow: hidden;
-font-family: ‘DM Mono’, monospace;
-touch-action: manipulation;
+* {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
+html, body { width: 100%; height: 100%; overflow: hidden; }
 
+/* ══ App shell ══ */
 #app {
-height: 100%;
-display: flex;
-flex-direction: column;
-position: relative;
-transition: background var(–transition);
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: calc(var(--safe-top) + 10px);
+  padding-bottom: calc(var(--safe-bot) + 6px);
+  padding-left: var(--safe-l); padding-right: var(--safe-r);
+  font-family: var(--font); color: #fff;
+  transition: background-color 0.65s ease;
+  background-color: #1e1e1e;
+  overflow: hidden;
 }
+/* Vignette */
+#app::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.58) 100%);
+  z-index: 0;
+}
+#app > * { position: relative; z-index: 1; }
 
-/* ── Background layers ── */
-.bg-layer {
-position: absolute; inset: 0;
-opacity: 0;
-transition: opacity var(–transition);
-pointer-events: none;
+/* ══ Top ══ */
+#top-section {
+  width: 100%; display: flex; flex-direction: column;
+  align-items: center; gap: 6px; padding: 0 22px;
 }
-.bg-layer.active { opacity: 1; }
-
-.bg-work {
-background: radial-gradient(ellipse 80% 60% at 50% 30%, #3d1880 0%, #1a0a2e 60%, #0d0520 100%);
-}
-.bg-break {
-background: radial-gradient(ellipse 80% 60% at 50% 70%, #0a4030 0%, #051a12 60%, #020d09 100%);
-}
-.bg-rest {
-background: radial-gradient(ellipse 80% 60% at 50% 50%, #1a1a4a 0%, #0a0a1a 60%, #05050f 100%);
-}
-
-/* Noise texture overlay */
-.noise {
-position: absolute; inset: 0;
-opacity: 0.035;
-pointer-events: none;
-background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’/%3E%3C/svg%3E”);
-background-size: 200px 200px;
-}
-
-/* ── Content ── */
-#main {
-position: relative;
-z-index: 10;
-height: 100%;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: space-between;
-padding: 48px 24px 36px;
-}
-
-/* ── Top: macro progress ── */
-#macro-section {
-width: 100%;
-max-width: 340px;
-text-align: center;
-transition: color var(–transition);
-}
-
-#macro-label {
-font-size: 10px;
-letter-spacing: 0.25em;
-text-transform: uppercase;
-opacity: 0.5;
-margin-bottom: 10px;
-transition: color var(–transition);
-}
-
-#macro-bar-track {
-width: 100%;
-height: 3px;
-border-radius: 2px;
-background: rgba(255,255,255,0.1);
-margin-bottom: 6px;
-overflow: hidden;
-}
-
-#macro-bar-fill {
-height: 100%;
-border-radius: 2px;
-transition: width 1s linear, background var(–transition);
-width: 0%;
-}
-
-#macro-time {
-font-size: 11px;
-letter-spacing: 0.1em;
-opacity: 0.4;
-}
-
-/* ── Center: main display ── */
-#center-section {
-flex: 1;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 16px;
-}
-
 #phase-label {
-font-family: ‘DM Serif Display’, serif;
-font-size: 13px;
-letter-spacing: 0.35em;
-text-transform: uppercase;
-transition: color var(–transition), opacity var(–transition);
-opacity: 0.7;
+  font-size: clamp(26px, 8vw, 36px); font-weight: 400; letter-spacing: 0.22em;
+  text-transform: uppercase; opacity: 0.52; min-height: clamp(30px, 9vw, 42px);
+}
+#progress-section {
+  width: 100%; display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  margin-top: 8px;
+  visibility: hidden; /* shown only in block */
+}
+#macro-bar-track {
+  width: 100%; height: 4px;
+  background: rgba(255,255,255,0.13); border-radius: 2px; overflow: hidden;
+}
+#macro-bar {
+  height: 100%; background: rgba(255,255,255,0.72);
+  border-radius: 2px; width: 0%; transition: width 0.35s linear;
+}
+#time-progress {
+  font-size: clamp(14px, 3.8vw, 18px); font-weight: 300; opacity: 0.42; letter-spacing: 0.04em;
 }
 
-#phase-label.rest-label {
-font-style: italic;
+/* ══ Middle ══ */
+#mid-section {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  width: 100%; gap: 0; padding: 0 22px; min-height: 0;
 }
-
-#timer-ring {
-position: relative;
-width: 220px;
-height: 220px;
+/* Rest questions — shown in rest-count and ready phases */
+#rest-questions {
+  display: none; flex-direction: column;
+  align-items: center; gap: 7px; margin-bottom: 20px;
 }
-
-#ring-svg {
-width: 220px;
-height: 220px;
-transform: rotate(-90deg);
+#rest-questions p {
+  font-size: clamp(16px, 4.5vw, 22px); font-weight: 300; color: #e8d5b0;
+  text-align: center; letter-spacing: 0.02em; line-height: 1.45;
 }
-
-#ring-track {
-fill: none;
-stroke: rgba(255,255,255,0.08);
-stroke-width: 4;
+/* Round counter */
+#round-counter {
+  font-size: clamp(18px, 5.5vw, 26px); font-weight: 400; opacity: 0.75;
+  letter-spacing: 0.04em; margin-bottom: 10px; min-height: clamp(48px, 13vw, 64px);
+  text-align: center; line-height: 1.25;
 }
-
-#ring-fill {
-fill: none;
-stroke-width: 4;
-stroke-linecap: round;
-stroke-dasharray: 628;
-stroke-dashoffset: 0;
-transition: stroke var(–transition);
+/* Ring */
+#ring-wrap {
+  position: relative;
+  width: min(256px, 63vw); height: min(256px, 63vw); flex-shrink: 0;
 }
-
-#timer-inner {
-position: absolute;
-inset: 0;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 4px;
+#ring-wrap svg {
+  width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;
 }
-
+#ring-bg { fill: none; stroke: rgba(255,255,255,0.10); }
+#ring-fg { fill: none; stroke: rgba(255,255,255,0.82); stroke-linecap: round; }
+#ring-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
 #time-display {
-font-family: ‘DM Serif Display’, serif;
-font-size: 64px;
-line-height: 1;
-letter-spacing: -0.02em;
-transition: color var(–transition);
+  font-size: clamp(42px, 13vw, 60px); font-weight: 300;
+  letter-spacing: -0.02em; line-height: 1; display: none;
+}
+#ready-ring-text {
+  font-size: clamp(38px, 11vw, 54px); font-weight: 300;
+  letter-spacing: 0.03em; display: none;
+}
+/* Message */
+#message {
+  font-size: clamp(17px, 5vw, 24px); font-weight: 400; letter-spacing: 0.06em;
+  text-align: center; opacity: 0.88; margin-top: 18px;
+  min-height: clamp(24px, 6vw, 32px); line-height: 1.4;
 }
 
-#time-tenths {
-font-size: 13px;
-letter-spacing: 0.08em;
-opacity: 0.4;
-font-weight: 300;
-}
-
-/* ── Pulse dot ── */
-#pulse-dot {
-width: 8px;
-height: 8px;
-border-radius: 50%;
-margin-top: 4px;
-transition: background var(–transition);
-}
-#pulse-dot.pulsing {
-animation: pulse 1s ease-in-out infinite;
-}
-@keyframes pulse {
-0%, 100% { opacity: 1; transform: scale(1); }
-50% { opacity: 0.3; transform: scale(0.6); }
-}
-
-/* ── Phase description ── */
-#phase-desc {
-font-size: 11px;
-letter-spacing: 0.18em;
-text-transform: uppercase;
-opacity: 0.38;
-text-align: center;
-max-width: 200px;
-line-height: 1.6;
-transition: color var(–transition);
-}
-
-/* ── Bottom controls ── */
+/* ══ Bottom ══ */
 #bottom-section {
-width: 100%;
-max-width: 340px;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 16px;
+  width: 100%; display: flex; flex-direction: column;
+  align-items: center; gap: 0; padding: 0 22px; flex-shrink: 0;
 }
+/* Controls row */
+#controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 28px; padding: 6px 0 2px; min-height: 86px;
+}
+.ctrl-btn {
+  background: none; border: none; color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.88; transition: opacity 0.12s, transform 0.1s;
+  -webkit-appearance: none; padding: 8px;
+}
+.ctrl-btn:active { opacity: 0.4; transform: scale(0.90); }
+#btn-play-pause { width: 68px; height: 68px; }
+#btn-prev, #btn-next { width: 48px; height: 48px; opacity: 0.70; }
 
-#advance-btn {
-width: 100%;
-padding: 16px;
-border: 1px solid rgba(255,255,255,0.15);
-border-radius: 12px;
-background: rgba(255,255,255,0.06);
-font-family: ‘DM Mono’, monospace;
-font-size: 12px;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-cursor: pointer;
-transition: background 0.2s, border-color 0.2s, color var(–transition);
--webkit-tap-highlight-color: transparent;
+/* Start button — same slot as controls */
+#start-btn {
+  display: none; min-height: 86px;
+  align-items: center; justify-content: center;
 }
-#advance-btn:active {
-background: rgba(255,255,255,0.14);
+#start-btn-inner {
+  background: rgba(255,255,255,0.11);
+  border: 1.5px solid rgba(255,255,255,0.40);
+  border-radius: 44px; color: #fff; font-family: var(--font);
+  font-size: clamp(17px, 5vw, 22px); font-weight: 500; letter-spacing: 0.10em;
+  padding: clamp(11px, 3vw, 16px) clamp(36px, 10vw, 52px); cursor: pointer; -webkit-appearance: none;
+  transition: background 0.15s, transform 0.1s;
 }
+#start-btn-inner:active { background: rgba(255,255,255,0.22); transform: scale(0.97); }
 
-#bottom-meta {
-display: flex;
-gap: 24px;
-align-items: center;
+/* Review slot — always reserves height */
+#review-slot {
+  min-height: 50px; display: flex;
+  align-items: center; justify-content: center; width: 100%;
 }
-
-#pause-btn {
-background: none;
-border: none;
-cursor: pointer;
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-opacity: 0.4;
-padding: 8px;
-transition: opacity 0.2s, color var(–transition);
--webkit-tap-highlight-color: transparent;
+#review-btn {
+  display: none;
+  background: rgba(255,255,255,0.09);
+  border: 1.5px solid rgba(255,255,255,0.28); border-radius: 26px;
+  color: #fff; font-family: var(--font); font-size: clamp(15px, 4.2vw, 19px);
+  font-weight: 400; letter-spacing: 0.06em; padding: clamp(8px, 2.2vw, 12px) clamp(22px, 6vw, 32px);
+  cursor: pointer; -webkit-appearance: none; transition: background 0.15s;
 }
-#pause-btn:hover, #pause-btn:active { opacity: 0.8; }
+#review-btn:active { background: rgba(255,255,255,0.18); }
 
+#bottom-spacer { height: 12px; flex-shrink: 0; }
+
+/* ══ Close button (fixed, lower left) ══ */
+#close-btn {
+  position: fixed;
+  bottom: calc(var(--safe-bot) + 16px); left: calc(var(--safe-l) + 18px);
+  background: none; border: none; color: rgba(255,255,255,0.36);
+  cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
+  transition: color 0.15s;
+}
+#close-btn:active { color: rgba(255,255,255,0.72); }
+
+/* ══ Settings gear (fixed) ══ */
 #settings-btn {
-background: none;
-border: none;
-cursor: pointer;
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-opacity: 0.4;
-padding: 8px;
-transition: opacity 0.2s, color var(–transition);
--webkit-tap-highlight-color: transparent;
+  position: fixed;
+  bottom: calc(var(--safe-bot) + 16px); right: calc(var(--safe-r) + 18px);
+  background: none; border: none; color: rgba(255,255,255,0.36);
+  cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
+  transition: color 0.15s;
 }
-#settings-btn:hover, #settings-btn:active { opacity: 0.8; }
+#settings-btn:active { color: rgba(255,255,255,0.82); }
 
-/* ── Theme application ── */
-.theme-work  { color: var(–work-text); }
-.theme-break { color: var(–break-text); }
-.theme-rest  { color: var(–rest-text); }
+/* ══════════════════════════════════════
+   SETTINGS PANEL
+══════════════════════════════════════ */
+#settings-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.90);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  z-index: 200; flex-direction: column;
+  padding: calc(var(--safe-top) + 14px) 26px calc(var(--safe-bot) + 20px);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  font-family: var(--font); color: #fff;
+}
+#settings-overlay.open { display: flex; }
+.s-title { font-size: clamp(19px, 5.5vw, 25px); font-weight: 600; letter-spacing: 0.04em; margin-bottom: 24px; }
+.s-sec { font-size: clamp(11px, 3vw, 14px); letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.38); margin: 20px 0 8px; }
+.s-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.s-label { font-size: clamp(16px, 4.5vw, 20px); font-weight: 300; color: rgba(255,255,255,0.85); }
+.s-sub   { font-size: clamp(14px, 3.8vw, 17px); color: rgba(255,255,255,0.35); margin-top: 2px; }
+.s-ctrl  { display: flex; align-items: center; gap: 12px; }
+.s-ctrl input[type=range] {
+  -webkit-appearance: none; width: 118px; height: 4px;
+  border-radius: 2px; background: rgba(255,255,255,0.20); outline: none;
+}
+.s-ctrl input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 22px;
+  border-radius: 50%; background: #fff; cursor: pointer;
+}
+.s-val { font-size: clamp(14px, 3.8vw, 17px); font-weight: 400; min-width: 54px; text-align: right; color: rgba(255,255,255,0.62); }
+.tog-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.tog-label { font-size: clamp(16px, 4.5vw, 20px); font-weight: 300; color: rgba(255,255,255,0.85); }
+.tog-sw { position: relative; width: 48px; height: 28px; cursor: pointer; flex-shrink: 0; }
+.tog-sw input { display: none; }
+.tog-track { position: absolute; inset: 0; background: rgba(255,255,255,0.18);
+  border-radius: 14px; transition: background 0.2s; }
+.tog-sw input:checked ~ .tog-track { background: rgba(255,255,255,0.65); }
+.tog-thumb { position: absolute; top: 4px; left: 4px; width: 20px; height: 20px;
+  background: #fff; border-radius: 50%; transition: transform 0.2s; }
+.tog-sw input:checked ~ .tog-thumb { transform: translateX(20px); }
+/* Messages */
+#msg-list { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.msg-row { display: flex; gap: 8px; align-items: center; }
+.msg-inp {
+  flex: 1; background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+  color: #fff; font-family: var(--font); font-size: clamp(15px, 4vw, 18px); padding: 8px 12px; outline: none;
+}
+.msg-inp:focus { border-color: rgba(255,255,255,0.38); }
+.msg-del { background: none; border: none; color: rgba(255,255,255,0.32);
+  font-size: clamp(18px, 5vw, 24px); cursor: pointer; padding: 4px; line-height: 1; }
+#add-msg-btn, #s-done-btn {
+  -webkit-appearance: none; font-family: var(--font); cursor: pointer;
+  border-radius: 10px; font-size: clamp(15px, 4.2vw, 19px); padding: 11px 22px; border: none;
+  transition: opacity 0.15s; letter-spacing: 0.04em;
+}
+#add-msg-btn  { background: rgba(255,255,255,0.10); color: #fff; margin-top: 10px; }
+#s-reset-btn  { background: none; border: none; color: rgba(255,255,255,0.35);
+  font-family: var(--font); font-size: clamp(14px, 3.8vw, 17px);
+  letter-spacing: 0.04em; cursor: pointer; margin-top: 28px; padding: 6px 0;
+  text-decoration: underline; text-underline-offset: 3px; -webkit-appearance: none; }
+#s-reset-btn:active { color: rgba(255,255,255,0.65); }
+#s-done-btn  { background: #fff; color: #000; font-weight: 600; margin-top: 12px; padding: 15px 22px; }
+#add-msg-btn:active, #s-done-btn:active { opacity: 0.7; }
 
-#ring-fill.theme-work  { stroke: var(–work-accent); }
-#ring-fill.theme-break { stroke: var(–break-accent); }
-#ring-fill.theme-rest  { stroke: var(–rest-accent); }
+/* Reset confirmation dialog */
+#reset-overlay {
+  display: none; position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,0.70);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  font-family: var(--font);
+}
+#reset-overlay.open { display: flex; }
+#reset-box {
+  background: #1a1a1a; border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 18px; padding: 28px 24px 20px;
+  width: min(340px, 88vw);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+#reset-title {
+  font-size: clamp(17px, 4.5vw, 21px); font-weight: 600;
+  color: #fff; letter-spacing: 0.03em;
+}
+#reset-msg {
+  font-size: clamp(14px, 3.8vw, 17px); font-weight: 300;
+  color: rgba(255,255,255,0.65); text-align: center; line-height: 1.4;
+  margin-bottom: 6px;
+}
+#reset-btns { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+#reset-yes, #reset-no, #reset-cancel {
+  -webkit-appearance: none; font-family: var(--font);
+  font-size: clamp(15px, 4vw, 18px); font-weight: 400;
+  letter-spacing: 0.04em; border-radius: 12px;
+  padding: 13px 16px; cursor: pointer;
+  border: 1.5px solid rgba(255,255,255,0.18); width: 100%;
+  transition: opacity 0.12s;
+}
+#reset-yes    { background: rgba(255,255,255,0.12); color: #fff; }
+#reset-no     { background: rgba(255,255,255,0.07); color: #fff; }
+#reset-cancel { background: none; color: rgba(255,255,255,0.45);
+  border-color: transparent; }
+#reset-yes:active, #reset-no:active, #reset-cancel:active { opacity: 0.6; }
 
-#macro-bar-fill.theme-work  { background: var(–work-accent); }
-#macro-bar-fill.theme-break { background: var(–break-accent); }
-#macro-bar-fill.theme-rest  { background: var(–rest-accent); }
+/* ══════════════════════════════════════
+   REVIEW OVERLAY
+══════════════════════════════════════ */
+#review-overlay {
+  display: none; position: fixed; inset: 0;
+  background: #1a3d28; /* forest green */
+  z-index: 300; flex-direction: column; align-items: center;
+  justify-content: flex-start;
+  padding: calc(var(--safe-top) + 10px) 28px calc(var(--safe-bot) + 16px);
+  gap: 20px; font-family: var(--font); color: #fff;
+}
+/* Spacer pushes controls group to vertical center */
+#rev-spacer-top    { flex: 1; }
+#rev-spacer-bottom { flex: 1; }
+/* Vignette on review overlay too */
+#review-overlay::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.60) 100%);
+  z-index: 0;
+}
+#review-overlay > * { position: relative; z-index: 1; }
+#review-overlay.open { display: flex; }
 
-#pulse-dot.theme-work  { background: var(–work-accent); }
-#pulse-dot.theme-break { background: var(–break-accent); }
-#pulse-dot.theme-rest  { background: var(–rest-accent); }
+/* Phase-label style title */
+#rev-title {
+  font-size: clamp(26px, 8vw, 36px); font-weight: 400; letter-spacing: 0.22em;
+  text-transform: uppercase; opacity: 0.52;
+}
+/* Current / total time */
+#rev-times {
+  font-size: clamp(36px, 11vw, 54px); font-weight: 300; letter-spacing: -0.02em; line-height: 1;
+}
+#rev-sep  { opacity: 0.35; }
+#rev-dur  { opacity: 0.45; }
 
-#advance-btn.theme-work  { color: var(–work-text); }
-#advance-btn.theme-break { color: var(–break-text); }
-#advance-btn.theme-rest  { color: var(–rest-text); }
-
-#pause-btn.theme-work  { color: var(–work-text); }
-#pause-btn.theme-break { color: var(–break-text); }
-#pause-btn.theme-rest  { color: var(–rest-text); }
-
-#settings-btn.theme-work  { color: var(–work-text); }
-#settings-btn.theme-break { color: var(–break-text); }
-#settings-btn.theme-rest  { color: var(–rest-text); }
-
-/* flash animation */
-@keyframes flashIn {
-0%   { opacity: 0; transform: scale(0.92); }
-40%  { opacity: 1; transform: scale(1.03); }
-100% { opacity: 1; transform: scale(1); }
+/* Waveform + progress container */
+#rev-wave {
+  width: 100%; height: 72px; border-radius: 10px;
+  background: rgba(255,255,255,0.06); overflow: hidden; position: relative;
+  cursor: pointer;
 }
-.phase-transition {
-animation: flashIn 0.45s cubic-bezier(0.4,0,0.2,1) forwards;
+#rev-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
 }
-
-/* ── Settings panel ── */
-#settings-panel {
-position: absolute;
-inset: 0;
-z-index: 50;
-background: rgba(0,0,0,0.88);
-backdrop-filter: blur(12px);
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-padding: 32px 28px;
-opacity: 0;
-pointer-events: none;
-transition: opacity 0.3s;
+#rev-prog {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: rgba(255,255,255,0.18); width: 0%;
+  mix-blend-mode: screen;
+  transition: width 0.08s linear;
 }
-#settings-panel.open {
-opacity: 1;
-pointer-events: all;
+#rev-controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; width: 100%;
 }
-
-#settings-title {
-font-family: ‘DM Serif Display’, serif;
-font-size: 22px;
-color: rgba(255,255,255,0.9);
-margin-bottom: 32px;
-letter-spacing: 0.05em;
+.rev-btn {
+  background: rgba(255,255,255,0.10); border: 1.5px solid rgba(255,255,255,0.22);
+  border-radius: 50%; color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-appearance: none; transition: background 0.12s, transform 0.1s;
 }
-
-.settings-group {
-width: 100%;
-max-width: 300px;
-margin-bottom: 28px;
-}
-.settings-group-title {
-font-size: 9px;
-letter-spacing: 0.3em;
-text-transform: uppercase;
-color: rgba(255,255,255,0.35);
-margin-bottom: 14px;
-border-bottom: 1px solid rgba(255,255,255,0.08);
-padding-bottom: 6px;
-}
-
-.setting-row {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin-bottom: 14px;
-}
-.setting-label {
-font-size: 12px;
-letter-spacing: 0.08em;
-color: rgba(255,255,255,0.65);
-}
-.setting-control {
-display: flex;
-align-items: center;
-gap: 10px;
-}
-.setting-val {
-font-family: ‘DM Mono’, monospace;
-font-size: 16px;
-color: rgba(255,255,255,0.9);
-min-width: 42px;
-text-align: center;
-letter-spacing: 0.05em;
-}
-.adj-btn {
-width: 30px; height: 30px;
-border-radius: 6px;
-border: 1px solid rgba(255,255,255,0.15);
-background: rgba(255,255,255,0.06);
-color: rgba(255,255,255,0.7);
-font-size: 18px;
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
--webkit-tap-highlight-color: transparent;
-line-height: 1;
-}
-.adj-btn:active { background: rgba(255,255,255,0.15); }
-
-#close-settings {
-margin-top: 8px;
-padding: 14px 40px;
-border-radius: 10px;
-border: 1px solid rgba(255,255,255,0.2);
-background: rgba(255,255,255,0.08);
-color: rgba(255,255,255,0.8);
-font-family: ‘DM Mono’, monospace;
-font-size: 12px;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-cursor: pointer;
--webkit-tap-highlight-color: transparent;
-}
-#close-settings:active { background: rgba(255,255,255,0.18); }
-
-/* ── Mute toggle ── */
-.toggle-switch {
-width: 40px; height: 22px;
-border-radius: 11px;
-border: 1px solid rgba(255,255,255,0.2);
-background: rgba(255,255,255,0.08);
-position: relative;
-cursor: pointer;
-transition: background 0.25s;
--webkit-tap-highlight-color: transparent;
-}
-.toggle-switch.on {
-background: rgba(100,200,160,0.35);
-border-color: rgba(100,200,160,0.5);
-}
-.toggle-knob {
-width: 16px; height: 16px;
-border-radius: 50%;
-background: rgba(255,255,255,0.5);
-position: absolute;
-top: 2px; left: 2px;
-transition: left 0.25s, background 0.25s;
-}
-.toggle-switch.on .toggle-knob {
-left: 20px;
-background: #3dffc0;
-}
+.rev-btn:active { background: rgba(255,255,255,0.28); transform: scale(0.90); }
+.rev-lg { width: 78px; height: 78px; }
+.rev-sm { width: 60px; height: 60px; }
+.rev-exit-btn { border-color: rgba(200,40,40,0.40); background: rgba(200,40,40,0.10); }
+.rev-exit-btn:active { background: rgba(200,40,40,0.25); }
 </style>
-
 </head>
 <body>
-<div id="app">
-
-  <!-- Background layers -->
-
-  <div class="bg-layer bg-work" id="bg-work"></div>
-  <div class="bg-layer bg-break" id="bg-break"></div>
-  <div class="bg-layer bg-rest" id="bg-rest"></div>
-  <div class="noise"></div>
-
-  <!-- Main UI -->
-
-  <div id="main">
-
-```
-<!-- Macro section -->
-<div id="macro-section">
-  <div id="macro-label" class="theme-work">Session block · 1 of 1</div>
-  <div id="macro-bar-track">
-    <div id="macro-bar-fill" class="theme-work"></div>
-  </div>
-  <div id="macro-time" class="theme-work">0:00 / 5:00</div>
-</div>
-
-<!-- Center section -->
-<div id="center-section">
-  <div id="phase-label" class="theme-work">Practice</div>
-
-  <div id="timer-ring">
-    <svg id="ring-svg" viewBox="0 0 220 220">
-      <circle id="ring-track" cx="110" cy="110" r="100"/>
-      <circle id="ring-fill" class="theme-work" cx="110" cy="110" r="100"/>
-    </svg>
-    <div id="timer-inner">
-      <div id="time-display" class="theme-work">0:25</div>
-      <div id="time-tenths" class="theme-work">· · ·</div>
-      <div id="pulse-dot" class="theme-work pulsing"></div>
+<div id="app" style="background-color: rgb(30, 30, 30);">
+  <!-- TOP -->
+  <div id="top-section">
+    <div id="phase-label"></div>
+    <div id="progress-section" style="visibility: hidden;">
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 0%;"></div></div>
+      <div id="time-progress">0:00 of 5:00</div>
     </div>
   </div>
 
-  <div id="phase-desc" class="theme-work">Focus on the phrase</div>
-</div>
-
-<!-- Bottom section -->
-<div id="bottom-section">
-  <button id="advance-btn" class="theme-work">↵ &nbsp; Advance Phase</button>
-  <div id="bottom-meta">
-    <button id="pause-btn" class="theme-work">⏸ Pause</button>
-    <button id="settings-btn" class="theme-work">⚙ Settings</button>
-  </div>
-</div>
-```
-
-  </div><!-- /main -->
-
-  <!-- Settings panel -->
-
-  <div id="settings-panel">
-    <div id="settings-title">Timer Settings</div>
-
-```
-<div class="settings-group">
-  <div class="settings-group-title">Micro Cycle</div>
-  <div class="setting-row">
-    <div class="setting-label">Practice duration</div>
-    <div class="setting-control">
-      <button class="adj-btn" data-target="workSec" data-delta="-5">−</button>
-      <div class="setting-val" id="val-workSec">45s</div>
-      <button class="adj-btn" data-target="workSec" data-delta="5">+</button>
+  <!-- MIDDLE -->
+  <div id="mid-section">
+    <div id="rest-questions" style="display: flex;">
+      <p>What is the goal of your practice?</p>
+      <p>How will you achieve it?</p>
     </div>
-  </div>
-  <div class="setting-row">
-    <div class="setting-label">Micro-break duration</div>
-    <div class="setting-control">
-      <button class="adj-btn" data-target="breakSec" data-delta="-5">−</button>
-      <div class="setting-val" id="val-breakSec">15s</div>
-      <button class="adj-btn" data-target="breakSec" data-delta="5">+</button>
+    <div id="round-counter"></div>
+    <div id="ring-wrap" style="visibility: visible;">
+      <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+        <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="7" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 0;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="7" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" stroke-dashoffset="86.868" style="opacity: 0;"></circle>
+      </svg>
+      <div id="ring-center">
+        <div id="time-display" style="display: none;">0:14</div>
+        <div id="ready-ring-text" style="display: block;">Ready?</div>
+      </div>
     </div>
+    <div id="message"></div>
   </div>
-</div>
 
-<div class="settings-group">
-  <div class="settings-group-title">Macro Cycle</div>
-  <div class="setting-row">
-    <div class="setting-label">Block length</div>
-    <div class="setting-control">
-      <button class="adj-btn" data-target="blockMin" data-delta="-1">−</button>
-      <div class="setting-val" id="val-blockMin">5m</div>
-      <button class="adj-btn" data-target="blockMin" data-delta="1">+</button>
+  <!-- BOTTOM -->
+  <div id="bottom-section">
+    <!-- Controls (shown during work/break/rest-count) -->
+    <div id="controls" style="display: none;">
+      <button class="ctrl-btn" id="btn-prev" aria-label="Restart phase">
+        <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+          <rect x="7" y="11" width="5" height="24" rx="2" fill="white"></rect>
+          <path d="M38 11 L16 23 L38 35 Z" fill="white"></path>
+        </svg>
+      </button>
+      <button class="ctrl-btn" id="btn-play-pause" aria-label="Play/Pause">
+        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
+          <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
+          <path d="M26 20 L50 34 L26 48 Z" fill="white"></path>
+        </svg>
+        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
+          <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
+          <rect x="20" y="19" width="10" height="30" rx="3" fill="white"></rect>
+          <rect x="38" y="19" width="10" height="30" rx="3" fill="white"></rect>
+        </svg>
+      </button>
+      <button class="ctrl-btn" id="btn-next" aria-label="Next phase">
+        <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+          <path d="M8 11 L30 23 L8 35 Z" fill="white"></path>
+          <rect x="34" y="11" width="5" height="24" rx="2" fill="white"></rect>
+        </svg>
+      </button>
     </div>
-  </div>
-  <div class="setting-row">
-    <div class="setting-label">Long rest duration</div>
-    <div class="setting-control">
-      <button class="adj-btn" data-target="restMin" data-delta="-0.5">−</button>
-      <div class="setting-val" id="val-restMin">1.5m</div>
-      <button class="adj-btn" data-target="restMin" data-delta="0.5">+</button>
+    <!-- Start Practice button (shown in ready phase) — same height slot -->
+    <div id="start-btn" style="display: flex;">
+      <button id="start-btn-inner">Start Practice</button>
     </div>
-  </div>
-</div>
-
-<div class="settings-group">
-  <div class="settings-group-title">Sound</div>
-  <div class="setting-row">
-    <div class="setting-label">Audio alerts</div>
-    <div class="setting-control">
-      <div class="toggle-switch on" id="sound-toggle"><div class="toggle-knob"></div></div>
+    <!-- Review Recording button — always reserves space -->
+    <div id="review-slot">
+      <button id="review-btn" style="display: none;">Review Recording</button>
     </div>
+    <div id="bottom-spacer"></div>
   </div>
 </div>
 
-<button id="close-settings">Done</button>
-```
+<!-- Close button (fixed, lower left) -->
+<button id="close-btn" aria-label="Close app" style="opacity: 0; pointer-events: none;">
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
+    <path d="M13 13 L25 25M25 13 L13 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+  </svg>
+</button>
 
+<!-- Settings gear (fixed position) -->
+<button id="settings-btn" aria-label="Settings">
+  <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 35a15 15 0 1 0 0 30 15 15 0 0 0 0-30z" fill="currentColor"></path>
+    <path d="M88 42h-5.8a33 33 0 0 0-3-7.2l4.1-4.1a4 4 0 0 0 0-5.6l-8.4-8.4a4 4 0 0 0-5.6 0l-4.1 4.1A33 33 0 0 0 58 17.8V12a4 4 0 0 0-4-4h-8a4 4 0 0 0-4 4v5.8a33 33 0 0 0-7.2 3l-4.1-4.1a4 4 0 0 0-5.6 0l-8.4 8.4a4 4 0 0 0 0 5.6l4.1 4.1A33 33 0 0 0 17.8 42H12a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h5.8a33 33 0 0 0 3 7.2l-4.1 4.1a4 4 0 0 0 0 5.6l8.4 8.4a4 4 0 0 0 5.6 0l4.1-4.1a33 33 0 0 0 7.2 3V88a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-5.8a33 33 0 0 0 7.2-3l4.1 4.1a4 4 0 0 0 5.6 0l8.4-8.4a4 4 0 0 0 0-5.6l-4.1-4.1a33 33 0 0 0 3-7.2H88a4 4 0 0 0 4-4v-8a4 4 0 0 0-4-4z" fill="currentColor"></path>
+    <circle cx="50" cy="50" r="15" fill="#1e1e1e"></circle>
+    <circle cx="50" cy="50" r="10" fill="currentColor"></circle>
+  </svg>
+</button>
+
+<!-- SETTINGS PANEL -->
+<div id="settings-overlay" class="">
+  <div class="s-title">Settings</div>
+
+  <div class="s-sec">Durations</div>
+  <div class="s-row">
+    <div><div class="s-label">Practice</div></div>
+    <div class="s-ctrl">
+      <input type="range" id="s-work" min="15" max="120" step="5" value="45">
+      <div class="s-val" id="sv-work">45s</div>
+    </div>
+  </div>
+  <div class="s-row">
+    <div><div class="s-label">Micro-break</div></div>
+    <div class="s-ctrl">
+      <input type="range" id="s-break" min="10" max="60" step="5" value="15">
+      <div class="s-val" id="sv-break">15s</div>
+    </div>
+  </div>
+  <div class="s-row">
+    <div>
+      <div class="s-label">Block</div>
+      <div class="s-sub" id="sv-rounds-sub">5 rounds</div>
+      <div class="s-sub" id="sv-block-dur">≈ 5:00</div>
+    </div>
+    <div class="s-ctrl">
+      <input type="range" id="s-rounds" min="3" max="15" step="1" value="5">
+      <div class="s-val" id="sv-rounds">5</div>
+    </div>
+  </div>
+  <div class="s-row">
+    <div><div class="s-label">Rest</div></div>
+    <div class="s-ctrl">
+      <input type="range" id="s-rest" min="60" max="300" step="15" value="120">
+      <div class="s-val" id="sv-rest">2:00</div>
+    </div>
   </div>
 
-</div><!-- /app -->
+  <div class="s-sec">Audio</div>
+  <div class="tog-row">
+    <div class="tog-label">Mute sounds</div>
+    <label class="tog-sw">
+      <input type="checkbox" id="s-mute">
+      <div class="tog-track"></div>
+      <div class="tog-thumb"></div>
+    </label>
+  </div>
+
+  <div class="s-sec">Recording</div>
+  <div class="tog-row">
+    <div class="tog-label">Record / review practice</div>
+    <label class="tog-sw">
+      <input type="checkbox" id="s-record">
+      <div class="tog-track"></div>
+      <div class="tog-thumb"></div>
+    </label>
+  </div>
+
+  <div class="s-sec">Rest Questions</div>
+  <div class="s-row" style="flex-direction:column; align-items:stretch; gap:8px; padding: 10px 0;">
+    <input type="text" class="msg-inp" id="s-restq1" placeholder="Question 1">
+    <input type="text" class="msg-inp" id="s-restq2" placeholder="Question 2">
+  </div>
+
+  <div class="s-sec">Micro-break Messages</div>
+  <div id="msg-list"><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div></div>
+  <button id="add-msg-btn">+ Add message</button>
+
+  <button id="s-reset-btn">Reset to defaults…</button>
+  <button id="s-done-btn">Done</button>
+</div>
+
+<!-- Reset confirmation dialog -->
+<div id="reset-overlay" class="">
+  <div id="reset-box">
+    <div id="reset-title">Reset to defaults</div>
+    <div id="reset-msg">Also clear the micro-break messages?</div>
+    <div id="reset-btns">
+      <button id="reset-yes">Yes, clear messages</button>
+      <button id="reset-no">No, keep messages</button>
+      <button id="reset-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW OVERLAY -->
+<div id="review-overlay" class="">
+  <div id="rev-title">Review</div>
+  <div id="rev-spacer-top"></div>
+  <div id="rev-times"><span id="rev-cur">0:07</span><span id="rev-sep"> / </span><span id="rev-dur">0:08</span></div>
+  <div id="rev-wave">
+    <canvas id="rev-canvas" width="3756" height="108"></canvas>
+    <div id="rev-prog" style="width: 85.2928%;"></div>
+  </div>
+  <div id="rev-controls">
+    <!-- Back to start -->
+    <button class="rev-btn rev-sm" id="rev-restart" aria-label="Back to start">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <rect x="3" y="4" width="3.5" height="18" rx="1.5" fill="white"></rect>
+        <path d="M22 4 L9 13 L22 22 Z" fill="white"></path>
+      </svg>
+    </button>
+    <!-- Back 5s -->
+    <button class="rev-btn rev-sm" id="rev-back5" aria-label="Back 5s">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M20 4 L7 13 L20 22 Z" fill="white"></path>
+      </svg>
+    </button>
+    <!-- Play/Pause -->
+    <button class="rev-btn rev-lg" id="rev-playpause" aria-label="Play/Pause">
+      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
+        <path d="M8 4 L28 16 L8 28 Z" fill="white"></path>
+      </svg>
+      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
+        <rect x="4" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
+        <rect x="19" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
+      </svg>
+    </button>
+    <!-- Forward 5s -->
+    <button class="rev-btn rev-sm" id="rev-fwd5" aria-label="Forward 5s">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M6 4 L19 13 L6 22 Z" fill="white"></path>
+      </svg>
+    </button>
+    <!-- Exit (red X — only close button) -->
+    <button class="rev-btn rev-sm rev-exit-btn" id="rev-exit" aria-label="Close review">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M4 4 L18 18M18 4 L4 18" stroke="#e03030" stroke-width="2.6" stroke-linecap="round"></path>
+      </svg>
+    </button>
+  </div>
+  <div id="rev-spacer-bottom"></div>
+</div>
 
 <script>
-// ── State ──────────────────────────────────────────────────────────────
-const cfg = {
-  workSec:  45,
-  breakSec: 15,
-  blockMin: 5,
-  restMin:  1.5,
-  sound: true
+'use strict';
+
+// ═══════════════════════════════════════════════════
+// SETTINGS & STORAGE
+// ═══════════════════════════════════════════════════
+const DEFAULTS = {
+  workDur:   45,
+  breakDur:  15,
+  rounds:    5,
+  restDur:   120,
+  muted:     false,
+  recording: false,
+  messages:  ['Focus on your goal','Flex your wrist','Audiate to intonate','Create emphasis'],
+  restQ: ['What is the goal of your practice?', 'How will you achieve it?']
 };
 
-const PHASES = { WORK: 'work', BREAK: 'break', REST: 'rest' };
+let settings = (() => {
+  try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('pt_v3') || '{}')); }
+  catch(e) { return {...DEFAULTS}; }
+})();
 
-let phase       = PHASES.WORK;
-let microRemain = cfg.workSec;   // seconds remaining in micro phase
-let macroRemain = cfg.blockMin * 60; // seconds remaining in macro block
-let blockCount  = 1;
-let paused      = false;
-let tickInterval = null;
-let lastTick    = null;
+function saveSettings() {
+  const s = {
+    workDur: settings.workDur, breakDur: settings.breakDur,
+    rounds: settings.rounds, restDur: settings.restDur,
+    muted: settings.muted, recording: settings.recording,
+    messages: settings.messages,
+    restQ: settings.restQ
+  };
+  localStorage.setItem('pt_v3', JSON.stringify(s));
+}
 
-// ── DOM ────────────────────────────────────────────────────────────────
-const bgWork  = document.getElementById('bg-work');
-const bgBreak = document.getElementById('bg-break');
-const bgRest  = document.getElementById('bg-rest');
-const macroLabel  = document.getElementById('macro-label');
-const macroFill   = document.getElementById('macro-bar-fill');
-const macroTime   = document.getElementById('macro-time');
-const phaseLabel  = document.getElementById('phase-label');
-const timeDisplay = document.getElementById('time-display');
-const timeTenths  = document.getElementById('time-tenths');
-const pulseDot    = document.getElementById('pulse-dot');
-const phaseDesc   = document.getElementById('phase-desc');
-const advanceBtn  = document.getElementById('advance-btn');
-const pauseBtn    = document.getElementById('pause-btn');
-const settingsBtn = document.getElementById('settings-btn');
-const settingsPanel = document.getElementById('settings-panel');
-const closeSettings = document.getElementById('close-settings');
-const soundToggle = document.getElementById('sound-toggle');
-const ringFill    = document.getElementById('ring-fill');
+// ═══════════════════════════════════════════════════
+// AUDIO ENGINE
+// ═══════════════════════════════════════════════════
+let audioCtx      = null;
+let audioUnlocked = false;
 
-const CIRCUMFERENCE = 2 * Math.PI * 100; // 628.3
-
-// ── Audio ──────────────────────────────────────────────────────────────
-let audioCtx = null;
-function getAudio() {
+function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  audioUnlocked = true;
 }
 
-function playTone(freqs, durations, type='sine', gain=0.3) {
-  if (!cfg.sound) return;
+function beep(freq, dur, gain, type, delay) {
+  if (settings.muted || !audioUnlocked) return;
+  const ctx = audioCtx;
+  const t = ctx.currentTime + (delay || 0);
+  const g = ctx.createGain();
+  const o = ctx.createOscillator();
+  o.type = type || 'sine';
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain || 0.32, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+
+function playCountdownBeep(n) { beep(n === 1 ? 1047 : 880, 0.11, 0.42); }
+
+function playWorkStart() {
+  beep(660, 0.10, 0.32, 'sine', 0);
+  beep(880, 0.18, 0.32, 'sine', 0.13);
+}
+
+function playBreakStart() {
+  // Calm low-frequency meditation chime, fades over 3 seconds
+  if (settings.muted || !audioUnlocked) return;
+  const ctx = audioCtx;
+  const t0  = ctx.currentTime;
+  [[130, 0.22], [196, 0.17], [261, 0.13]].forEach(([f, g], i) => {
+    const o = ctx.createOscillator();
+    const gn = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    gn.gain.setValueAtTime(0, t0 + i * 0.07);
+    gn.gain.linearRampToValueAtTime(g, t0 + i * 0.07 + 0.06);
+    gn.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.0);
+    o.connect(gn); gn.connect(ctx.destination);
+    o.start(t0 + i * 0.07); o.stop(t0 + 3.1);
+  });
+}
+
+function playFanfare() {
+  const seq = [{f:523,d:0.12},{f:659,d:0.12},{f:784,d:0.12},{f:1047,d:0.50},{f:784,d:0.09},{f:1047,d:0.55}];
+  let t = 0;
+  seq.forEach(({f, d}) => { beep(f, d, 0.30, 'sine', t); t += d * 0.72; });
+}
+
+function playBackToWork() {
+  // da-da-da  da-da  DA!
+  [[440,0.11,0.28,0.00],[440,0.11,0.28,0.20],[440,0.11,0.28,0.40],
+   [523,0.13,0.30,0.70],[523,0.13,0.30,0.90],[660,0.50,0.50,1.22]]
+  .forEach(([f,d,g,t]) => beep(f, d, g, 'sine', t));
+}
+
+// ═══════════════════════════════════════════════════
+// RECORDING
+// Recording runs for the full work phase with no pause/resume.
+// Hitting pause does NOT pause the recorder — it keeps running.
+// A hard 5-minute cap stops recording automatically to avoid runaway capture.
+// The blob is set asynchronously inside mr.onstop (fired after mr.stop()).
+// Always capture mr in a local const so the onstop closure references the
+// specific recorder instance, not the global mediaRecorder which may be
+// nulled or replaced by the time onstop fires.
+// ═══════════════════════════════════════════════════
+let micStream     = null;
+let mediaRecorder = null;
+let recChunks     = [];
+let reviewBlob    = null;
+let reviewAudio   = null;
+let recCapTimer   = null;  // 5-min safety cap
+
+async function acquireMic() {
+  if (micStream) return true;
   try {
-    const ctx = getAudio();
-    freqs.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const vol = ctx.createGain();
-      osc.connect(vol); vol.connect(ctx.destination);
-      osc.type = type;
-      osc.frequency.value = freq;
-      const delay = durations.slice(0,i).reduce((a,b)=>a+b,0);
-      const dur   = durations[i];
-      vol.gain.setValueAtTime(0, ctx.currentTime + delay);
-      vol.gain.linearRampToValueAtTime(gain, ctx.currentTime + delay + 0.01);
-      vol.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + dur);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + dur + 0.02);
-    });
-  } catch(e) {}
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    return true;
+  } catch(e) { return false; }
 }
 
-function soundWorkStart()  { playTone([880, 1100], [0.1, 0.15], 'triangle', 0.25); }
-function soundBreakStart() { playTone([660, 440],  [0.1, 0.25], 'sine', 0.2); }
-function soundRestStart()  { playTone([440, 330, 220], [0.15, 0.15, 0.4], 'sine', 0.2); }
-function soundRestEnd()    { playTone([220, 330, 440, 660], [0.1, 0.1, 0.1, 0.2], 'triangle', 0.25); }
-function soundCountdown()  { playTone([520], [0.06], 'square', 0.12); }
-
-// ── Theme ──────────────────────────────────────────────────────────────
-const themeEls = () => [
-  macroLabel, macroFill, macroTime, phaseLabel, timeDisplay,
-  timeTenths, pulseDot, phaseDesc, advanceBtn, pauseBtn, settingsBtn, ringFill
-];
-
-function applyTheme(p) {
-  const cls = p === PHASES.WORK ? 'theme-work'
-            : p === PHASES.BREAK ? 'theme-break'
-            : 'theme-rest';
-  themeEls().forEach(el => {
-    el.classList.remove('theme-work','theme-break','theme-rest');
-    el.classList.add(cls);
-  });
-  bgWork.classList.toggle('active',  p === PHASES.WORK);
-  bgBreak.classList.toggle('active', p === PHASES.BREAK);
-  bgRest.classList.toggle('active',  p === PHASES.REST);
-}
-
-// ── Ring ───────────────────────────────────────────────────────────────
-function setRing(fraction) {
-  // fraction 1 = full, 0 = empty
-  const offset = CIRCUMFERENCE * (1 - Math.max(0, Math.min(1, fraction)));
-  ringFill.style.strokeDashoffset = offset;
-}
-
-// ── Formatting ─────────────────────────────────────────────────────────
-function fmtSec(s) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return m > 0 ? `${m}:${String(sec).padStart(2,'0')}` : `0:${String(sec).padStart(2,'0')}`;
-}
-function fmtMin(s) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${String(sec).padStart(2,'0')}`;
-}
-
-// ── Phase transitions ──────────────────────────────────────────────────
-function goToPhase(newPhase, fromAdvance=false) {
-  phase = newPhase;
-  applyTheme(phase);
-
-  // Animate timer
-  document.getElementById('timer-ring').classList.remove('phase-transition');
-  void document.getElementById('timer-ring').offsetWidth;
-  document.getElementById('timer-ring').classList.add('phase-transition');
-
-  if (phase === PHASES.WORK) {
-    microRemain = cfg.workSec;
-    phaseLabel.textContent = 'Practice';
-    phaseLabel.classList.remove('rest-label');
-    phaseDesc.textContent = 'Focus on the phrase';
-    pulseDot.classList.add('pulsing');
-    if (!fromAdvance) soundWorkStart();
-  } else if (phase === PHASES.BREAK) {
-    microRemain = cfg.breakSec;
-    phaseLabel.textContent = 'Micro-Break';
-    phaseLabel.classList.remove('rest-label');
-    phaseDesc.textContent = 'Breathe · let it settle';
-    pulseDot.classList.remove('pulsing');
-    soundBreakStart();
-  } else {
-    microRemain = cfg.restMin * 60;
-    phaseLabel.textContent = 'Long Rest';
-    phaseLabel.classList.add('rest-label');
-    phaseDesc.textContent = 'Block complete · rest well';
-    pulseDot.classList.remove('pulsing');
-    soundRestStart();
+function startRecording() {
+  if (!settings.recording) return;
+  stopRecording();           // stop any previous recorder first
+  reviewBlob = null;         // discard old clip
+  recChunks  = [];
+  if (!micStream) {
+    acquireMic().then(ok => { if (ok) _beginRec(); });
+    return;
   }
-  renderMicro();
+  _beginRec();
 }
 
-function advancePhase() {
-  if (phase === PHASES.WORK) {
-    goToPhase(PHASES.BREAK, true);
-    soundBreakStart();
-  } else if (phase === PHASES.BREAK) {
-    // check if macro block expired
-    if (macroRemain <= 0) {
-      startNewBlock(true);
-    } else {
-      goToPhase(PHASES.WORK, true);
-      soundWorkStart();
-    }
-  } else {
-    // REST → start fresh block
-    blockCount++;
-    macroRemain = cfg.blockMin * 60;
-    soundRestEnd();
-    goToPhase(PHASES.WORK, true);
-    soundWorkStart();
-  }
-}
+function _beginRec() {
+  if (!micStream) return;
+  try {
+    const mr = new MediaRecorder(micStream);
+    mediaRecorder = mr;
 
-function startNewBlock(fromBreak=false) {
-  blockCount++;
-  macroRemain = cfg.blockMin * 60;
-  goToPhase(PHASES.REST, fromBreak);
-}
+    mr.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
 
-// ── Render ─────────────────────────────────────────────────────────────
-function renderMicro() {
-  const total = phase === PHASES.WORK ? cfg.workSec
-              : phase === PHASES.BREAK ? cfg.breakSec
-              : cfg.restMin * 60;
-  const fraction = microRemain / total;
-  setRing(fraction);
-  timeDisplay.textContent = fmtSec(microRemain);
-
-  // Tenths dots as countdown indicator
-  const pct = Math.round(fraction * 5);
-  timeTenths.textContent = '· '.repeat(Math.max(0,pct)).trim() || '·';
-}
-
-function renderMacro() {
-  const total = cfg.blockMin * 60;
-  const elapsed = total - macroRemain;
-  const pct = Math.max(0, Math.min(100, (elapsed / total) * 100));
-  macroFill.style.width = pct + '%';
-  macroLabel.textContent = `Session block · ${blockCount}`;
-  macroTime.textContent = `${fmtMin(elapsed)} / ${fmtMin(total)}`;
-}
-
-// ── Tick ───────────────────────────────────────────────────────────────
-function tick() {
-  if (paused) { lastTick = performance.now(); return; }
-
-  const now = performance.now();
-  const dt = lastTick ? (now - lastTick) / 1000 : 0;
-  lastTick = now;
-
-  // countdown beeps at 3, 2, 1
-  const prevFloor = Math.ceil(microRemain);
-  microRemain = Math.max(0, microRemain - dt);
-
-  if (phase !== PHASES.REST) {
-    const newFloor = Math.ceil(microRemain);
-    if (prevFloor !== newFloor && newFloor <= 3 && newFloor > 0) soundCountdown();
-  }
-
-  // Macro clock only ticks during WORK and BREAK
-  if (phase === PHASES.WORK || phase === PHASES.BREAK) {
-    macroRemain = Math.max(0, macroRemain - dt);
-  }
-
-  if (microRemain <= 0) {
-    // Auto advance
-    if (phase === PHASES.WORK) {
-      goToPhase(PHASES.BREAK);
-    } else if (phase === PHASES.BREAK) {
-      if (macroRemain <= 0) {
-        startNewBlock();
-      } else {
-        goToPhase(PHASES.WORK);
+    // onstop fires asynchronously after mr.stop().
+    // We reference mr (local const) not mediaRecorder (global) to avoid race conditions.
+    mr.onstop = () => {
+      if (recChunks.length) {
+        reviewBlob = new Blob(recChunks, { type: mr.mimeType || 'audio/webm' });
+        // Re-render so the Review Recording button appears in the break phase.
+        render();
       }
-    } else {
-      // REST done
-      blockCount++;
-      macroRemain = cfg.blockMin * 60;
-      soundRestEnd();
-      goToPhase(PHASES.WORK);
+    };
+
+    mr.start(250); // timesliced every 250ms so ondataavailable fires regularly
+
+    // Safety cap: stop recording after 5 minutes regardless of phase
+    recCapTimer = setTimeout(() => stopRecording(), 5 * 60 * 1000);
+  } catch(e) { console.warn('MediaRecorder start failed', e); }
+}
+
+function stopRecording() {
+  if (recCapTimer) { clearTimeout(recCapTimer); recCapTimer = null; }
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    try { mediaRecorder.stop(); } catch(e) {}
+    // mediaRecorder.stop() is async — onstop fires later.
+    // We null the global here; the onstop closure holds its own ref via mr.
+  }
+  mediaRecorder = null;
+}
+
+// ═══════════════════════════════════════════════════
+// STATE MACHINE
+// ═══════════════════════════════════════════════════
+/*
+  Phases:
+    'ready'      — waiting to start (on load OR after back-to-work alarm)
+    'rest-count' — rest countdown
+    'work'       — practice
+    'break'      — micro-break
+*/
+let phase        = 'ready';
+let isPaused     = false;
+
+let phaseTimeLeft = 0;   // seconds left in current phase
+
+// Block timing
+let currentRound  = 0;   // 0-based
+let blockTotal    = 0;   // total seconds in a full block
+let progressTime  = 0;   // counts down; affected by skip/restart
+let elapsedTime   = 0;   // real wall-clock seconds since block started
+let blockStartTime = null; // Date.now() at block start; drives elapsedTime
+
+// Countdown beep state
+let cntFired = {3:false, 2:false, 1:false};
+
+// Message cycling
+let msgIndex = 0;
+
+// RAF tick
+let lastTickTime = null;
+let rafId        = null;
+
+function blockDuration() {
+  return settings.rounds * (settings.workDur + settings.breakDur);
+}
+
+// ─── Start block ────────────────────────────────────
+function startBlock() {
+  currentRound   = 0;
+  blockTotal     = blockDuration();
+  progressTime   = blockTotal;
+  elapsedTime    = 0;
+  blockStartTime = Date.now();
+  _enterPhase('work');
+}
+
+// ─── Enter a phase (always resets phaseTimeLeft) ────
+function _enterPhase(p) {
+  phase    = p;
+  isPaused = false;
+  cntFired = {3:false, 2:false, 1:false};
+
+  if (p === 'work') {
+    phaseTimeLeft = settings.workDur;
+    startRecording();
+    if (audioUnlocked) playWorkStart();
+  } else if (p === 'break') {
+    phaseTimeLeft = settings.breakDur;
+    stopRecording();
+    msgIndex++;
+    if (audioUnlocked) playBreakStart();
+  } else if (p === 'rest-count') {
+    phaseTimeLeft = settings.restDur;
+    stopRecording();
+  } else if (p === 'ready') {
+    phaseTimeLeft = 0;
+    stopRecording();
+  }
+  lastTickTime = null;
+  render();
+}
+
+// ─── RAF tick ───────────────────────────────────────
+function tick(now) {
+  rafId = requestAnimationFrame(tick);
+  if (lastTickTime === null) { lastTickTime = now; return; }
+
+  const dt = Math.min((now - lastTickTime) / 1000, 0.25);
+  lastTickTime = now;
+
+  // Always re-render when in a block so wall-clock elapsed time stays live,
+  // even while paused, in settings, or in the review overlay.
+  if (phase === 'work' || phase === 'break') render();
+
+  if (isPaused || phase === 'ready') return;
+
+  // Countdown beeps
+  [3, 2, 1].forEach(n => {
+    if (!cntFired[n] && phaseTimeLeft > 0 && phaseTimeLeft - dt <= n && phaseTimeLeft > n - 0.05) {
+      cntFired[n] = true;
+      if (audioUnlocked) playCountdownBeep(n);
     }
+  });
+
+  phaseTimeLeft -= dt;
+
+  if (phase === 'work' || phase === 'break') {
+    progressTime = Math.max(0, progressTime - dt);
   }
 
-  renderMicro();
-  renderMacro();
+  if (phaseTimeLeft <= 0) { phaseTimeLeft = 0; _advance(); }
+  else render();
 }
 
-// ── Settings ───────────────────────────────────────────────────────────
-const settingsMap = {
-  workSec:  { min: 5,   max: 120, step: 5,   fmt: v => v+'s' },
-  breakSec: { min: 5,   max: 60,  step: 5,   fmt: v => v+'s' },
-  blockMin: { min: 1,   max: 15,  step: 1,   fmt: v => v+'m' },
-  restMin:  { min: 0.5, max: 5,   step: 0.5, fmt: v => v+'m' },
-};
-
-function updateSettingsUI() {
-  for (const [key, meta] of Object.entries(settingsMap)) {
-    document.getElementById('val-'+key).textContent = meta.fmt(cfg[key]);
+// ─── Advance to next phase ──────────────────────────
+function _advance() {
+  if (phase === 'work') {
+    // Always do the micro-break after work, even on the final round.
+    // The final break is the user's only chance to review their recording.
+    // The break→next transition handles the block-complete fanfare instead.
+    _enterPhase('break');
+  } else if (phase === 'break') {
+    if (currentRound >= settings.rounds - 1) {
+      // Final break just ended — block complete
+      stopRecording();
+      if (audioUnlocked) playFanfare();
+      phase = 'rest-count';
+      isPaused = false;
+      phaseTimeLeft = settings.restDur;
+      cntFired = {3:false, 2:false, 1:false};
+      lastTickTime = null;
+      render();
+    } else {
+      currentRound++;
+      _enterPhase('work');
+    }
+  } else if (phase === 'rest-count') {
+    // Rest countdown done → play alarm → go to ready
+    if (audioUnlocked) playBackToWork();
+    _enterPhase('ready');
   }
 }
 
-document.querySelectorAll('.adj-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.dataset.target;
-    const delta  = parseFloat(btn.dataset.delta);
-    const meta   = settingsMap[target];
-    cfg[target] = Math.max(meta.min, Math.min(meta.max, cfg[target] + delta));
-    updateSettingsUI();
+// ─── Toggle play/pause ──────────────────────────────
+// Recording is completely independent of pause — it runs for the full
+// work phase and is not affected by the user pausing the timer.
+function togglePlayPause() {
+  if (phase === 'ready') return;
+  isPaused = !isPaused;
+  if (!isPaused) lastTickTime = null;
+  render();
+}
+
+// ─── Restart current phase ──────────────────────────
+function restartPhase() {
+  if (phase === 'ready') return;
+  if (phase === 'rest-count') {
+    // allow restart on rest countdown
+    const elapsed = settings.restDur - phaseTimeLeft;
+    phaseTimeLeft = settings.restDur;
+    cntFired = {3:false, 2:false, 1:false};
+    isPaused = false;
+    lastTickTime = null;
+    render(); return;
+  }
+  const phaseDur = phase === 'work' ? settings.workDur : settings.breakDur;
+  const elapsed  = phaseDur - phaseTimeLeft;
+  // Add back the elapsed time to progressTime (capped at blockTotal)
+  progressTime = Math.min(blockTotal, progressTime + elapsed);
+  phaseTimeLeft = phaseDur;
+  cntFired = {3:false, 2:false, 1:false};
+  if (phase === 'work') { stopRecording(); startRecording(); }
+  isPaused = false;
+  lastTickTime = null;
+  render();
+}
+
+// ─── Skip to next phase ─────────────────────────────
+function skipNext() {
+  if (phase === 'ready') return;
+  if (phase === 'rest-count') { phaseTimeLeft = 0; _advance(); return; }
+  // Deduct remaining time from progressTime
+  progressTime = Math.max(0, progressTime - phaseTimeLeft);
+  phaseTimeLeft = 0;
+  _advance();
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+const RING_R = 110;
+const RING_C = +(2 * Math.PI * RING_R).toFixed(3); // 691.150
+
+// Cache DOM references
+const $ = id => document.getElementById(id);
+const elApp          = $('app');
+const elPhaseLabel   = $('phase-label');
+const elProgressSec  = $('progress-section');
+const elMacroBar     = $('macro-bar');
+const elTimeProgress = $('time-progress');
+const elRestQ        = $('rest-questions');
+const elRoundCtr     = $('round-counter');
+const elRingWrap     = $('ring-wrap');
+const elRingFg       = $('ring-fg');
+const elTimeDisplay  = $('time-display');
+const elReadyRing    = $('ready-ring-text');
+const elMessage      = $('message');
+const elControls     = $('controls');
+const elStartBtn     = $('start-btn');
+const elReviewBtn    = $('review-btn');
+const elIconPlay     = $('icon-play');
+const elIconPause    = $('icon-pause');
+
+function fmt(sec) {
+  const s = Math.max(0, Math.ceil(sec));
+  return Math.floor(s/60) + ':' + (s%60).toString().padStart(2,'0');
+}
+function fmtF(sec) { // floor version for elapsed display
+  const s = Math.max(0, Math.floor(sec));
+  return Math.floor(s/60) + ':' + (s%60).toString().padStart(2,'0');
+}
+
+function render() {
+  const isReady = phase === 'ready';
+  const isRest  = phase === 'rest-count';
+  const isWork  = phase === 'work';
+  const isBreak = phase === 'break';
+  const inBlock = isWork || isBreak;
+
+  // Background
+  const bg = isWork ? '#b83c08' : isBreak ? '#141560' : '#1e1e1e';
+  elApp.style.backgroundColor = bg;
+  $('meta-theme').setAttribute('content', bg);
+
+  // Phase label
+  elPhaseLabel.textContent =
+    isReady  ? '' :
+    isRest   ? 'Rest' :
+    isWork   ? 'Practice' : 'Micro-break';
+
+  // Progress bar — only in block
+  elProgressSec.style.visibility = inBlock ? 'visible' : 'hidden';
+  if (inBlock) {
+    const pct = 100 * (1 - progressTime / blockTotal);
+    elMacroBar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+    // elapsedTime is true wall-clock time — recompute fresh on every render
+    const wallElapsed = blockStartTime ? (Date.now() - blockStartTime) / 1000 : 0;
+    elTimeProgress.textContent = fmtF(wallElapsed) + ' of ' + fmt(blockTotal);
+  }
+
+  // Rest questions
+  elRestQ.style.display = (isReady || isRest) ? 'flex' : 'none';
+  if (isReady || isRest) {
+    const ps = elRestQ.querySelectorAll('p');
+    const q  = settings.restQ || ['', ''];
+    ps[0].textContent = q[0] || '';
+    ps[1].textContent = q[1] || '';
+    ps[0].style.display = q[0] ? '' : 'none';
+    ps[1].style.display = q[1] ? '' : 'none';
+  }
+
+  // Round counter
+  elRoundCtr.innerHTML = inBlock ? 'Round<br>' + (currentRound + 1) + ' of ' + settings.rounds : '';
+
+  // Ring — wrap always visible; SVG ring hidden in ready phase; text swaps
+  elRingWrap.style.visibility = 'visible';
+  // Hide the SVG ring strokes in ready phase (keep for spacing)
+  const ringOpacity = isReady ? '0' : '1';
+  $('ring-bg').style.opacity = ringOpacity;
+  $('ring-fg').style.opacity = ringOpacity;
+
+  elTimeDisplay.style.display = (isWork || isBreak || isRest) ? 'block' : 'none';
+  elReadyRing.style.display   = isReady ? 'block' : 'none';
+
+  if (isWork || isBreak || isRest) {
+    const total  = isWork ? settings.workDur : isBreak ? settings.breakDur : settings.restDur;
+    const frac   = total > 0 ? phaseTimeLeft / total : 0;
+    const offset = (RING_C * (1 - Math.min(1, Math.max(0, frac)))).toFixed(3);
+    elRingFg.setAttribute('stroke-dashoffset', offset);
+    elTimeDisplay.textContent = fmt(phaseTimeLeft);
+  }
+
+  // Message (break phase only)
+  if (isBreak && settings.messages.length) {
+    elMessage.textContent = settings.messages[msgIndex % settings.messages.length];
+  } else {
+    elMessage.textContent = '';
+  }
+
+  // Controls vs Start button
+  if (isReady) {
+    elControls.style.display = 'none';
+    elStartBtn.style.display = 'flex';
+  } else {
+    elControls.style.display = 'flex';
+    elStartBtn.style.display = 'none';
+  }
+
+  // Play/Pause icon
+  const showPlay = isPaused || isReady;
+  elIconPlay.style.display  = showPlay ? 'block' : 'none';
+  elIconPause.style.display = showPlay ? 'none'  : 'block';
+
+  // Review button — always visible during break phase (if recording enabled and blob ready)
+  // No pause required; tapping it will pause the phase automatically.
+  elReviewBtn.style.display = (settings.recording && isBreak && reviewBlob) ? 'block' : 'none';
+
+  // Close button — hidden in ready phase (where it would just re-enter ready)
+  // In all other phases it resets the session back to ready.
+  $('close-btn').style.opacity = isReady ? '0' : '1';
+  $('close-btn').style.pointerEvents = isReady ? 'none' : 'auto';
+}
+
+// ═══════════════════════════════════════════════════
+// BUTTON LISTENERS
+// ═══════════════════════════════════════════════════
+$('btn-play-pause').addEventListener('click', () => { ensureAudio(); togglePlayPause(); });
+$('btn-prev').addEventListener('click',       () => { ensureAudio(); restartPhase(); });
+$('btn-next').addEventListener('click',       () => { ensureAudio(); skipNext(); });
+$('start-btn-inner').addEventListener('click', () => {
+  ensureAudio();
+  // acquireMic() is called inside startRecording() → _beginRec() when needed.
+  // Calling it here too causes two simultaneous getUserMedia prompts on iOS.
+  startBlock();
+});
+$('review-btn').addEventListener('click', openReview);
+
+document.addEventListener('keydown', e => {
+  if ($('settings-overlay').classList.contains('open')) return;
+  if ($('review-overlay').classList.contains('open')) {
+    if (e.code === 'Space') { e.preventDefault(); $('rev-playpause').click(); }
+    if (e.code === 'Enter') { e.preventDefault(); $('rev-back5').click(); }
+    return;
+  }
+  if (e.code === 'Space') { e.preventDefault(); $('btn-play-pause').click(); }
+  if (e.code === 'Enter') { e.preventDefault(); $('btn-next').click(); }
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+});
+
+// ═══════════════════════════════════════════════════
+// SETTINGS PANEL
+// ═══════════════════════════════════════════════════
+function fmtDur(sec) {
+  if (sec < 60) return sec + 's';
+  const m = Math.floor(sec/60), s = sec%60;
+  return m + ':' + (s ? s.toString().padStart(2,'0') : '00');
+}
+function syncSettingsUI() {
+  $('s-work').value    = settings.workDur;
+  $('s-break').value   = settings.breakDur;
+  $('s-rounds').value  = settings.rounds;
+  $('s-rest').value    = settings.restDur;
+  $('s-mute').checked  = settings.muted;
+  $('s-record').checked= settings.recording;
+  const rq = settings.restQ || ['', ''];
+  $('s-restq1').value = rq[0] || '';
+  $('s-restq2').value = rq[1] || '';
+  refreshCalc();
+}
+function refreshCalc() {
+  const w = +$('s-work').value, b = +$('s-break').value,
+        r = +$('s-rounds').value, rest = +$('s-rest').value;
+  $('sv-work').textContent       = w + 's';
+  $('sv-break').textContent      = b + 's';
+  $('sv-rounds').textContent     = r;
+  $('sv-rounds-sub').textContent = r + ' round' + (r!==1?'s':'');
+  $('sv-block-dur').textContent  = '≈ ' + fmtDur(r*(w+b));
+  $('sv-rest').textContent       = fmtDur(rest);
+}
+['s-work','s-break','s-rounds','s-rest'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    settings.workDur  = +$('s-work').value;
+    settings.breakDur = +$('s-break').value;
+    settings.rounds   = +$('s-rounds').value;
+    settings.restDur  = +$('s-rest').value;
+    refreshCalc(); saveSettings();
+  });
+});
+$('s-mute').addEventListener('change',   e => { settings.muted   = e.target.checked; saveSettings(); });
+$('s-reset-btn').addEventListener('click', () => {
+  $('reset-overlay').classList.add('open');
+});
+
+function doReset(clearMessages) {
+  // Apply all defaults except messages (and optionally messages too)
+  settings.workDur   = DEFAULTS.workDur;
+  settings.breakDur  = DEFAULTS.breakDur;
+  settings.rounds    = DEFAULTS.rounds;
+  settings.restDur   = DEFAULTS.restDur;
+  settings.muted     = DEFAULTS.muted;
+  settings.recording = DEFAULTS.recording;
+  settings.restQ     = [...DEFAULTS.restQ];
+  if (clearMessages) settings.messages = [...DEFAULTS.messages];
+  saveSettings();
+  syncSettingsUI();
+  renderMsgList();
+  render();
+}
+
+$('reset-yes').addEventListener('click', () => {
+  $('reset-overlay').classList.remove('open');
+  doReset(true);
+});
+$('reset-no').addEventListener('click', () => {
+  $('reset-overlay').classList.remove('open');
+  doReset(false);
+});
+$('reset-cancel').addEventListener('click', () => {
+  $('reset-overlay').classList.remove('open');
+});
+
+['s-restq1','s-restq2'].forEach((id, i) => {
+  $(id).addEventListener('input', () => {
+    if (!settings.restQ) settings.restQ = ['', ''];
+    settings.restQ[i] = $(id).value;
+    saveSettings(); render();
   });
 });
 
-soundToggle.addEventListener('click', () => {
-  cfg.sound = !cfg.sound;
-  soundToggle.classList.toggle('on', cfg.sound);
-});
-
-settingsBtn.addEventListener('click', () => {
-  paused = true;
-  pauseBtn.textContent = '▶ Resume';
-  settingsPanel.classList.add('open');
-  updateSettingsUI();
-});
-
-closeSettings.addEventListener('click', () => {
-  settingsPanel.classList.remove('open');
-  // Reset current micro phase with new duration
-  microRemain = Math.min(microRemain,
-    phase === PHASES.WORK ? cfg.workSec :
-    phase === PHASES.BREAK ? cfg.breakSec : cfg.restMin * 60
-  );
-  renderMicro();
-});
-
-// ── Pause ──────────────────────────────────────────────────────────────
-pauseBtn.addEventListener('click', () => {
-  paused = !paused;
-  pauseBtn.textContent = paused ? '▶ Resume' : '⏸ Pause';
-  if (!paused) {
-    lastTick = performance.now();
-    // Unlock audio context on iOS
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+$('s-record').addEventListener('change', e => {
+  settings.recording = e.target.checked;
+  if (settings.recording) {
+    // Turned ON — request mic access immediately
+    acquireMic().then(ok => {
+      if (ok && phase === 'work') {
+        // If we're currently in the work phase, start recording right away
+        startRecording();
+      }
+    });
+  } else {
+    // Turned OFF — stop any active recording and discard it
+    stopRecording();
+    reviewBlob = null;
+    recChunks  = [];
   }
+  saveSettings(); render();
 });
 
-// ── Advance ────────────────────────────────────────────────────────────
-advanceBtn.addEventListener('click', advanceClick);
-function advanceClick() {
-  // unlock audio on first tap (iOS requirement)
-  if (!audioCtx) { getAudio(); }
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  if (paused) {
-    paused = false;
-    pauseBtn.textContent = '⏸ Pause';
-    lastTick = performance.now();
+function renderMsgList() {
+  const list = $('msg-list'); list.innerHTML = '';
+  settings.messages.forEach((m, i) => {
+    const row = document.createElement('div'); row.className = 'msg-row';
+    const inp = document.createElement('input');
+    inp.type='text'; inp.className='msg-inp'; inp.value=m;
+    inp.addEventListener('input', () => { settings.messages[i]=inp.value; saveSettings(); });
+    const del = document.createElement('button');
+    del.className='msg-del'; del.textContent='×';
+    del.addEventListener('click', () => { settings.messages.splice(i,1); saveSettings(); renderMsgList(); });
+    row.appendChild(inp); row.appendChild(del); list.appendChild(row);
+  });
+}
+$('add-msg-btn').addEventListener('click', () => {
+  settings.messages.push(''); saveSettings(); renderMsgList();
+  const inp = $('msg-list').querySelectorAll('.msg-inp');
+  if (inp.length) inp[inp.length-1].focus();
+});
+
+let _wasPaused = false;
+$('settings-btn').addEventListener('click', () => {
+  _wasPaused = isPaused;
+  if (!isPaused && phase !== 'ready') { isPaused = true; render(); }
+  syncSettingsUI(); renderMsgList();
+  $('settings-overlay').classList.add('open');
+});
+$('s-done-btn').addEventListener('click', () => {
+  $('settings-overlay').classList.remove('open');
+  if (!_wasPaused && phase !== 'ready') {
+    isPaused = false; lastTickTime = null;
   }
-  advancePhase();
+  render();
+});
+
+// ═══════════════════════════════════════════════════
+// REVIEW PLAYER
+// ═══════════════════════════════════════════════════
+// Known Safari/iOS issue: Blob URL audio often reports duration as Infinity
+// after onloadedmetadata. The workaround is to seek to a very large time value,
+// which forces the browser to scan to the end and update duration to the real value.
+// We then listen for durationchange to get the final value and draw the waveform.
+let revKnownDuration = 0;
+
+function openReview() {
+  if (!reviewBlob) return;
+  // Pause the break phase while reviewing
+  if (!isPaused) { isPaused = true; render(); }
+
+  revKnownDuration = 0;
+  const url = URL.createObjectURL(reviewBlob);
+  if (reviewAudio) { reviewAudio.pause(); reviewAudio = null; }
+  reviewAudio = new Audio(url);
+  reviewAudio.ontimeupdate = updateRevUI;
+  reviewAudio.onended = () => {
+    $('rev-icon-play').style.display  = 'block';
+    $('rev-icon-pause').style.display = 'none';
+  };
+
+  // onloadedmetadata fires first — duration may be Infinity on Safari
+  reviewAudio.onloadedmetadata = () => {
+    if (isFinite(reviewAudio.duration) && reviewAudio.duration > 0) {
+      revKnownDuration = reviewAudio.duration;
+      $('rev-dur').textContent = fmtF(revKnownDuration);
+      drawWaveform(revKnownDuration);
+    } else {
+      // Safari Infinity workaround: seek to a huge number to force full scan
+      $('rev-dur').textContent = '…';
+      reviewAudio.currentTime = 1e9;
+    }
+  };
+
+  // durationchange fires once the browser has scanned to the real end
+  reviewAudio.ondurationchange = () => {
+    if (isFinite(reviewAudio.duration) && reviewAudio.duration > 0) {
+      revKnownDuration = reviewAudio.duration;
+      $('rev-dur').textContent = fmtF(revKnownDuration);
+      // Seek back to start after the forced scan
+      reviewAudio.currentTime = 0;
+      drawWaveform(revKnownDuration);
+    }
+  };
+
+  $('rev-cur').textContent = '0:00';
+  $('rev-dur').textContent = '…';
+  $('rev-prog').style.width = '0%';
+  $('review-overlay').classList.add('open');
+  // Auto-play as soon as metadata is ready
+  reviewAudio.play().then(() => {
+    $('rev-icon-play').style.display  = 'none';
+    $('rev-icon-pause').style.display = 'block';
+  }).catch(() => {
+    // Autoplay blocked — show play button so user can tap
+    $('rev-icon-play').style.display  = 'block';
+    $('rev-icon-pause').style.display = 'none';
+  });
 }
 
-// Keyboard
-document.addEventListener('keydown', e => {
-  if (settingsPanel.classList.contains('open')) return;
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    advanceClick();
+function drawWaveform(totalDur) {
+  if (!reviewBlob || !audioCtx) return;
+  const canvas = $('rev-canvas');
+  const ctx2d  = canvas.getContext('2d');
+  // Use the layout size of the element, not its attribute
+  const rect = canvas.getBoundingClientRect();
+  const W = Math.floor(rect.width  * (window.devicePixelRatio || 1));
+  const H = Math.floor(rect.height * (window.devicePixelRatio || 1));
+  canvas.width  = W;
+  canvas.height = H;
+  // canvas CSS size is set via 100%/100% in CSS, so no need to set style
+
+  reviewBlob.arrayBuffer().then(buf => {
+    // decodeAudioData consumes the buffer; clone first so we don't break playback
+    audioCtx.decodeAudioData(buf.slice(0), decoded => {
+      const data = decoded.getChannelData(0);
+      const step = Math.max(1, Math.floor(data.length / W));
+      ctx2d.clearRect(0, 0, W, H);
+      ctx2d.fillStyle = 'rgba(255,255,255,0.60)';
+      for (let x = 0; x < W; x++) {
+        let peak = 0;
+        const base = x * step;
+        for (let i = 0; i < step; i++) {
+          const v = Math.abs(data[base + i] || 0);
+          if (v > peak) peak = v;
+        }
+        const barH = Math.max(2, peak * H * 0.88);
+        ctx2d.fillRect(x, (H - barH) / 2, 1, barH);
+      }
+    }, () => {}); // silent on decode error
+  }).catch(() => {});
+}
+
+function updateRevUI() {
+  if (!reviewAudio) return;
+  const cur = reviewAudio.currentTime || 0;
+  const dur = revKnownDuration || 0;
+  $('rev-cur').textContent = fmtF(cur);
+  if (dur > 0) {
+    $('rev-prog').style.width = (100 * cur / dur) + '%';
   }
-  if (e.key === 'p' || e.key === 'P') {
-    pauseBtn.click();
+}
+
+// Waveform click-to-seek
+$('rev-wave').addEventListener('click', e => {
+  if (!reviewAudio || !revKnownDuration) return;
+  const rect = $('rev-wave').getBoundingClientRect();
+  const frac = (e.clientX - rect.left) / rect.width;
+  reviewAudio.currentTime = frac * revKnownDuration;
+  // Auto-play on seek
+  if (reviewAudio.paused) {
+    reviewAudio.play().catch(()=>{});
+    $('rev-icon-play').style.display  = 'none';
+    $('rev-icon-pause').style.display = 'block';
+  }
+  updateRevUI();
+});
+
+function closeReview() {
+  if (reviewAudio) { reviewAudio.pause(); reviewAudio = null; }
+  $('review-overlay').classList.remove('open');
+  // Break phase remains paused after exit (isPaused stays true)
+}
+
+$('rev-restart').addEventListener('click', () => {
+  if (reviewAudio) { reviewAudio.currentTime = 0; updateRevUI(); }
+});
+$('rev-back5').addEventListener('click', () => {
+  if (reviewAudio) { reviewAudio.currentTime = Math.max(0, reviewAudio.currentTime - 5); updateRevUI(); }
+});
+$('rev-playpause').addEventListener('click', () => {
+  if (!reviewAudio) return;
+  if (reviewAudio.paused) {
+    reviewAudio.play().catch(()=>{});
+    $('rev-icon-play').style.display  = 'none';
+    $('rev-icon-pause').style.display = 'block';
+  } else {
+    reviewAudio.pause();
+    $('rev-icon-play').style.display  = 'block';
+    $('rev-icon-pause').style.display = 'none';
+  }
+});
+$('rev-fwd5').addEventListener('click', () => {
+  if (reviewAudio && revKnownDuration) {
+    reviewAudio.currentTime = Math.min(revKnownDuration, reviewAudio.currentTime + 5);
+    updateRevUI();
+  }
+});
+$('rev-exit').addEventListener('click', () => {
+  // G4 = 392Hz short, C4 = 261.6Hz twice as long
+  beep(392,   0.40, 0.28, 'sine', 0.0);
+  beep(261.6, 0.80, 0.25, 'sine', 0.45);
+  closeReview();
+});
+
+// ═══════════════════════════════════════════════════
+// CLOSE BUTTON
+// ═══════════════════════════════════════════════════
+$('close-btn').addEventListener('click', () => {
+  ensureAudio();
+  beep(196, 0.45, 0.30, 'sine', 0.0);
+  beep(131, 0.90, 0.28, 'sine', 0.5);
+  if (phase === 'ready') {
+    // Already in rest-waiting — close/exit the app
+    setTimeout(() => {
+      try { window.close(); } catch(e) {}
+      if (!window.closed) history.back();
+    }, 1600);
+  } else {
+    // Reset everything and return to rest-waiting phase
+    stopRecording();
+    reviewBlob = null;
+    currentRound = 0;
+    blockTotal     = blockDuration();
+    progressTime   = blockTotal;
+    elapsedTime    = 0;
+    blockStartTime = null;
+    setTimeout(() => {
+      phase        = 'ready';
+      isPaused     = false;
+      phaseTimeLeft = 0;
+      render();
+    }, 1600);
   }
 });
 
-// ── Init ───────────────────────────────────────────────────────────────
-applyTheme(PHASES.WORK);
-renderMicro();
-renderMacro();
-updateSettingsUI();
-
-tickInterval = setInterval(tick, 50); // 20fps is plenty
+// ═══════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════
+phase         = 'ready';
+isPaused      = false;
+phaseTimeLeft = 0;
+blockTotal    = blockDuration();
+progressTime   = blockTotal;
+elapsedTime    = 0;
+blockStartTime = null;
+render();
+rafId = requestAnimationFrame(tick);
 </script>
 
-</body>
-</html>
+
+</body></html>
