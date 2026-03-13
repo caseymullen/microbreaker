@@ -70,6 +70,7 @@ It is impossible to guess the "right" amount of time for a round of practice. If
 If you have feedback or suggestions, email [microbreaker@gmail.com](mailto:microbreaker@gmail.com).
 ```
 
+Don't let Cloudflare hide the email. Make it a simple mailto link.
 
 -----
 
@@ -110,7 +111,7 @@ To save/close settings, use a circle button with a check mark in the upper right
 
 The "Recording" setting should come after the "audio" setting.
 
-The Audio setting section should be labeled "Notifications" and the setting should "Play audible notifications" and should default to "on".
+The Audio setting section should be labeled "Notifications" and the setting should be "Audible notifications" and should default to "on".
 
 ## Keyboard input
 
@@ -167,6 +168,7 @@ During the rest-waiting phase, display the text "Ready?" in the same font size a
 - 3-2-1 countdown beeps before each phase ends
 - A small "success fanfare" plays at the end of the chunk
 - The "alarm" at the end of rest timer has a rhythm like "da-da-da da-da DA!"
+  - When you play the "da-da-da da-da DA!" sound, each rhythmic group starts on a steady beat and has the same duration. The pause after "da-da-da" should last as long as the sound. The sound+pause for the other two rhythmic groups should have the same duration,  e.g. "DA [pause]" lasts as long as "da-da-da [pause]" and "da-da [pause]".
 - When a "work" phase starts, play a crisp double-beep
 - The "break" begins with a meditation chime, which should be a calm, low frequency tone fading over 3 seconds.
 - Mute toggle in settings
@@ -376,3 +378,73 @@ function stopRecording() {
   }
 }
 ```
+
+
+-----
+
+## Notification Sounds
+
+Here's a spec snippet based on the actual code:
+
+---
+
+## Notification Sounds
+
+All sounds use sine wave oscillators. Timing is specified as seconds from the moment the sound is triggered. Each note is described as `(frequency Hz, duration s, gain)`. Gain is approximate peak amplitude (0–1). Notes fade out exponentially to near-silence by the end of their duration.
+
+---
+
+### Work phase start
+Two rising beeps in quick succession, giving a crisp "ready, go" feel.
+- 660 Hz, 0.10s, gain 0.32, at t=0.00
+- 880 Hz, 0.18s, gain 0.32, at t=0.13
+
+---
+
+### Micro-break start
+A meditation chime — One low C2 note
+- C2: 65.4 Hz, 3s, gain 0.30, at t=0.00
+
+---
+
+### Countdown beeps (3, 2, 1 before a phase ends)
+Single beeps, fired when the phase timer crosses the 3s, 2s, and 1s marks.
+- At 3s and 2s remaining: 880 Hz, 0.11s, gain 0.42
+- At 1s remaining: 1047 Hz (C6), 0.11s, gain 0.42 — slightly higher to signal the final beat
+
+---
+
+### Chunk complete fanfare
+Four ascending notes followed by a held final note. Plays at the end of the final micro-break in a chunk.
+- 261.6 Hz (C4), 0.18s, gain 0.35, at t=0.00
+- 329.6 Hz (E4), 0.18s, gain 0.35, at t=0.16
+- 392.0 Hz (G4), 0.18s, gain 0.35, at t=0.32
+- 523.3 Hz (C5), 0.18s, gain 0.35, at t=0.48
+- 523.3 Hz (C5), 0.60s, gain 0.40, at t=0.70 — held resolution
+
+---
+
+### Rest countdown complete / "back to work" alarm
+Rhythmic "da-da-da · da-da · DA!" pattern. Three rhythmic groups, each group plus its following silence occupying exactly 0.60s (one 3-beat unit at a beat of 0.20s). The groups start on beats 0, 3, and 6.
+- Group 1 — "da da da": 440 Hz, 0.10s, gain 0.28, at t=0.00 / 0.20 / 0.40
+- Group 2 — "da da": 523 Hz, 0.10s, gain 0.30, at t=0.60 / 0.80
+- Group 3 — "DA!": 660 Hz, 0.50s, gain 0.50, at t=1.20 — long held note, louder
+
+---
+
+### App close ("goodbye")
+Two descending notes played when the close button is pressed. Low register, gentle.
+- G3: 196 Hz, 0.45s, gain 0.30, at t=0.00
+- C3: 131 Hz, 0.90s, gain 0.28, at t=0.50
+
+---
+
+### Review close
+Same descending two-note shape as app close, but an octave higher and slightly softer.
+- G4: 392 Hz, 0.40s, gain 0.28, at t=0.00
+- C4: 261.6 Hz, 0.80s, gain 0.25, at t=0.45
+
+---
+
+### Mute behavior
+All sounds are suppressed when "Audible notifications" is off in Settings. Sounds also require the audio context to have been unlocked by at least one user gesture before they will play (standard browser autoplay policy).
