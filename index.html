@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_52.html -->
-<html lang="en" style="background-color: rgb(11, 25, 16);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_53.html -->
+<html lang="en" style="background-color: rgb(8, 9, 40);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Practice">
-<meta name="theme-color" id="meta-theme" content="#0b1910">
+<meta name="theme-color" id="meta-theme" content="#080928">
 <title>Practice Timer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="./index_files/css2" rel="stylesheet">
@@ -37,7 +37,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   position: fixed; inset: 0;
   display: flex; flex-direction: column; align-items: center;
   padding-top: calc(var(--safe-top) + 10px);
-  padding-bottom: calc(var(--safe-bot) + 60px);
+  padding-bottom: calc(var(--safe-bot) + 47px);
   padding-left: var(--safe-l); padding-right: var(--safe-r);
   font-family: var(--font); color: #fff;
   transition: background-color 0.65s ease;
@@ -217,7 +217,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Close button (fixed, lower left) ══ */
 #close-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 6px); left: calc(var(--safe-l) + 18px);
+  bottom: calc(var(--safe-bot) + 1px); left: calc(var(--safe-l) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s, opacity 0.2s;
@@ -227,7 +227,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Info button (fixed, lower left — same slot as close) ══ */
 #info-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 6px); left: calc(var(--safe-l) + 18px);
+  bottom: calc(var(--safe-bot) + 1px); left: calc(var(--safe-l) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s, opacity 0.2s;
@@ -237,7 +237,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Settings gear (fixed, lower right) ══ */
 #settings-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 6px); right: calc(var(--safe-r) + 18px);
+  bottom: calc(var(--safe-bot) + 1px); right: calc(var(--safe-r) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s;
@@ -444,16 +444,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 #info-content a { color: #1a5c9a; text-decoration: underline; }
 </style>
 </head>
-<body style="background-color: rgb(11, 25, 16);">
-<div id="bg-fill" style="background-color: rgb(11, 25, 16);"></div>
+<body style="background-color: rgb(8, 9, 40);">
+<div id="bg-fill" style="background-color: rgb(8, 9, 40);"></div>
 <div id="app" style="background-color: rgb(20, 21, 96);">
   <!-- TOP -->
   <div id="top-section">
     <div id="phase-label">Micro-break</div>
     <div id="label-gap"></div>
     <div id="progress-section" style="visibility: visible;">
-      <div id="macro-bar-track"><div id="macro-bar" style="width: 36.229%;"></div></div>
-      <div id="time-progress"><strong>1:07</strong> of 5:00</div>
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 19.2099%;"></div></div>
+      <div id="time-progress"><strong>0:18</strong> of 5:00</div>
     </div>
   </div>
 
@@ -465,20 +465,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         <p>How will you achieve it?</p>
         <p style="display: none;"></p>
       </div>
-      <div id="round-counter">Round<br>2 of 5</div>
+      <div id="round-counter">Round<br>1 of 5</div>
     </div>
     <div id="ring-wrap">
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
         <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 1;"></circle>
-        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 169.889; opacity: 1;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 581.934; opacity: 1;"></circle>
       </svg>
       <div id="ring-center">
-        <div id="time-display" style="display: block;">0:12</div>
+        <div id="time-display" style="display: block;">0:03</div>
         <div id="ready-ring-text" style="display: none;">Ready?</div>
       </div>
     </div>
     <div id="lower-zone">
-      <div id="message">Audiate to intonate</div>
+      <div id="message">Flex your wrist</div>
       <div id="review-slot-lower">
         <button id="review-btn" aria-label="Review Recording" style="display: flex;">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
@@ -526,11 +526,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         </svg>
       </button>
       <button class="ctrl-btn" id="btn-play-pause" aria-label="Play/Pause">
-        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
+        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <path d="M26 20 L50 34 L26 48 Z" fill="white"></path>
         </svg>
-        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
+        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <rect x="20" y="19" width="10" height="30" rx="3" fill="white"></rect>
           <rect x="38" y="19" width="10" height="30" rx="3" fill="white"></rect>
@@ -635,7 +635,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </div>
 
 <!-- SETTINGS PANEL -->
-<div id="settings-overlay" class="">
+<div id="settings-overlay">
   <div class="s-title-row">
     <div class="s-title">Settings</div>
     <button id="s-done-btn" aria-label="Done">
@@ -714,7 +714,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     <input type="text" class="msg-inp" id="s-restq3" placeholder="Question 3 (optional)">
   </div>
   <div class="s-sec">Micro-break reminders</div>
-  <div id="msg-list"><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div></div>
+  <div id="msg-list"></div>
   <button id="add-msg-btn">+ Add reminder</button>
   <button id="s-reset-btn">Reset to defaults…</button>
   <div style="height:20px"></div>
@@ -734,13 +734,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </div>
 
 <!-- REVIEW OVERLAY -->
-<div id="review-overlay" class="open">
+<div id="review-overlay">
   <div id="rev-title">Review</div>
   <div id="rev-spacer-top"></div>
-  <div id="rev-times"><span id="rev-cur">0:12</span><span id="rev-sep"> / </span><span id="rev-dur">0:12</span></div>
+  <div id="rev-times"><span id="rev-cur">0:00</span><span id="rev-sep"> / </span><span id="rev-dur">--:--</span></div>
   <div id="rev-wave">
-    <canvas id="rev-canvas" width="1275" height="144"></canvas>
-    <div id="rev-prog" style="width: 100%;"></div>
+    <canvas id="rev-canvas"></canvas>
+    <div id="rev-prog"></div>
   </div>
   <div id="rev-controls">
     <button class="rev-btn rev-sm" id="rev-restart" aria-label="Back to start">
@@ -755,10 +755,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </svg>
     </button>
     <button class="rev-btn rev-lg" id="rev-playpause" aria-label="Play/Pause">
-      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
+      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none">
         <path d="M8 4 L28 16 L8 28 Z" fill="white"></path>
       </svg>
-      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
+      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:none">
         <rect x="4" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
         <rect x="19" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
       </svg>
@@ -1292,6 +1292,18 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// Safari bfcache restore: page may be brought back with stale DOM state
+// (overlays left open from last session). Force-close all overlays on restore.
+window.addEventListener('pageshow', e => {
+  $('review-overlay').classList.remove('open');
+  $('settings-overlay').classList.remove('open');
+  $('info-overlay').classList.remove('open');
+  $('reset-overlay').classList.remove('open');
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().then(() => { audioUnlocked = true; });
+  }
+});
+
 // iOS/iPadOS: unlock audio context on any touch, in case ensureAudio()
 // was never called (e.g. foot pedal was first interaction)
 document.addEventListener('touchstart', () => {
@@ -1474,13 +1486,19 @@ function openReview() {
   $('rev-dur').textContent = '...';
   $('rev-prog').style.width = '0%';
   $('review-overlay').classList.add('open');
-  reviewAudio.play().then(() => {
-    $('rev-icon-play').style.display  = 'none';
-    $('rev-icon-pause').style.display = 'block';
-  }).catch(() => {
-    $('rev-icon-play').style.display  = 'block';
-    $('rev-icon-pause').style.display = 'none';
-  });
+  // Attempt autoplay immediately — iOS requires play() close to the user gesture.
+  // We call it now (before metadata loads) and handle the promise separately.
+  const playPromise = reviewAudio.play();
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      $('rev-icon-play').style.display  = 'none';
+      $('rev-icon-pause').style.display = 'block';
+    }).catch(() => {
+      // Autoplay blocked (iOS) — show play button
+      $('rev-icon-play').style.display  = 'block';
+      $('rev-icon-pause').style.display = 'none';
+    });
+  }
 }
 
 function drawWaveform() {
