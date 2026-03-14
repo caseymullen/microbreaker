@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_45.html -->
-<html lang="en" style="background-color: rgb(8, 9, 40);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_52.html -->
+<html lang="en" style="background-color: rgb(11, 25, 16);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Practice">
-<meta name="theme-color" id="meta-theme" content="#080928">
+<meta name="theme-color" id="meta-theme" content="#0b1910">
 <title>Practice Timer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="./index_files/css2" rel="stylesheet">
@@ -37,7 +37,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   position: fixed; inset: 0;
   display: flex; flex-direction: column; align-items: center;
   padding-top: calc(var(--safe-top) + 10px);
-  padding-bottom: calc(var(--safe-bot) + 6px);
+  padding-bottom: calc(var(--safe-bot) + 60px);
   padding-left: var(--safe-l); padding-right: var(--safe-r);
   font-family: var(--font); color: #fff;
   transition: background-color 0.65s ease;
@@ -162,7 +162,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* Controls row */
 #controls {
   display: flex; align-items: center; justify-content: center;
-  gap: 28px; padding: 4px 0 2px; min-height: 86px;
+  gap: 28px; padding: 0; min-height: 0;
 }
 .ctrl-btn {
   background: none; border: none; color: #fff; cursor: pointer;
@@ -176,7 +176,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 
 /* Start button */
 #start-btn {
-  display: none; min-height: 86px;
+  display: none; min-height: 0;
   align-items: center; justify-content: center;
 }
 #start-btn-inner {
@@ -190,8 +190,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 }
 #start-btn-inner:active { background: rgba(255,255,255,0.22); transform: scale(0.97); }
 
-/* Review slot — empty but reserves height for visual balance */
-#review-slot { min-height: 54px; display: block; }
+/* Review slot — hidden, button moved to lower-zone */
+#review-slot { display: none; }
 /* Review button — pill with play icon + divider + waveform SVG */
 #review-btn {
   display: none;
@@ -212,12 +212,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   margin: 0 14px; flex-shrink: 0;
 }
 
-#bottom-spacer { height: 8px; flex-shrink: 0; }
+#bottom-spacer { height: 0; flex-shrink: 0; }
 
 /* ══ Close button (fixed, lower left) ══ */
 #close-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 16px); left: calc(var(--safe-l) + 18px);
+  bottom: calc(var(--safe-bot) + 6px); left: calc(var(--safe-l) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s, opacity 0.2s;
@@ -227,7 +227,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Info button (fixed, lower left — same slot as close) ══ */
 #info-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 16px); left: calc(var(--safe-l) + 18px);
+  bottom: calc(var(--safe-bot) + 6px); left: calc(var(--safe-l) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s, opacity 0.2s;
@@ -237,7 +237,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Settings gear (fixed, lower right) ══ */
 #settings-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 16px); right: calc(var(--safe-r) + 18px);
+  bottom: calc(var(--safe-bot) + 6px); right: calc(var(--safe-r) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s;
@@ -444,16 +444,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 #info-content a { color: #1a5c9a; text-decoration: underline; }
 </style>
 </head>
-<body style="background-color: rgb(8, 9, 40);">
-<div id="bg-fill" style="background-color: rgb(8, 9, 40);"></div>
+<body style="background-color: rgb(11, 25, 16);">
+<div id="bg-fill" style="background-color: rgb(11, 25, 16);"></div>
 <div id="app" style="background-color: rgb(20, 21, 96);">
   <!-- TOP -->
   <div id="top-section">
     <div id="phase-label">Micro-break</div>
     <div id="label-gap"></div>
     <div id="progress-section" style="visibility: visible;">
-      <div id="macro-bar-track"><div id="macro-bar" style="width: 20.0052%;"></div></div>
-      <div id="time-progress"><strong>1:28</strong> of 5:00</div>
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 36.229%;"></div></div>
+      <div id="time-progress"><strong>1:07</strong> of 5:00</div>
     </div>
   </div>
 
@@ -465,20 +465,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         <p>How will you achieve it?</p>
         <p style="display: none;"></p>
       </div>
-      <div id="round-counter">Round<br>1 of 5</div>
+      <div id="round-counter">Round<br>2 of 5</div>
     </div>
     <div id="ring-wrap">
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
         <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 1;"></circle>
-        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 691.15; opacity: 1;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 169.889; opacity: 1;"></circle>
       </svg>
       <div id="ring-center">
-        <div id="time-display" style="display: none;">0:01</div>
-        <div id="ready-ring-text" style="display: block;">done?</div>
+        <div id="time-display" style="display: block;">0:12</div>
+        <div id="ready-ring-text" style="display: none;">Ready?</div>
       </div>
     </div>
     <div id="lower-zone">
-      <div id="message">Flex your wrist</div>
+      <div id="message">Audiate to intonate</div>
       <div id="review-slot-lower">
         <button id="review-btn" aria-label="Review Recording" style="display: flex;">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
@@ -734,13 +734,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </div>
 
 <!-- REVIEW OVERLAY -->
-<div id="review-overlay">
+<div id="review-overlay" class="open">
   <div id="rev-title">Review</div>
   <div id="rev-spacer-top"></div>
-  <div id="rev-times"><span id="rev-cur">0:00</span><span id="rev-sep"> / </span><span id="rev-dur">--:--</span></div>
+  <div id="rev-times"><span id="rev-cur">0:12</span><span id="rev-sep"> / </span><span id="rev-dur">0:12</span></div>
   <div id="rev-wave">
-    <canvas id="rev-canvas"></canvas>
-    <div id="rev-prog"></div>
+    <canvas id="rev-canvas" width="1275" height="144"></canvas>
+    <div id="rev-prog" style="width: 100%;"></div>
   </div>
   <div id="rev-controls">
     <button class="rev-btn rev-sm" id="rev-restart" aria-label="Back to start">
@@ -755,10 +755,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </svg>
     </button>
     <button class="rev-btn rev-lg" id="rev-playpause" aria-label="Play/Pause">
-      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
         <path d="M8 4 L28 16 L8 28 Z" fill="white"></path>
       </svg>
-      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:none">
+      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
         <rect x="4" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
         <rect x="19" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
       </svg>
@@ -880,19 +880,21 @@ let recCapTimer   = null;
 let reviewAudio   = null;
 
 async function acquireMic() {
-  // Reuse existing live stream — avoids re-prompting on iPad
-  if (micStream && micStream.getTracks().some(t => t.readyState === 'live')) return true;
-  micStream = null;
+  if (micStream) return true;  // reuse existing stream
   try {
     micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
     return true;
-  } catch(e) { micStream = null; return false; }
+  } catch(e) {
+    console.warn('getUserMedia failed:', e);
+    micStream = null;
+    return false;
+  }
 }
 
 function startRecording() {
   if (!settings.recording) return;
   recChunks = [];
-  if (!micStream || !micStream.getTracks().some(t => t.readyState === 'live')) {
+  if (!micStream) {
     acquireMic().then(ok => { if (ok) _beginRec(); });
     return;
   }
@@ -900,9 +902,12 @@ function startRecording() {
 }
 
 function _beginRec() {
-  if (!micStream) return;
+  if (!micStream) { console.warn('_beginRec: no micStream'); return; }
   try {
-    const mr = new MediaRecorder(micStream);
+    // Pick a supported MIME type
+    const mimeType = ['audio/webm;codecs=opus','audio/webm','audio/ogg','']
+      .find(m => m === '' || MediaRecorder.isTypeSupported(m)) || '';
+    const mr = new MediaRecorder(micStream, mimeType ? { mimeType } : undefined);
     mediaRecorder = mr;
     mr.ondataavailable = e => { if (e.data?.size > 0) recChunks.push(e.data); };
     mr.onstop = () => {
@@ -912,8 +917,11 @@ function _beginRec() {
       }
     };
     mr.start(250);
+    console.log('Recording started, mimeType:', mr.mimeType);
     recCapTimer = setTimeout(() => stopRecording(), 5 * 60 * 1000);
-  } catch(e) { console.warn('MediaRecorder start failed', e); }
+  } catch(e) {
+    console.warn('MediaRecorder start failed:', e);
+  }
 }
 
 function stopRecording() {
@@ -1186,7 +1194,7 @@ function render() {
   const showReady = isReady || waitingToAdvance;
   elTimeDisplay.style.display = (!showReady && (isWork || isBreak || isRest)) ? 'block' : 'none';
   elReadyRing.style.display   = showReady ? 'block' : 'none';
-  elReadyRing.textContent     = waitingToAdvance ? 'done?' : 'Ready?';
+  elReadyRing.textContent     = waitingToAdvance ? 'Done?' : 'Ready?';
   // Also show the ring strokes when waitingToAdvance (they're hidden in isReady)
   if (waitingToAdvance) {
     $('ring-bg').style.opacity = '1';
@@ -1279,8 +1287,17 @@ document.addEventListener('keydown', e => {
 });
 
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (!document.hidden && audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().then(() => { audioUnlocked = true; });
+  }
 });
+
+// iOS/iPadOS: unlock audio context on any touch, in case ensureAudio()
+// was never called (e.g. foot pedal was first interaction)
+document.addEventListener('touchstart', () => {
+  if (!audioCtx) { ensureAudio(); return; }
+  if (audioCtx.state === 'suspended') audioCtx.resume().then(() => { audioUnlocked = true; });
+}, { once: false, passive: true });
 
 // =================================================
 // SETTINGS PANEL
@@ -1298,7 +1315,9 @@ const STEP_CFG = {
   restDur:  { min: 30,  max: 600, step: 15, fmt: v => fmtDur(v), el: 'sv-rest'  },
 };
 
+let _syncingUI = false;
 function syncSettingsUI() {
+  _syncingUI = true;
   refreshCalc();
   $('s-notify').checked = settings.notify !== false;
   $('s-record').checked = settings.recording;
@@ -1307,6 +1326,7 @@ function syncSettingsUI() {
   $('s-restq1').value = rq[0] || '';
   $('s-restq2').value = rq[1] || '';
   $('s-restq3').value = rq[2] || '';
+  _syncingUI = false;
 }
 
 function refreshCalc() {
@@ -1326,13 +1346,23 @@ document.querySelectorAll('.step-btn').forEach(btn => {
   });
 });
 
-$('s-notify').addEventListener('change', e => { settings.notify = e.target.checked; saveSettings(); });
-$('s-auto').addEventListener('change',   e => { settings.autoAdvance = e.target.checked; saveSettings(); });
+$('s-notify').addEventListener('change', e => { if (_syncingUI) return; settings.notify = e.target.checked; saveSettings(); });
+$('s-auto').addEventListener('change',   e => { if (_syncingUI) return; settings.autoAdvance = e.target.checked; saveSettings(); });
 
 $('s-record').addEventListener('change', async e => {
-  settings.recording = e.target.checked;
+  if (_syncingUI) return;
+  const wantOn = e.target.checked;
+  // Guard against spurious duplicate events
+  if (wantOn === settings.recording) return;
+  settings.recording = wantOn;
   if (settings.recording) {
-    // Request mic immediately within user gesture context (critical for iPadOS)
+    // Ensure any prior stream is fully released before requesting a new one
+    if (micStream) {
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
+      // Small delay so OS releases the hardware before we re-request
+      await new Promise(r => setTimeout(r, 150));
+    }
     const ok = await acquireMic();
     if (ok && phase === 'work') startRecording();
   } else {
