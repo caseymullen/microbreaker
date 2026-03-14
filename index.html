@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_54.html -->
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_55.html -->
 <html lang="en" style="background-color: rgb(8, 9, 40);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -218,7 +218,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Close button (fixed, lower left) ══ */
 #close-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 1px); left: calc(var(--safe-l) + 18px);
+  bottom: 0; left: calc(var(--safe-l) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s, opacity 0.2s;
@@ -228,7 +228,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Info button (fixed, lower left — same slot as close) ══ */
 #info-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 1px); left: calc(var(--safe-l) + 18px);
+  bottom: 0; left: calc(var(--safe-l) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s, opacity 0.2s;
@@ -238,7 +238,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 /* ══ Settings gear (fixed, lower right) ══ */
 #settings-btn {
   position: fixed;
-  bottom: calc(var(--safe-bot) + 1px); right: calc(var(--safe-r) + 18px);
+  bottom: 0; right: calc(var(--safe-r) + 18px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s;
@@ -453,8 +453,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     <div id="phase-label">Micro-break</div>
     <div id="label-gap"></div>
     <div id="progress-section" style="visibility: visible;">
-      <div id="macro-bar-track"><div id="macro-bar" style="width: 17.2968%;"></div></div>
-      <div id="time-progress"><strong>0:32</strong> of 5:00</div>
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 15.6507%;"></div></div>
+      <div id="time-progress"><strong>0:47</strong> of 5:00</div>
     </div>
   </div>
 
@@ -471,10 +471,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     <div id="ring-wrap">
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
         <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 1;"></circle>
-        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 317.491; opacity: 1;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 89.946; opacity: 1;"></circle>
       </svg>
       <div id="ring-center">
-        <div id="time-display" style="display: block;">0:09</div>
+        <div id="time-display" style="display: block;">0:14</div>
         <div id="ready-ring-text" style="display: none;">Ready?</div>
       </div>
     </div>
@@ -631,7 +631,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </tbody>
     </table>
     <p>If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.</p>
-    <p>If you have feedback or suggestions, email <a href="mailto:microbreaker@gmail.com">microbreaker@gmail.com</a>.</p>
+    <p>If you have feedback or suggestions, email <a href="file:///C:/cdn-cgi/l/email-protection#a2cfcbc1d0cdc0d0c7c3c9c7d0e2c5cfc3cbce8cc1cdcf"><span class="__cf_email__" data-cfemail="036e6a60716c6171666268667143646e626a6f2d606c6e">[email&nbsp;protected]</span></a>.</p>
   <p style="opacity:0.45;margin-top:12px;">Version 2026-03-14-21:50</p>
   </div>
 </div>
@@ -739,10 +739,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 <div id="review-overlay" class="">
   <div id="rev-title">Review</div>
   <div id="rev-spacer-top"></div>
-  <div id="rev-times"><span id="rev-cur">0:06</span><span id="rev-sep"> / </span><span id="rev-dur">0:07</span></div>
+  <div id="rev-times"><span id="rev-cur">0:03</span><span id="rev-sep"> / </span><span id="rev-dur">0:03</span></div>
   <div id="rev-wave">
-    <canvas id="rev-canvas" width="1274" height="144"></canvas>
-    <div id="rev-prog" style="width: 87.1654%;"></div>
+    <canvas id="rev-canvas" width="3840" height="216"></canvas>
+    <div id="rev-prog" style="width: 100%;"></div>
   </div>
   <div id="rev-controls">
     <button class="rev-btn rev-sm" id="rev-restart" aria-label="Back to start">
@@ -757,10 +757,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </svg>
     </button>
     <button class="rev-btn rev-lg" id="rev-playpause" aria-label="Play/Pause">
-      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
+      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
         <path d="M8 4 L28 16 L8 28 Z" fill="white"></path>
       </svg>
-      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
+      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
         <rect x="4" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
         <rect x="19" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
       </svg>
@@ -780,7 +780,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   <div id="rev-hint">Tap waveform to jump to that spot.<br>Press [ENTER] to close.</div>
 </div>
 
-<script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="file:///C:/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 'use strict';
 
 // =================================================
@@ -1461,13 +1461,16 @@ function openReview() {
   const url = URL.createObjectURL(reviewBlob);
   if (reviewAudio) { reviewAudio.pause(); reviewAudio = null; }
   reviewAudio = new Audio(url);
+  reviewAudio.load(); // explicit load() helps iOS pre-buffer
 
   // iOS: call play() synchronously within the user gesture, before any other work.
-  // This establishes the playback intent; the actual audio starts once data loads.
+  // ensureAudio() resumes the AudioContext which may be suspended on iOS.
+  ensureAudio();
   reviewAudio.play().then(() => {
     $('rev-icon-play').style.display  = 'none';
     $('rev-icon-pause').style.display = 'block';
-  }).catch(() => {
+  }).catch(err => {
+    console.warn('review autoplay failed:', err);
     $('rev-icon-play').style.display  = 'block';
     $('rev-icon-pause').style.display = 'none';
   });
@@ -1598,36 +1601,6 @@ $('rev-exit').addEventListener('click', closeReview);
 $('info-btn').addEventListener('click', () => { $('info-overlay').classList.add('open'); });
 $('info-close-btn').addEventListener('click', () => { $('info-overlay').classList.remove('open'); });
 
-$('close-btn').addEventListener('click', () => {
-  ensureAudio();
-  beep(196, 0.45, 0.30, 'sine', 0.0);
-  beep(131, 0.90, 0.28, 'sine', 0.5);
-  if (phase === 'ready') {
-    setTimeout(() => {
-      try { window.close(); } catch(e) {}
-      if (!window.closed) history.back();
-    }, 1600);
-  } else {
-    stopRecording();
-    reviewBlob = null;
-    currentRound = 0;
-    chunkTotal = chunkDuration(); progressTime = chunkTotal;
-    elapsedTime = 0; chunkStartTime = null;
-    setTimeout(() => {
-      phase = 'ready'; isPaused = false; phaseTimeLeft = 0;
-      waitingToAdvance = false;
-      render();
-    }, 1600);
-  }
-});
-
-
-// =================================================
-// INFO & CLOSE BUTTONS
-// =================================================
-$('info-btn').addEventListener('click', () => { $('info-overlay').classList.add('open'); });
-$('info-close-btn').addEventListener('click', () => { $('info-overlay').classList.remove('open'); });
-
 // =================================================
 // BOOT
 // =================================================
@@ -1642,6 +1615,7 @@ chunkStartTime   = null;
 render();
 rafId = requestAnimationFrame(tick);
 </script>
+
 <!-- DEBUG LINES - remove after testing -->
 <div id="debug-red" style="position:fixed;bottom:0;left:0;right:0;height:2px;background:red;z-index:9999;pointer-events:none;"></div>
 <div id="debug-yellow" style="position:fixed;bottom:calc(var(--safe-bot) + 1px);left:0;right:0;height:2px;background:yellow;z-index:9998;pointer-events:none;"></div>
