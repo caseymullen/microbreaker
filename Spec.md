@@ -98,6 +98,8 @@ Note that when the user hits the "Next track" and "previous track" buttons, the 
 
 Leave space below the "audio-player" controls for the "Review Recording" button to appear. Also leave a little bit of "blank" space at the bottom of the screen, even when the "Review Recording" is showing.
 
+All "rectangular" buttons with text in them should be very "rounded" at the ends. Each end should be a semi-circle with no flat spot.
+
 -----
 
 ## Settings Controls
@@ -125,9 +127,9 @@ The "keys" act differently in different phases:
 | Phase         | Space | Enter    |
 |--------------|-------|---------|
 |Work | Pause/Play |"next track"|
-|Break | Pause/Play |"next track" |
-|Review | Pause/Play |restart from beginning |
-|Rest-coundown     |Pause/Play|"next track"|
+|Break | Pause/Play |"Review Recording"|
+|Review | Pause/Play |Close|
+|Rest-countdown     |Pause/Play|"next track"|
 |Rest-waiting|"Start Practice"|"Start Practice"|
 
 -----
