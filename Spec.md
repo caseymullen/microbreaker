@@ -63,9 +63,16 @@ The app encourages working in **chuncks** of 5-10 minutes, with 1-3 minute rests
 
 **Recording yourself** is encouraged! Turn on "record/review practice" in settings. Your practice will always be recorded, and you can review it during the micro-break. Click the recording waveform to jump around during playback.
 
-There are **keyboard shortcuts** designed to be used with a "page turner" footpedal that can emulate a "space bar" or "enter" key. The "space" generally acts as play/pause. "Enter" triggers "skip to the end". Both keys trigger the "Start Practice" button in the "rest" phase. "Enter" skips back 5 seconds in the "review" phase.
+There are **keyboard shortcuts** designed to be used with a "page turner" footpedal that can emulate a "space bar" or "enter" key. They are designed so that you seldom need to touch the screen during a practice session (your hands are needed for your instrument!)
+| Phase         | Space | Enter    |
+|--------------|-------|---------|
+|Practice | Pause/Play |End Round|
+|Break | Pause/Play |Review Recording|
+|Review | Pause/Play |Close|
+|Rest "Countdown"     |Pause/Play|End Countdown|
+|Rest "Ready?"|"Start Practice"|"Start Practice"|
 
-It is impossible to guess the "right" amount of time for a round of practice. If you turn off "Automatically advance" in settings, you will get an audible notification that the phase has ended, but it will wait for you to manually advance to the next phase (by hitting the "next track" button).
+If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.
 
 If you have feedback or suggestions, email [microbreaker@gmail.com](mailto:microbreaker@gmail.com).
 ```
@@ -121,16 +128,13 @@ Listen for keyboard input. We really only listen for "Space" and "Enter", which 
 All editable text fields should support virtual keyboard input with "Assistive Touch" turn on the iPhone/iPad. Basically there should be some way (ideally a standard iOS based way) to bring up the on-screen keyboard even though the system thinks that there is a keyboard attached, because that "keyboard" is likely to just be a foot pedal.
 
 The "keys" act differently in different phases:
-
- will play/pause. "Enter" acts like "next track" (play/pause)
-
 | Phase         | Space | Enter    |
 |--------------|-------|---------|
-|Work | Pause/Play |"next track"|
-|Break | Pause/Play |"Review Recording"|
+|Practice | Pause/Play |End Round|
+|Break | Pause/Play |Review Recording|
 |Review | Pause/Play |Close|
-|Rest-countdown     |Pause/Play|"next track"|
-|Rest-waiting|"Start Practice"|"Start Practice"|
+|Rest "Countdown"     |Pause/Play|End Countdown|
+|Rest "Ready?"|"Start Practice"|"Start Practice"|
 
 -----
 
