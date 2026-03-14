@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_57.html -->
-<html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_59.html -->
+<html lang="en" style="background-color: rgb(13, 13, 13);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Practice">
-<meta name="theme-color" id="meta-theme" content="#4d1903">
+<meta name="theme-color" id="meta-theme" content="#0d0d0d">
 <title>Practice Timer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="./index_files/css2" rel="stylesheet">
@@ -444,37 +444,37 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 #info-content a { color: #1a5c9a; text-decoration: underline; }
 </style>
 </head>
-<body style="background-color: rgb(77, 25, 3);">
-<div id="bg-fill" style="background-color: rgb(77, 25, 3);"></div>
-<div id="app" style="background-color: rgb(184, 60, 8);">
+<body style="background-color: rgb(13, 13, 13);">
+<div id="bg-fill" style="background-color: rgb(13, 13, 13);"></div>
+<div id="app" style="background-color: rgb(30, 30, 30);">
   <!-- TOP -->
   <div id="top-section">
-    <div id="phase-label">Practice</div>
+    <div id="phase-label"></div>
     <div id="label-gap"></div>
-    <div id="progress-section" style="visibility: visible;">
-      <div id="macro-bar-track"><div id="macro-bar" style="width: 42.174%;"></div></div>
-      <div id="time-progress"><strong>0:55</strong> of 5:00</div>
+    <div id="progress-section" style="visibility: hidden;">
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 0.539467%;"></div></div>
+      <div id="time-progress"><strong>0:00</strong> of 5:00</div>
     </div>
   </div>
 
   <!-- MIDDLE -->
   <div id="mid-section">
     <div id="mid-zone">
-      <div id="rest-questions" style="display: none;">
+      <div id="rest-questions" style="display: flex;">
         <p>What is your goal?</p>
         <p>How will you achieve it?</p>
         <p style="display: none;"></p>
       </div>
-      <div id="round-counter">Round<br>3 of 5</div>
+      <div id="round-counter"></div>
     </div>
     <div id="ring-wrap">
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-        <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 1;"></circle>
-        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 99.936; opacity: 1;"></circle>
+        <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 0;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 77.129; opacity: 0;"></circle>
       </svg>
       <div id="ring-center">
-        <div id="time-display" style="display: block;">0:39</div>
-        <div id="ready-ring-text" style="display: none;">Ready?</div>
+        <div id="time-display" style="display: none;">0:40</div>
+        <div id="ready-ring-text" style="display: block;">Ready?</div>
       </div>
     </div>
     <div id="lower-zone">
@@ -518,7 +518,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 
   <!-- BOTTOM -->
   <div id="bottom-section">
-    <div id="controls" style="display: flex;">
+    <div id="controls" style="display: none;">
       <button class="ctrl-btn" id="btn-prev" aria-label="Restart phase">
         <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
           <rect x="7" y="11" width="5" height="24" rx="2" fill="white"></rect>
@@ -526,11 +526,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         </svg>
       </button>
       <button class="ctrl-btn" id="btn-play-pause" aria-label="Play/Pause">
-        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
+        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <path d="M26 20 L50 34 L26 48 Z" fill="white"></path>
         </svg>
-        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
+        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <rect x="20" y="19" width="10" height="30" rx="3" fill="white"></rect>
           <rect x="38" y="19" width="10" height="30" rx="3" fill="white"></rect>
@@ -543,7 +543,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         </svg>
       </button>
     </div>
-    <div id="start-btn" style="display: none;">
+    <div id="start-btn" style="display: flex;">
       <button id="start-btn-inner">Start Practice</button>
     </div>
     <div id="review-slot"></div>
@@ -552,7 +552,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </div>
 
 <!-- Close button (fixed, lower left) -->
-<button id="close-btn" aria-label="Close app" style="opacity: 1; pointer-events: auto;">
+<button id="close-btn" aria-label="Close app" style="opacity: 0; pointer-events: none;">
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
     <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
     <path d="M13 13 L25 25M25 13 L13 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
@@ -560,7 +560,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </button>
 
 <!-- Info button (fixed, lower left — shown in rest/ready phases) -->
-<button id="info-btn" aria-label="About this app" style="opacity: 0; pointer-events: none;">
+<button id="info-btn" aria-label="About this app" style="opacity: 1; pointer-events: auto;">
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
     <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
     <text x="19" y="25" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-style="italic" fill="currentColor">i</text>
@@ -579,7 +579,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </button>
 
 <!-- INFO OVERLAY -->
-<div id="info-overlay">
+<div id="info-overlay" class="open">
   <button id="info-close-btn" aria-label="Close">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
@@ -592,13 +592,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     <p>The app encourages working in <strong>chunks</strong> of 5-10 minutes, with 1-3 minute rests between chunks.</p>
     <p><strong>Interleaved practice</strong> is encouraged! Choose different pieces/passages/etudes/goals for each practice chunk. See Molly's work for the compelling motivation for this.</p>
     <p><strong>Recording yourself</strong> is encouraged! Turn on "record/review practice" in settings. Your practice will always be recorded, and you can review it during the micro-break. Click the recording waveform to jump around during playback.</p>
-    <p>There are <strong>keyboard shortcuts</strong> designed to be used with a "page turner" footpedal that can emulate a "space bar" or "enter" key. They are designed so that you seldom need to touch the screen during a practice session (your hands are needed for your instrument!)</p>
+    <p>The <strong>keyboard shortcuts</strong> work with a "page turner" footpedal (that can emulate a "SPACE" or "ENTER" key.) They eliminate most of your need to touch the screen during a normal practice flow.</p>
     <table style="width:100%;border-collapse:collapse;font-size:clamp(11px,3vw,15px);font-weight:300;margin-top:4px;">
       <thead>
         <tr style="border-bottom:1px solid rgba(0,0,0,0.18);">
           <th style="text-align:left;padding:5px 8px 5px 0;font-weight:600;">Phase</th>
-          <th style="text-align:center;padding:5px 8px;font-weight:600;">Space</th>
-          <th style="text-align:center;padding:5px 0 5px 8px;font-weight:600;">Enter</th>
+          <th style="text-align:center;padding:5px 8px;font-weight:600;">SPACE</th>
+          <th style="text-align:center;padding:5px 0 5px 8px;font-weight:600;">ENTER</th>
         </tr>
       </thead>
       <tbody>
@@ -608,7 +608,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
           <td style="text-align:center;padding:5px 0 5px 8px;">End Round</td>
         </tr>
         <tr style="border-bottom:1px solid rgba(0,0,0,0.08);">
-          <td style="padding:5px 8px 5px 0;">Break</td>
+          <td style="padding:5px 8px 5px 0;">Micro-Break</td>
           <td style="text-align:center;padding:5px 8px;">Pause / Play</td>
           <td style="text-align:center;padding:5px 0 5px 8px;">Review Recording</td>
         </tr>
@@ -631,7 +631,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     </table>
     <p>If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.</p>
     <p>If you have feedback or suggestions, email <a href="file:///C:/cdn-cgi/l/email-protection#a2cfcbc1d0cdc0d0c7c3c9c7d0e2c5cfc3cbce8cc1cdcf"><span class="__cf_email__" data-cfemail="036e6a60716c6171666268667143646e626a6f2d606c6e">[email&nbsp;protected]</span></a>.</p>
-  <p style="opacity:0.45;margin-top:12px;">Version 2026-03-14-22:22</p>
+  <p style="opacity:0.45;margin-top:12px;">Version 2026-03-14-23:18</p>
   </div>
 </div>
 
@@ -735,13 +735,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </div>
 
 <!-- REVIEW OVERLAY -->
-<div id="review-overlay">
+<div id="review-overlay" class="">
   <div id="rev-title">Review</div>
   <div id="rev-spacer-top"></div>
-  <div id="rev-times"><span id="rev-cur">0:00</span><span id="rev-sep"> / </span><span id="rev-dur">--:--</span></div>
+  <div id="rev-times"><span id="rev-cur">0:03</span><span id="rev-sep"> / </span><span id="rev-dur">0:03</span></div>
   <div id="rev-wave">
-    <canvas id="rev-canvas"></canvas>
-    <div id="rev-prog"></div>
+    <canvas id="rev-canvas" width="871" height="144"></canvas>
+    <div id="rev-prog" style="width: 100%;"></div>
   </div>
   <div id="rev-controls">
     <button class="rev-btn rev-sm" id="rev-restart" aria-label="Back to start">
@@ -756,10 +756,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </svg>
     </button>
     <button class="rev-btn rev-lg" id="rev-playpause" aria-label="Play/Pause">
-      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
         <path d="M8 4 L28 16 L8 28 Z" fill="white"></path>
       </svg>
-      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:none">
+      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
         <rect x="4" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
         <rect x="19" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
       </svg>
@@ -1485,14 +1485,22 @@ function openReview() {
       drawWaveform();
     } else {
       $('rev-dur').textContent = '...';
-      reviewAudio.currentTime = 1e9;
+      // Safari duration=Infinity workaround: only seek if paused to avoid
+      // interrupting playback on iOS.
+      if (reviewAudio.paused) {
+        reviewAudio.currentTime = 1e9;
+      }
+      // If playing, ondurationchange will fire naturally as data buffers.
     }
   };
   reviewAudio.ondurationchange = () => {
     if (isFinite(reviewAudio.duration) && reviewAudio.duration > 0 && revKnownDuration === 0) {
       revKnownDuration = reviewAudio.duration;
       $('rev-dur').textContent = fmtF(revKnownDuration);
-      reviewAudio.currentTime = 0;
+      // Only seek back to 0 if we actually seeked to 1e9 (i.e. was paused)
+      if (reviewAudio.paused && reviewAudio.currentTime > 1) {
+        reviewAudio.currentTime = 0;
+      }
       drawWaveform();
     }
   };

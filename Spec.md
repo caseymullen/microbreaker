@@ -63,8 +63,8 @@ The app encourages working in **chuncks** of 5-10 minutes, with 1-3 minute rests
 
 **Recording yourself** is encouraged! Turn on "record/review practice" in settings. Your practice will always be recorded, and you can review it during the micro-break. Click the recording waveform to jump around during playback.
 
-There are **keyboard shortcuts** designed to be used with a "page turner" footpedal that can emulate a "space bar" or "enter" key. They are designed so that you seldom need to touch the screen during a practice session (your hands are needed for your instrument!)
-| Phase         | Space | Enter    |
+The **keyboard shortcuts** work with a "page turner" footpedal (that can emulate a "SPACE" or "ENTER" key.) They eliminate most of your need to touch the screen during a normal practice flow.
+| Phase         | SPACE | ENTER    |
 |--------------|-------|---------|
 |Practice | Pause/Play |End Round|
 |Micro-Break | Pause/Play |Review Recording|
