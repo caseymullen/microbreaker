@@ -67,7 +67,7 @@ There are **keyboard shortcuts** designed to be used with a "page turner" footpe
 | Phase         | Space | Enter    |
 |--------------|-------|---------|
 |Practice | Pause/Play |End Round|
-|Break | Pause/Play |Review Recording|
+|Micro-Break | Pause/Play |Review Recording|
 |Review | Pause/Play |Close|
 |Rest "Countdown"     |Pause/Play|End Countdown|
 |Rest "Ready?"|"Start Practice"|"Start Practice"|
