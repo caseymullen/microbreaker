@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_64.html -->
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_67.html -->
 <html lang="en" style="background-color: rgb(8, 9, 40);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -37,7 +37,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   position: fixed; inset: 0;
   display: flex; flex-direction: column; align-items: center;
   padding-top: calc(var(--safe-top) + 10px);
-  padding-bottom: 57px;
+  padding-bottom: 42px;
   padding-left: var(--safe-l); padding-right: var(--safe-r);
   font-family: var(--font); color: #fff;
   transition: background-color 0.65s ease;
@@ -145,7 +145,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   padding-top: 14px;
 }
 #review-slot-lower {
-  flex: 1; display: flex; align-items: center; justify-content: center;
+  flex: 1; display: flex; align-items: center; justify-content: flex-end;
+  padding-bottom: 12px;
 }
 #message {
   font-size: clamp(17px, 5vw, 24px); font-weight: 400; letter-spacing: 0.06em;
@@ -185,7 +186,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   border: 1.5px solid rgba(255,255,255,0.40);
   border-radius: 999px; color: #fff; font-family: var(--font);
   font-size: clamp(17px, 5vw, 22px); font-weight: 500; letter-spacing: 0.10em;
-  padding: clamp(11px, 3vw, 16px) clamp(36px, 10vw, 52px);
+  padding: clamp(11px, 3vw, 16px) clamp(20px, 5vw, 28px);
   cursor: pointer; -webkit-appearance: none;
   transition: background 0.15s, transform 0.1s;
 }
@@ -453,8 +454,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     <div id="phase-label">Micro-break</div>
     <div id="label-gap"></div>
     <div id="progress-section" style="visibility: visible;">
-      <div id="macro-bar-track"><div id="macro-bar" style="width: 16.8519%;"></div></div>
-      <div id="time-progress"><strong>0:28</strong> of 5:00</div>
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 38.7312%;"></div></div>
+      <div id="time-progress"><strong>0:34</strong> of 5:00</div>
     </div>
   </div>
 
@@ -466,20 +467,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         <p>How will you achieve it?</p>
         <p style="display: none;"></p>
       </div>
-      <div id="round-counter">Round<br>1 of 5</div>
+      <div id="round-counter">Round<br>2 of 5</div>
     </div>
     <div id="ring-wrap">
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
         <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 1;"></circle>
-        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 255.988; opacity: 1;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 515.05; opacity: 1;"></circle>
       </svg>
       <div id="ring-center">
-        <div id="time-display" style="display: block;">0:10</div>
+        <div id="time-display" style="display: block;">0:04</div>
         <div id="ready-ring-text" style="display: none;">Ready?</div>
       </div>
     </div>
     <div id="lower-zone">
-      <div id="message">Flex your wrist</div>
+      <div id="message">Audiate to intonate</div>
       <div id="review-slot-lower">
         <button id="review-btn" aria-label="Review Recording" style="display: flex;">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
@@ -527,11 +528,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         </svg>
       </button>
       <button class="ctrl-btn" id="btn-play-pause" aria-label="Play/Pause">
-        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
+        <svg id="icon-play" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <path d="M26 20 L50 34 L26 48 Z" fill="white"></path>
         </svg>
-        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: none;">
+        <svg id="icon-pause" width="68" height="68" viewBox="0 0 68 68" fill="none" style="display: block;">
           <circle cx="34" cy="34" r="32" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.09)"></circle>
           <rect x="20" y="19" width="10" height="30" rx="3" fill="white"></rect>
           <rect x="38" y="19" width="10" height="30" rx="3" fill="white"></rect>
@@ -632,7 +633,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     </table>
     <p>If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.</p>
     <p>If you have feedback or suggestions, email <a href="file:///C:/cdn-cgi/l/email-protection#a2cfcbc1d0cdc0d0c7c3c9c7d0e2c5cfc3cbce8cc1cdcf"><span class="__cf_email__" data-cfemail="036e6a60716c6171666268667143646e626a6f2d606c6e">[email&nbsp;protected]</span></a>.</p>
-  <p style="opacity:0.45;margin-top:12px;">Version 2026-03-15-00:22</p>
+  <p style="opacity:0.45;margin-top:12px;">Version 2026-03-15-00:40</p>
   </div>
 </div>
 
@@ -736,13 +737,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </div>
 
 <!-- REVIEW OVERLAY -->
-<div id="review-overlay" class="">
+<div id="review-overlay">
   <div id="rev-title">Review</div>
   <div id="rev-spacer-top"></div>
-  <div id="rev-times"><span id="rev-cur">0:04</span><span id="rev-sep"> / </span><span id="rev-dur">0:04</span></div>
+  <div id="rev-times"><span id="rev-cur">0:00</span><span id="rev-sep"> / </span><span id="rev-dur">--:--</span></div>
   <div id="rev-wave">
-    <canvas id="rev-canvas" width="1274" height="144"></canvas>
-    <div id="rev-prog" style="width: 100%;"></div>
+    <canvas id="rev-canvas"></canvas>
+    <div id="rev-prog"></div>
   </div>
   <div id="rev-controls">
     <button class="rev-btn rev-sm" id="rev-restart" aria-label="Back to start">
@@ -757,10 +758,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </svg>
     </button>
     <button class="rev-btn rev-lg" id="rev-playpause" aria-label="Play/Pause">
-      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: block;">
+      <svg id="rev-icon-play" width="32" height="32" viewBox="0 0 32 32" fill="none">
         <path d="M8 4 L28 16 L8 28 Z" fill="white"></path>
       </svg>
-      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display: none;">
+      <svg id="rev-icon-pause" width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:none">
         <rect x="4" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
         <rect x="19" y="3" width="9" height="26" rx="2.5" fill="white"></rect>
       </svg>
@@ -919,7 +920,6 @@ function _beginRec() {
       }
     };
     mr.start(250);
-    console.log('Recording started, mimeType:', mr.mimeType);
     recCapTimer = setTimeout(() => stopRecording(), 5 * 60 * 1000);
   } catch(e) {
     console.warn('MediaRecorder start failed:', e);
@@ -1646,48 +1646,6 @@ render();
 rafId = requestAnimationFrame(tick);
 </script>
 
-<!-- DEBUG LINES - remove after testing -->
-<div id="debug-red" style="position:fixed;bottom:0;left:0;right:0;height:2px;background:red;z-index:9999;pointer-events:none;"></div>
-<div id="debug-yellow" style="position:fixed;bottom:calc(var(--safe-bot) + 1px);left:0;right:0;height:2px;background:yellow;z-index:9998;pointer-events:none;"></div>
-<div id="debug-pink" style="position: fixed; left: 0px; right: 0px; height: 2px; background: hotpink; z-index: 9997; pointer-events: none; top: 847px;"></div>
-<div id="debug-green" style="position: fixed; left: 0px; right: 0px; height: 2px; background: lime; z-index: 9996; pointer-events: none; top: 847px;"></div>
-<script>
-(function positionDebugLines() {
-  function update() {
-    var bs       = document.getElementById('bottom-section');
-    var app      = document.getElementById('app');
-    var closebtn = document.getElementById('close-btn');
-    var pink     = document.getElementById('debug-pink');
-    var green    = document.getElementById('debug-green');
-    if (bs && pink) {
-      var r = bs.getBoundingClientRect();
-      pink.style.top = r.bottom + 'px';
-    }
-    if (closebtn && green) {
-      var r2 = closebtn.getBoundingClientRect();
-      green.style.top = r2.top + 'px';
-    }
-    // Log measurements to console
-    if (bs && app && closebtn) {
-      var bsR  = bs.getBoundingClientRect();
-      var appR = app.getBoundingClientRect();
-      var cbR  = closebtn.getBoundingClientRect();
-      console.log('[DEBUG LAYOUT]',
-        'viewport h=' + window.innerHeight,
-        '| app.bottom=' + appR.bottom.toFixed(1),
-        '| app paddingBottom=' + getComputedStyle(app).paddingBottom,
-        '| bottomSection.bottom=' + bsR.bottom.toFixed(1),
-        '| bottomSection.height=' + bsR.height.toFixed(1),
-        '| closeBtn.top=' + cbR.top.toFixed(1),
-        '| closeBtn.height=' + cbR.height.toFixed(1),
-        '| gap(pink-green)=' + (bsR.bottom - cbR.top).toFixed(1)
-      );
-    }
-  }
-  requestAnimationFrame(function(){ requestAnimationFrame(update); });
-  window.addEventListener('resize', update);
-})();
-</script>
 
 
 
