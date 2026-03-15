@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_70.html -->
-<html lang="en" style="background-color: rgb(13, 13, 13);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_73.html -->
+<html lang="en" style="background-color: rgb(11, 11, 11);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Practice">
-<meta name="theme-color" id="meta-theme" content="#0d0d0d">
+<meta name="theme-color" id="meta-theme" content="#0b0b0b">
 <title>Practice Timer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="./index_files/css2" rel="stylesheet">
@@ -296,7 +296,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   width: 50px; height: 28px; border-radius: 14px;
   background: rgba(255,255,255,0.18); transition: background 0.2s;
 }
-.tog-sw input:checked ~ .tog-track { background: #4a9; }
+.tog-sw input:checked ~ .tog-track { background: #1a3d28; }
 .tog-thumb {
   position: absolute; left: 3px;
   width: 22px; height: 22px; border-radius: 50%;
@@ -428,10 +428,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 ══════════════════════════════════════ */
 #info-overlay {
   display: none; position: fixed; inset: 0; z-index: 250;
-  background: #fff; color: #111; font-family: var(--font);
+  background: #f5efe6; color: #111; font-family: var(--font);
   padding: calc(var(--safe-top) + 14px) 28px calc(var(--safe-bot) + 28px);
   overflow-y: auto; -webkit-overflow-scrolling: touch;
   flex-direction: column;
+  background-image: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.13) 100%);
 }
 #info-overlay.open { display: flex; }
 #info-close-btn {
@@ -441,13 +442,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 }
 #info-close-btn:active { color: #000; }
 #info-content { display: flex; flex-direction: column; gap: 20px; max-width: 600px; align-self: center; width: 100%; }
-#info-content p { font-size: clamp(12px, 3.2vw, 16px); font-weight: 300; line-height: 1.6; color: #111; }
+#info-content p { font-size: clamp(12px, 3.2vw, 16px); font-weight: 300; line-height: 1.6; color: #2a2018; }
 #info-content strong { font-weight: 600; }
 #info-content a { color: #1a5c9a; text-decoration: underline; }
 </style>
 </head>
-<body style="background-color: rgb(13, 13, 13);">
-<div id="bg-fill" style="background-color: rgb(13, 13, 13);"></div>
+<body style="background-color: rgb(11, 11, 11);">
+<div id="bg-fill" style="background-color: rgb(11, 11, 11);"></div>
 <div id="app" style="background-color: rgb(30, 30, 30);">
   <!-- TOP -->
   <div id="top-section">
@@ -583,7 +584,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </button>
 
 <!-- INFO OVERLAY -->
-<div id="info-overlay" class="">
+<div id="info-overlay">
   <button id="info-close-btn" aria-label="Close">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
@@ -634,6 +635,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </tbody>
     </table>
     <p>If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.</p>
+    <p>If the record/review feature is not working on iPhone or iPad, go to <strong>Settings → Safari → Microphone</strong> and make sure it is not set to “Deny.” To avoid being prompted for microphone permission every time you use the app, you can set this to “Allow.”</p>
     <p>If you have feedback or suggestions, email <a id="contact-link" href="mailto:microbreaker@gmail.com">microbreaker@gmail.com</a>.</p>
   <p style="opacity:0.45;margin-top:12px;">Version 2026-03-15-00:48</p>
   </div>
@@ -654,7 +656,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 </script>
 
 <!-- SETTINGS PANEL -->
-<div id="settings-overlay">
+<div id="settings-overlay" class="open">
   <div class="s-title-row">
     <div class="s-title">Settings</div>
     <button id="s-done-btn" aria-label="Done">
@@ -733,7 +735,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     <input type="text" class="msg-inp" id="s-restq3" placeholder="Question 3 (optional)">
   </div>
   <div class="s-sec">Micro-break reminders</div>
-  <div id="msg-list"></div>
+  <div id="msg-list"><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div><div class="msg-row"><input type="text" class="msg-inp"><button class="msg-del">×</button></div></div>
   <button id="add-msg-btn">+ Add reminder</button>
   <button id="s-reset-btn">Reset to defaults…</button>
   <div style="height:20px"></div>
@@ -1450,11 +1452,16 @@ $('settings-btn').addEventListener('click', () => {
   if (!isPaused && phase !== 'ready') { isPaused = true; render(); }
   syncSettingsUI(); renderMsgList();
   $('settings-overlay').classList.add('open');
+  // Match safe-area edges to settings background
+  $('bg-fill').style.backgroundColor = '#0b0b0b';
+  document.body.style.backgroundColor = '#0b0b0b';
+  document.documentElement.style.backgroundColor = '#0b0b0b';
+  $('meta-theme').setAttribute('content', '#0b0b0b');
 });
 $('s-done-btn').addEventListener('click', () => {
   $('settings-overlay').classList.remove('open');
   if (!_wasPaused && phase !== 'ready') { isPaused = false; lastTickTime = null; }
-  render();
+  render(); // render() will restore bg-fill to the current phase color
 });
 
 // =================================================
@@ -1621,8 +1628,17 @@ $('rev-exit').addEventListener('click', closeReview);
 // =================================================
 // INFO & CLOSE BUTTONS
 // =================================================
-$('info-btn').addEventListener('click', () => { $('info-overlay').classList.add('open'); });
-$('info-close-btn').addEventListener('click', () => { $('info-overlay').classList.remove('open'); });
+$('info-btn').addEventListener('click', () => {
+  $('info-overlay').classList.add('open');
+  $('bg-fill').style.backgroundColor = '#c9c4bc';
+  document.body.style.backgroundColor = '#c9c4bc';
+  document.documentElement.style.backgroundColor = '#c9c4bc';
+  $('meta-theme').setAttribute('content', '#c9c4bc');
+});
+$('info-close-btn').addEventListener('click', () => {
+  $('info-overlay').classList.remove('open');
+  render(); // restores bg-fill to current phase color
+});
 
 $('close-btn').addEventListener('click', () => {
   ensureAudio();

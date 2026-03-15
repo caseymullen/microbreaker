@@ -74,6 +74,8 @@ The **keyboard shortcuts** work with a "page turner" footpedal (that can emulate
 
 If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.
 
+If the record/review feature is not working on iPhone or iPad, go to **Settings → Safari → Microphone** and make sure it is not set to "Deny." To avoid being prompted for microphone permission every time you use the app, you can set this to "Allow."
+
 If you have feedback or suggestions, email [microbreaker@gmail.com](mailto:microbreaker@gmail.com).
 ```
 
