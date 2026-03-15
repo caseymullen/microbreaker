@@ -53,30 +53,35 @@ This shows a white screen with black text.
 The text should be derived from the contents of this code block:
 
 ```md
-This music practice timer is inspired by the work of [Molly Gebrian](https://www.mollygebrian.com/) and incorporates some of her suggestions for efficent music practice.
+This music practice timer is inspired by the work of [Molly Gebrian](https://www.mollygebrian.com/) and incorporates some of her suggestions for efficient practice.
 
-**"Micro-breaks"** are 10-20 second breaks that allow your brain to begin incorporating what you were learning just before the micro-break. 
+**"Micro-breaks"** are 10–20 second pauses that allow your brain to consolidate what you were just practicing.
 
-The app encourages working in **chuncks** of 5-10 minutes, with 1-3 minute rests between chunks.
+The app encourages working in **chunks** of 5–10 minutes, with 1–3 minute rests between chunks.
 
-**Interleaved practice** is encouraged! Choose different pieces/passages/etudes/goals for each practice chunk. See Molly's work for the compelling motivation for this.
+**Interleaved practice** is encouraged — choose a different piece, passage, etude, or goal for each chunk. See Molly's work for the compelling research behind this.
 
-**Recording yourself** is encouraged! Turn on "record/review practice" in settings. Your practice will always be recorded, and you can review it during the micro-break. Click the recording waveform to jump around during playback.
+**Recording yourself** is encouraged! Turn on "Record / review practice" in Settings. Your playing will be recorded each round, and you can review it during the micro-break.
 
 The **keyboard shortcuts** work with a "page turner" footpedal (that can emulate a "SPACE" or "ENTER" key.) They eliminate most of your need to touch the screen during a normal practice flow.
-| Phase         | SPACE | ENTER    |
-|--------------|-------|---------|
-|Practice | Pause/Play |End Round|
-|Micro-Break | Pause/Play |Review Recording|
-|Review | Pause/Play |Close|
-|Rest "Countdown"     |Pause/Play|End Countdown|
-|Rest "Ready?"|"Start Practice"|"Start Practice"|
 
-If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.
+| Phase | SPACE | ENTER |
+|---|---|---|
+| Practice | Pause / Play | End Round |
+| Micro-Break | Pause / Play | Review Recording |
+| Review | Pause / Play | Close |
+| Rest "Countdown" | Pause / Play | End Countdown |
+| Rest "Ready?" | Start Practice | Start Practice |
 
-If the record/review feature is not working on iPhone or iPad, go to **Settings → Safari → Microphone** and make sure it is not set to "Deny." To avoid being prompted for microphone permission every time you use the app, you can set this to "Allow."
+If you turn off **"Automatically advance"** in Settings, you will get an audible notification when a practice round or micro-break ends, and the timer will wait for you to skip to the next phase manually.
 
-If you have feedback or suggestions, email [microbreaker@gmail.com](mailto:microbreaker@gmail.com).
+To add this app to your iPhone or iPad home screen, tap the **Share** button (the box with an arrow pointing up) in Safari, then scroll down and tap **"Add to Home Screen."** The app will open full-screen without the Safari browser controls.
+
+If the record/review feature is not working on iPhone or iPad, go to **Settings → Safari → Microphone** and make sure it is not set to "Deny." To avoid being prompted for microphone permission every time you use the app, you can set this to "Allow." In Chrome/Android, the "microphone in use" status indicator stays on even when you are not in the "Practice" phase. This is just to avoid asking for permission to use the microphone at the start of each "Practice" phase. It is only actually recording during the "Practice" phase.
+
+On Chrome and Android, the microphone indicator stays on between practice rounds — this is intentional, to avoid requesting permission at the start of each round. Recording only occurs during the Practice phase.
+
+If you have feedback, email microbreaker@gmail.com.
 ```
 
 Don't let Cloudflare hide the email. Make it a simple mailto link.
