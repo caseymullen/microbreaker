@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0057)file:///C:/Users/CaseyM/Downloads/practice-timer_100.html -->
+<!-- saved from url=(0057)file:///C:/Users/CaseyM/Downloads/practice-timer_102.html -->
 <html lang="en" style="background-color: rgb(13, 13, 13);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -255,11 +255,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   display: none; position: fixed; inset: 0;
   background: #1a1a1a;
   z-index: 200; flex-direction: column;
-  padding: calc(var(--safe-top) + 14px) 24px calc(var(--safe-bot) + 24px);
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
   font-family: var(--font); color: #fff;
 }
 #settings-overlay.open { display: flex; }
+/* Inner scroll container — overflow:auto here, not on the overlay itself */
+#settings-scroll {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: calc(var(--safe-top) + 14px) 24px calc(var(--safe-bot) + 24px);
+  display: flex; flex-direction: column;
+}
 .s-title-row {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 24px;
@@ -733,6 +737,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
 <!-- SETTINGS PANEL -->
 <div id="settings-overlay">
+  <div id="settings-scroll">
   <div class="s-title-row">
     <div class="s-title">Settings</div>
     <button id="s-done-btn" aria-label="Done">
@@ -828,6 +833,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     </button>
   </div>
   <div style="height:8px"></div>
+  </div><!-- end settings-scroll -->
 </div>
 
 <!-- Reset confirmation dialog -->
