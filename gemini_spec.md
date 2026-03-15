@@ -1,3 +1,6 @@
+Got it. Here is the entire specification enclosed within a single, easily copyable markdown block.
+
+```markdown
 # Specification: Micro-breaker Practice Timer
 
 ## 1. App Overview
@@ -69,3 +72,96 @@ function beep(freq, dur, gain, type, delay) {
   o.connect(g); g.connect(audioCtx.destination);
   o.start(t); o.stop(t + dur + 0.02);
 }
+
+```
+
+### Sound Events Table
+
+| Event | Tones / Frequencies | Duration | Description |
+| --- | --- | --- | --- |
+| **Countdown (3, 2)** | `880Hz` | `0.11s` | Short beep at 3s and 2s remaining. |
+| **Countdown (1)** | `1047Hz` | `0.11s` | Higher pitched beep at 1s remaining. |
+| **Work Start** | `660Hz` (delay 0s)<br>
+
+<br>`880Hz` (delay 0.13s) | `0.10s`<br>
+
+<br>`0.18s` | Two-tone rising chime (up a perfect fourth). |
+| **Break Start** | `130.8Hz` (C3) | `3.0s` | Low, soothing, long-fading tone indicating rest. |
+| **Fanfare (Chunk End)** | `261.6`, `329.6`, `392.0`, `523.3` (staggered 0.16s apart) | `0.18s` (arpeggio)<br>
+
+<br>`0.60s` (final) | Triumphant C-major arpeggio (C-E-G-C). |
+| **Back to Work (Rest End)** | `440` (x3), `523` (x2), `660` (final) | `0.10s` (short)<br>
+
+<br>`0.50s` (final) | Rhythmic "da-da-da... da-da... DA!". |
+| **Close App** | `196Hz`, `131Hz` | `0.45s`, `0.90s` | Two-tone descending chime indicating cancellation. |
+
+---
+
+## 5. Typography
+
+The primary font is `Inconsolata`, imported from Google Fonts. Variables and fluid typography (`clamp()`) are used extensively to support mobile and tablet sizing.
+
+| Element | Font Family | Size / Clamp | Weight | Color / Opacity | Formatting |
+| --- | --- | --- | --- | --- | --- |
+| **Global Text** | `'Inconsolata', monospace` | Varies | Varies | `#ffffff` | - |
+| **Phase Label (Top)** | `'Inconsolata'` | `clamp(26px, 8vw, 36px)` | `400` | `#ffffff` (0.52 op) | Uppercase, `0.22em` tracking |
+| **Progress / Elapsed** | `'Inconsolata'` | `clamp(14px, 3.8vw, 18px)` | `300` / `600` | `#ffffff` (0.55 / 1.0 op) | Elapsed time is `font-weight: 600` |
+| **Rest Questions** | `'Inconsolata'` | `clamp(16px, 4.5vw, 22px)` | `300` | `#e8d5b0` | - |
+| **Round Counter** | `'Inconsolata'` | `clamp(18px, 5.5vw, 26px)` | `400` | `#ffffff` (0.75 op) | `0.04em` tracking |
+| **Time Display** | `'Inconsolata'` | `clamp(42px, 13vw, 60px)` | `300` | `#ffffff` | `-0.02em` tracking |
+| **Ready Text** | `'Inconsolata'` | `clamp(38px, 11vw, 54px)` | `300` | `#ffffff` | `0.03em` tracking |
+| **Messages (Break)** | `'Inconsolata'` | `clamp(16px, 4.5vw, 22px)` | `300` | `#e8d5b0` | `0.06em` tracking |
+| **Info Icon "i"** | `Georgia, serif` | `18px` (inside SVG) | N/A | Current fill | Italicized |
+
+---
+
+## 6. Information Overlay Text
+
+Here is the extracted content of the `#info-overlay`:
+
+This music practice timer is inspired by the work of [Molly Gebrian](https://www.mollygebrian.com/) and incorporates some of her suggestions for efficient practice.
+
+**“Micro-breaks”** are 10–20 second pauses that allow your brain to consolidate what you were just practicing.
+
+The app encourages working in **chunks** of 5–10 minutes, with 1–3 minute rests between chunks.
+
+**Interleaved practice** is encouraged — choose a different piece, passage, etude, or goal for each chunk. See Molly’s work for the compelling research behind this.
+
+**Recording yourself** is encouraged! Turn on “Record / review practice” in Settings. Your playing will be recorded each round, and you can review it during the micro-break.
+
+The **keyboard shortcuts** work with a “page turner” footpedal (that can emulate a “SPACE” or “ENTER” key.) They eliminate most of your need to touch the screen during a normal practice flow.
+
+| Phase | SPACE | ENTER |
+| --- | --- | --- |
+| Practice | Pause / Play | End Round |
+| Micro-Break | Pause / Play | Review Recording |
+| Review | Pause / Play | Close |
+| Rest “Countdown” | Pause / Play | End Countdown |
+| Rest “Ready?” | Start Practice | Start Practice |
+
+If you turn off **“Automatically advance”** in Settings, you will get an audible notification when a practice round or micro-break ends, and the timer will wait for you to skip to the next phase manually.
+
+To add this app to your iPhone or iPad home screen, tap the **Share** button (the box with an arrow pointing up) in Safari, then scroll down and tap **“Add to Home Screen.”** The app will open full-screen without the Safari browser controls.
+
+If the record/review feature is not working on iPhone or iPad, go to **Settings → Safari → Microphone** and make sure it is not set to “Deny.” To avoid being prompted for microphone permission every time you use the app, you can set this to “Allow.”
+
+On Chrome and Android, the microphone indicator stays on between practice rounds — this is intentional, to avoid requesting permission at the start of each round. Recording only occurs during the Practice phase.
+
+If you have feedback, email microbreaktimer@gmail.com.
+
+---
+
+## 7. Implementation Hints (PWA & iOS considerations)
+
+To ensure smooth operation as a PWA, especially on iOS/Safari, the app uses several specific implementation strategies:
+
+1. **Audio Context Unlocking:** Web Audio API requires a user gesture to start. The app listens for `touchstart` and `click` events on main buttons to instantiate or `resume()` the `AudioContext`. It also listens to `visibilitychange` to resume audio if the app was backgrounded.
+2. **iOS/Safari Microphone Handling:** Safari exhibits an aggressive persistent "red pill" mic indicator. If left active between practice phases, it annoys users. The app explicitly checks `navigator.userAgent` for Safari (`/^((?!chrome|android).)*safari/i.test(navigator.userAgent)`). If true, it calls `micStream.getTracks().forEach(t => t.stop())` during breaks to kill the red pill. Chrome keeps the stream alive to prevent constant re-prompting.
+3. **Bfcache (Back/Forward Cache) Restore:** iOS Safari frequently caches page states. Returning to the app might load a stale DOM (e.g., an overlay left open). The app binds to the `pageshow` event to explicitly remove the `.open` class from all overlays (`#review-overlay`, `#settings-overlay`, etc.) and resume the audio context.
+4. **Auto-Play Review (iOS):** iOS requires `HTMLAudioElement.play()` to be called synchronously within a user gesture. In the `openReview` function, the object URL is mapped to `src` and `.play()` is chained *immediately* without awaiting any metadata to prevent the play request from being blocked.
+5. **Dynamic Apple Touch Icon:** Instead of requiring an external `.png`, the app generates its home screen icon programmatically using a `<canvas>`. It draws the orange background, radial vignette, semi-transparent rings, and a Palatino 'μ' symbol, converts it via `.toDataURL('image/png')`, and injects it into the `<link rel="apple-touch-icon">` tag dynamically on load.
+6. **Theme Color Syncing:** The `<meta name="theme-color">` and CSS variables (`env(safe-area-inset-...)`) are aggressively synced to the active phase's background edge color (`#bg-fill`) via JavaScript to ensure the iOS status bar seamlessly blends into the app UI, preventing ugly white/black bars at the top notch.
+
+```
+
+```
