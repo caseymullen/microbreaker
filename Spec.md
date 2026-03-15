@@ -638,3 +638,53 @@ A `frac` of `1.0` gives offset `0` (full ring drawn). A `frac` of `0.0` gives of
 ```
 
 Do **not** include `stroke-dashoffset` or `transform` in the CSS rule. Both must live on the element itself (as shown above) to work correctly cross-browser.
+
+
+# SVG for the icon
+```html
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
+
+  <!-- Background -->
+  <rect width="180" height="180" fill="#b83c08"/>
+
+  <!-- Vignette -->
+  <defs>
+    <radialGradient id="vg" cx="50%" cy="50%" r="50%">
+      <stop offset="30%" stop-color="black" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>
+  <rect width="180" height="180" fill="url(#vg)"/>
+
+  <!-- Ring track (dim background) -->
+  <circle cx="90" cy="90" r="72"
+    fill="none"
+    stroke="rgba(255,255,255,0.18)"
+    stroke-width="12"/>
+
+  <!-- Ring progress: 66% of circumference
+       circumference = 2 * pi * 72 = 452.4
+       filled = 452.4 * 0.66 = 298.6
+       stroke-dashoffset = 452.4 - 298.6 = 153.8
+       rotated -90deg so arc starts from the top -->
+  <circle cx="90" cy="90" r="72"
+    fill="none"
+    stroke="rgba(255,255,255,0.85)"
+    stroke-width="12"
+    stroke-linecap="round"
+    stroke-dasharray="452.4"
+    stroke-dashoffset="153.8"
+    transform="rotate(-90 90 90)"/>
+
+  <!-- Mu glyph — Palatino for elegant descending tail
+       nudged down 4px to optically center the glyph -->
+  <text x="90" y="94"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="Palatino, 'Palatino Linotype', serif"
+    font-size="58"
+    font-weight="bold"
+    fill="rgba(255,255,255,0.92)">μ</text>
+
+</svg>
+```
