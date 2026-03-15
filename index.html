@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_60.html -->
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_61.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -163,6 +163,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 #controls {
   display: flex; align-items: center; justify-content: center;
   gap: 28px; padding: 0; min-height: 0;
+  height: 84px;
 }
 .ctrl-btn {
   background: none; border: none; color: #fff; cursor: pointer;
@@ -176,7 +177,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
 
 /* Start button */
 #start-btn {
-  display: none; min-height: 0;
+  display: none; height: 84px;
   align-items: center; justify-content: center;
 }
 #start-btn-inner {
@@ -452,8 +453,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     <div id="phase-label">Practice</div>
     <div id="label-gap"></div>
     <div id="progress-section" style="visibility: visible;">
-      <div id="macro-bar-track"><div id="macro-bar" style="width: 5.29987%;"></div></div>
-      <div id="time-progress"><strong>0:15</strong> of 5:00</div>
+      <div id="macro-bar-track"><div id="macro-bar" style="width: 52.2438%;"></div></div>
+      <div id="time-progress"><strong>1:57</strong> of 5:00</div>
     </div>
   </div>
 
@@ -465,15 +466,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
         <p>How will you achieve it?</p>
         <p style="display: none;"></p>
       </div>
-      <div id="round-counter">Round<br>1 of 5</div>
+      <div id="round-counter">Round<br>3 of 5</div>
     </div>
     <div id="ring-wrap">
       <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
         <circle id="ring-bg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.10)" style="opacity: 1;"></circle>
-        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 244.2; opacity: 1;"></circle>
+        <circle id="ring-fg" cx="128" cy="128" r="110" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.82)" stroke-linecap="round" stroke-dasharray="691.150" transform="rotate(-90 128 128)" style="stroke-dashoffset: 563.481; opacity: 1;"></circle>
       </svg>
       <div id="ring-center">
-        <div id="time-display" style="display: block;">0:30</div>
+        <div id="time-display" style="display: block;">0:09</div>
         <div id="ready-ring-text" style="display: none;">Ready?</div>
       </div>
     </div>
@@ -631,7 +632,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
     </table>
     <p>If you turn off "Automatically advance" in settings, you will get an audible notification that the practice/break has ended, but it will wait for you to "skip" to the next phase.</p>
     <p>If you have feedback or suggestions, email <a href="file:///C:/cdn-cgi/l/email-protection#a2cfcbc1d0cdc0d0c7c3c9c7d0e2c5cfc3cbce8cc1cdcf"><span class="__cf_email__" data-cfemail="036e6a60716c6171666268667143646e626a6f2d606c6e">[email&nbsp;protected]</span></a>.</p>
-  <p style="opacity:0.45;margin-top:12px;">Version 2026-03-14-23:26</p>
+  <p style="opacity:0.45;margin-top:12px;">Version 2026-03-15-00:07</p>
   </div>
 </div>
 
@@ -1648,8 +1649,8 @@ rafId = requestAnimationFrame(tick);
 <!-- DEBUG LINES - remove after testing -->
 <div id="debug-red" style="position:fixed;bottom:0;left:0;right:0;height:2px;background:red;z-index:9999;pointer-events:none;"></div>
 <div id="debug-yellow" style="position:fixed;bottom:calc(var(--safe-bot) + 1px);left:0;right:0;height:2px;background:yellow;z-index:9998;pointer-events:none;"></div>
-<div id="debug-pink" style="position: fixed; left: 0px; right: 0px; height: 2px; background: hotpink; z-index: 9997; pointer-events: none; top: 1264.33px;"></div>
-<div id="debug-green" style="position: fixed; left: 0px; right: 0px; height: 2px; background: lime; z-index: 9996; pointer-events: none; top: 1248px;"></div>
+<div id="debug-pink" style="position: fixed; left: 0px; right: 0px; height: 2px; background: hotpink; z-index: 9997; pointer-events: none; top: 863px;"></div>
+<div id="debug-green" style="position: fixed; left: 0px; right: 0px; height: 2px; background: lime; z-index: 9996; pointer-events: none; top: 847px;"></div>
 <script>
 (function positionDebugLines() {
   function update() {
