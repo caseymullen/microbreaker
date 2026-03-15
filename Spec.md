@@ -73,7 +73,7 @@ The **keyboard shortcuts** work with a "page turner" footpedal (that can emulate
 | Rest "Countdown" | Pause / Play | End Countdown |
 | Rest "Ready?" | Start Practice | Start Practice |
 
-If you turn off **"Automatically advance"** in Settings, you will get an audible notification when a practice round or micro-break ends, and the timer will wait for you to skip to the next phase manually.
+If you turn off **"Automatically advance"** in Settings, you will get an audible notification when a practice round ends, and the timer will wait for you to skip to the next phase manually.
 
 To add this app to your iPhone or iPad home screen, tap the **Share** button (the box with an arrow pointing up) in Safari, then scroll down and tap **"Add to Home Screen."** The app will open full-screen without the Safari browser controls.
 
@@ -95,7 +95,7 @@ Don't let Cloudflare hide the email. Make it a simple mailto link.
 |Practice phase|45 sec |15–120 sec|
 |Micro-break   |15 sec |10–60 sec |
 |Chunk length  |5 rounds |3–15 rounds |
-|Rest     |2 min|1–5 min|
+|Rest     |1.5 min|1–5 min|
 
 -----
 
@@ -125,9 +125,9 @@ In "settings", just use the label "Chunk", rather than "Chunk length".
 
 To save/close settings, use a circle button with a check mark in the upper right.
 
-The "Recording" setting should come after the "audio" setting.
+The "Recording" setting should come before the "Notifications" setting group.
 
-The Audio setting section should be labeled "Notifications" and the setting should be "Audible notifications" and should default to "on".
+In the "Notifications", the setting should be "Audible notifications" and should default to "on".
 
 ## Keyboard input
 
@@ -192,7 +192,7 @@ During the rest-waiting phase, display the text "Ready?" in the same font size a
 ## Messages
 
 During the break phase, display one of the reminders below. Cycle through them, in order, for different breaks.
-- Focus on your goal
+- Remember your goal
 - Flex your wrist
 - Audiate to intonate
 - Create emphasis
@@ -217,9 +217,12 @@ In settings, label the "break" reminders as "Micro-break reminders"
 
 Have a button to reset all settings to their defaults. Ask the user if they also want to clear the "micro-break messages". Allow the to answer yes, no, or cancel.
 
-At the end of the "durations", add a "Automatically advance" toggle that defaults to "on". When it is "off", in work and break phases, when the countdown timer finishes, play the appropriate sound, but don't actually advance to the next phase. Wait for the user to manually hit the "skip" button.
+At the end of the "durations", add a "Automatically advance" toggle that defaults to "on". When it is "off", in work phase, when the countdown timer finishes, play the appropriate sound, but don't actually advance to the break phase. Wait for the user to manually hit the "skip" button. 
 
-Below the "
+When the countdown timer reaches 0 during practice and "automatically advance" is off, show the text "Done?" instead of "0:00" in the countdown timer. Do not play the "meditation" chime when the countdown timer reaches zero, but wait and play it when you advance to the next phase.
+
+ Have a setting just below the "audible notifications" toggle to set the notification volume.
+
 -----
 
 ## Recording Audio
@@ -240,6 +243,7 @@ Always be recording audio during the work phase (if the settings toggle has the 
 - Play/Pause
 - Jump forward 5 seconds (a simple small triangular arrow pointing to the left)
 - A "X" button that will close the screen/phase. It should be a deep red. When the user clicks it, play the notes C2 G3 as a "goodbye", with the G2 twice as long as the C1.
+- A volume slide beneath the playback controls. This volume should be independent of the notification volume. It should be remembered in localStorage. It should not be displayed in settings, but "reset to default" in settings should reset it to its default.
 
 In "settings" there should be a toggle "Record/review practice" that defaults to "off". When it is off, never show the "Review Recording" button.
 - If the user turns the "record/review" setting on, immediately trigger a request to access the microphone. If they entered settings from the work phase, then immediately start recording.
@@ -274,6 +278,10 @@ Regarding the recording player itself:
 ## Other notes
 
 Do not remember the current state of progress through a given chunk in localStorage.
+
+
+
+
 
 
 
@@ -587,6 +595,8 @@ Five buttons in a horizontal row inside the green review overlay. All `backgroun
 # Details for the countdown ring timer
 
 ## Countdown Ring Timer — Robust Implementation
+
+Clicking on the countdown time text in the center of the ring timer should act the same as hitting the "play/pause" button
 
 ### SVG Structure
 
