@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_87.html -->
+<!-- saved from url=(0056)file:///C:/Users/CaseyM/Downloads/practice-timer_93.html -->
 <html lang="en" style="background-color: rgb(13, 13, 13);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -422,6 +422,43 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
   padding: 0 28px clamp(12px, 3.2vw, 20px);
   flex-shrink: 0;
 }
+/* Review volume slider */
+#rev-vol-wrap {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 0 28px; flex-shrink: 0;
+}
+#rev-vol-icon { opacity: 0.50; flex-shrink: 0; }
+#rev-vol {
+  -webkit-appearance: none; appearance: none;
+  flex: 1; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.25); outline: none; cursor: pointer;
+}
+#rev-vol::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; cursor: pointer;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+#rev-vol::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; cursor: pointer; border: none;
+}
+/* Settings notification volume slider */
+#s-vol {
+  -webkit-appearance: none; appearance: none;
+  width: 140px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.20); outline: none; cursor: pointer;
+}
+#s-vol::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; cursor: pointer;
+  box-shadow: 0 0 3px rgba(0,0,0,0.4);
+}
+#s-vol::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; cursor: pointer; border: none;
+}
 #rev-spacer-bottom { flex: 1; }
 
 /* ══════════════════════════════════════
@@ -485,11 +522,41 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       <div id="message"></div>
       <div id="review-slot-lower">
         <div style="flex:1"></div>
-        <button id="review-btn" aria-label="Review Recording" style="display: none;">
+        <!-- ORIGINAL BUTTON WITH PLAY TRIANGLE + DIVIDER (commented out for easy restore):
+      <button id="review-btn-orig" aria-label="Review Recording">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
-          <polygon points="1,1 12,6.5 1,12" fill="rgba(255,255,255,0.92)"></polygon>
+          <polygon points="1,1 12,6.5 1,12" fill="rgba(255,255,255,0.92)"/>
         </svg>
         <span class="rb-divider"></span>
+        <svg width="96" height="22" viewBox="0 0 96 22" fill="none" style="flex-shrink:0">
+          <rect x="0"    y="10" width="2.5" height="2"  rx="1.25" fill="rgba(255,255,255,.10)"/>
+          <rect x="4"    y="8"  width="2.5" height="6"  rx="1.25" fill="rgba(255,255,255,.20)"/>
+          <rect x="8"    y="5"  width="2.5" height="12" rx="1.25" fill="rgba(255,255,255,.35)"/>
+          <rect x="12"   y="2"  width="2.5" height="18" rx="1.25" fill="rgba(255,255,255,.55)"/>
+          <rect x="16"   y="0"  width="2.5" height="22" rx="1.25" fill="rgba(255,255,255,.78)"/>
+          <rect x="20"   y="1"  width="2.5" height="20" rx="1.25" fill="rgba(255,255,255,1)"/>
+          <rect x="24"   y="3"  width="2.5" height="16" rx="1.25" fill="rgba(255,255,255,.82)"/>
+          <rect x="28"   y="6"  width="2.5" height="10" rx="1.25" fill="rgba(255,255,255,.62)"/>
+          <rect x="32"   y="8"  width="2.5" height="6"  rx="1.25" fill="rgba(255,255,255,.42)"/>
+          <rect x="36"   y="6"  width="2.5" height="10" rx="1.25" fill="rgba(255,255,255,.48)"/>
+          <rect x="40"   y="1"  width="2.5" height="20" rx="1.25" fill="rgba(255,255,255,.72)"/>
+          <rect x="44"   y="0"  width="2.5" height="22" rx="1.25" fill="rgba(255,255,255,.95)"/>
+          <rect x="48"   y="3"  width="2.5" height="16" rx="1.25" fill="rgba(255,255,255,.82)"/>
+          <rect x="52"   y="6"  width="2.5" height="10" rx="1.25" fill="rgba(255,255,255,.58)"/>
+          <rect x="56"   y="4"  width="2.5" height="14" rx="1.25" fill="rgba(255,255,255,.68)"/>
+          <rect x="60"   y="1"  width="2.5" height="20" rx="1.25" fill="rgba(255,255,255,.88)"/>
+          <rect x="64"   y="3"  width="2.5" height="16" rx="1.25" fill="rgba(255,255,255,.78)"/>
+          <rect x="68"   y="5"  width="2.5" height="12" rx="1.25" fill="rgba(255,255,255,.58)"/>
+          <rect x="72"   y="8"  width="2.5" height="6"  rx="1.25" fill="rgba(255,255,255,.38)"/>
+          <rect x="76"   y="6"  width="2.5" height="10" rx="1.25" fill="rgba(255,255,255,.42)"/>
+          <rect x="80"   y="8"  width="2.5" height="6"  rx="1.25" fill="rgba(255,255,255,.26)"/>
+          <rect x="84"   y="9"  width="2.5" height="4"  rx="1.25" fill="rgba(255,255,255,.16)"/>
+          <rect x="88"   y="10" width="2.5" height="2"  rx="1.25" fill="rgba(255,255,255,.08)"/>
+          <rect x="92"   y="10" width="2.5" height="2"  rx="1.25" fill="rgba(255,255,255,.04)"/>
+        </svg>
+      </button>
+-->
+      <button id="review-btn" aria-label="Review Recording" style="display: none;">
         <svg width="96" height="22" viewBox="0 0 96 22" fill="none" style="flex-shrink:0">
           <rect x="0" y="10" width="2.5" height="2" rx="1.25" fill="rgba(255,255,255,.10)"></rect>
           <rect x="4" y="8" width="2.5" height="6" rx="1.25" fill="rgba(255,255,255,.20)"></rect>
@@ -712,6 +779,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       <div class="tog-thumb"></div>
     </label>
   </div>
+  <div class="s-sec">Recording</div>
+  <div class="tog-row">
+    <div class="tog-label">Record / review practice</div>
+    <label class="tog-sw">
+      <input type="checkbox" id="s-record">
+      <div class="tog-track"></div>
+      <div class="tog-thumb"></div>
+    </label>
+  </div>
   <div class="s-sec">Notifications</div>
   <div class="tog-row">
     <div class="tog-label">Audible notifications</div>
@@ -721,14 +797,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       <div class="tog-thumb"></div>
     </label>
   </div>
-  <div class="s-sec">Recording</div>
-  <div class="tog-row">
-    <div class="tog-label">Record / review practice</div>
-    <label class="tog-sw">
-      <input type="checkbox" id="s-record">
-      <div class="tog-track"></div>
-      <div class="tog-thumb"></div>
-    </label>
+  <div class="s-row" style="padding: 6px 0;">
+    <div class="s-label" style="font-size:clamp(13px,3.8vw,17px);opacity:0.75;">Volume</div>
+    <input type="range" id="s-vol" min="0.05" max="1.0" step="0.05" value="0.35">
   </div>
   <div class="s-sec">Rest Questions</div>
   <div class="s-row" style="flex-direction:column; align-items:stretch; gap:8px; padding: 10px 0;">
@@ -806,6 +877,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
       </svg>
     </button>
   </div>
+  <div id="rev-vol-wrap">
+    <svg id="rev-vol-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M3 9v6h4l5 5V4L7 9H3z" fill="rgba(255,255,255,0.70)"></path>
+      <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="rgba(255,255,255,0.70)"></path>
+      <path d="M19.5 12c0 3.04-1.73 5.68-4.25 7.03l-.75-1.3A7 7 0 0 0 18 12a7 7 0 0 0-3.5-6.06l.74-1.3C17.77 6.32 19.5 8.96 19.5 12z" fill="rgba(255,255,255,0.40)"></path>
+    </svg>
+    <input type="range" id="rev-vol" min="0.0" max="1.0" step="0.05" value="0.8">
+  </div>
   <div id="rev-spacer-bottom"></div>
   <div id="rev-hint">Tap waveform to jump to that spot.<br>Press [ENTER] to close.</div>
 </div>
@@ -824,11 +903,13 @@ const DEFAULTS = {
   workDur:     45,
   breakDur:    15,
   rounds:      5,
-  restDur:     120,
+  restDur:     90,
   notify:      true,
+  notifyVol:   0.35,
+  reviewVol:   0.8,
   recording:   false,
   autoAdvance: true,
-  messages:    ['Focus on your goal','Flex your wrist','Audiate to intonate','Create emphasis'],
+  messages:    ['Remember your goal','Flex your wrist','Audiate to intonate','Create emphasis'],
   restQ:       ['What is your goal?', 'How will you achieve it?', '']
 };
 
@@ -846,7 +927,9 @@ function saveSettings() {
   localStorage.setItem('pt_v3', JSON.stringify({
     workDur: settings.workDur, breakDur: settings.breakDur,
     rounds: settings.rounds, restDur: settings.restDur,
-    notify: settings.notify, recording: settings.recording,
+    notify: settings.notify, notifyVol: settings.notifyVol,
+    reviewVol: settings.reviewVol,
+    recording: settings.recording,
     autoAdvance: settings.autoAdvance,
     messages: settings.messages, restQ: settings.restQ
   }));
@@ -872,8 +955,11 @@ function beep(freq, dur, gain, type, delay) {
   const o = ctx.createOscillator();
   o.type = type || 'sine';
   o.frequency.value = freq;
+  // Scale gain by user volume setting (default reference: 0.35)
+  const vol = (settings.notifyVol !== undefined ? settings.notifyVol : 0.35) / 0.35;
+  const scaledGain = (gain || 0.32) * vol;
   g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(gain || 0.32, t + 0.012);
+  g.gain.linearRampToValueAtTime(scaledGain, t + 0.012);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g); g.connect(ctx.destination);
   o.start(t); o.stop(t + dur + 0.02);
@@ -1023,7 +1109,7 @@ function _enterPhase(p) {
     phaseTimeLeft = settings.breakDur;
     stopRecording();
     msgIndex = (msgIndex + 1) % Math.max(1, settings.messages.length);
-    if (audioUnlocked) playBreakStart();
+    // playBreakStart() is called by _advance() before entering this phase
   } else if (p === 'rest-count') {
     phaseTimeLeft = settings.restDur;
   } else if (p === 'ready') {
@@ -1038,26 +1124,24 @@ function _enterPhase(p) {
 
 function _advance(force) {
   // force=true: user manually skipped — always transition.
-  // force=false: timer expired naturally — if autoAdvance off, play sound & wait.
-  const auto = force || settings.autoAdvance;
+  // force=false: timer expired naturally — autoAdvance only applies to work phase.
+  const workAuto = force || settings.autoAdvance;
 
   waitingToAdvance = false;
 
   if (phase === 'work') {
-    if (!auto) {
-      if (audioUnlocked) playBreakStart();
+    if (!workAuto) {
+      // Don't play chime yet — wait until user actually advances to break
       waitingToAdvance = true;
       render(); return;
     }
+    if (audioUnlocked) playBreakStart();
     _enterPhase('break');
   } else if (phase === 'break') {
     if (currentRound >= settings.rounds - 1) {
       stopRecording();
       if (audioUnlocked) playFanfare();
-      if (!auto) {
-        waitingToAdvance = true;
-        render(); return;
-      }
+      // break always auto-advances regardless of autoAdvance setting
       phase = 'rest-count';
       isPaused = false;
       phaseTimeLeft = settings.restDur;
@@ -1065,11 +1149,7 @@ function _advance(force) {
       lastTickTime = null;
       render();
     } else {
-      if (!auto) {
-        if (audioUnlocked) playWorkStart();
-        waitingToAdvance = true;
-        render(); return;
-      }
+      // break always auto-advances regardless of autoAdvance setting
       currentRound++;
       _enterPhase('work');
     }
@@ -1291,6 +1371,8 @@ function render() {
 // BUTTON LISTENERS
 // =================================================
 $('btn-play-pause').addEventListener('click', () => { ensureAudio(); togglePlayPause(); });
+$('time-display').addEventListener('click', () => { ensureAudio(); if (waitingToAdvance) skipNext(); else togglePlayPause(); });
+$('ready-ring-text').addEventListener('click', () => { ensureAudio(); if (waitingToAdvance) skipNext(); else togglePlayPause(); });
 $('btn-prev').addEventListener('click',       () => { ensureAudio(); restartPhase(); });
 $('btn-next').addEventListener('click',       () => { ensureAudio(); skipNext(); });
 $('start-btn-inner').addEventListener('click', () => { ensureAudio(); startChunk(); });
@@ -1375,6 +1457,7 @@ function syncSettingsUI() {
   _syncingUI = true;
   refreshCalc();
   $('s-notify').checked = settings.notify !== false;
+  $('s-vol').value      = settings.notifyVol !== undefined ? settings.notifyVol : 0.35;
   $('s-record').checked = settings.recording;
   $('s-auto').checked   = settings.autoAdvance !== false;
   const rq = settings.restQ || ['', '', ''];
@@ -1402,6 +1485,7 @@ document.querySelectorAll('.step-btn').forEach(btn => {
 });
 
 $('s-notify').addEventListener('change', e => { if (_syncingUI) return; settings.notify = e.target.checked; saveSettings(); });
+$('s-vol').addEventListener('input', e => { settings.notifyVol = parseFloat(e.target.value); saveSettings(); });
 $('s-auto').addEventListener('change',   e => { if (_syncingUI) return; settings.autoAdvance = e.target.checked; saveSettings(); });
 
 $('s-record').addEventListener('change', async e => {
@@ -1432,7 +1516,7 @@ $('s-reset-btn').addEventListener('click', () => { $('reset-overlay').classList.
 function doReset(clearMessages) {
   settings.workDur = DEFAULTS.workDur; settings.breakDur = DEFAULTS.breakDur;
   settings.rounds = DEFAULTS.rounds; settings.restDur = DEFAULTS.restDur;
-  settings.notify = DEFAULTS.notify; settings.recording = DEFAULTS.recording;
+  settings.notify = DEFAULTS.notify; settings.notifyVol = DEFAULTS.notifyVol; settings.reviewVol = DEFAULTS.reviewVol; settings.recording = DEFAULTS.recording;
   settings.autoAdvance = DEFAULTS.autoAdvance; settings.restQ = [...DEFAULTS.restQ];
   if (clearMessages) settings.messages = [...DEFAULTS.messages];
   saveSettings(); syncSettingsUI(); renderMsgList(); render();
@@ -1507,6 +1591,7 @@ function openReview() {
   if (reviewAudio) { reviewAudio.pause(); reviewAudio = null; }
   reviewAudio = new Audio();
   reviewAudio.preload = 'auto';
+  reviewAudio.volume = settings.reviewVol !== undefined ? settings.reviewVol : 0.8;
   reviewAudio.src = url;
   // iOS: play() must be called synchronously within the user gesture.
   // Set src first, then call play() immediately — do not await anything first.
@@ -1553,6 +1638,7 @@ function openReview() {
   $('rev-cur').textContent = '0:00';
   $('rev-dur').textContent = '...';
   $('rev-prog').style.width = '0%';
+  $('rev-vol').value = settings.reviewVol !== undefined ? settings.reviewVol : 0.8;
   $('review-overlay').classList.add('open');
 }
 
@@ -1566,7 +1652,12 @@ function drawWaveform() {
   canvas.width = W; canvas.height = H;
 
   reviewBlob.arrayBuffer().then(buf => {
-    audioCtx.decodeAudioData(buf.slice(0), decoded => {
+    // Use a separate OfflineAudioContext for decoding to avoid
+    // disturbing the main AudioContext gain/state on iOS
+    const decodeCtx = new (window.OfflineAudioContext || window.AudioContext)({
+      numberOfChannels: 1, length: 44100, sampleRate: 44100
+    });
+    decodeCtx.decodeAudioData(buf.slice(0), decoded => {
       const data = decoded.getChannelData(0);
       const step = Math.max(1, Math.floor(data.length / W));
       ctx2d.clearRect(0, 0, W, H);
@@ -1646,6 +1737,13 @@ $('rev-fwd5').addEventListener('click', () => {
   }
 });
 $('rev-exit').addEventListener('click', closeReview);
+
+$('rev-vol').addEventListener('input', e => {
+  const v = parseFloat(e.target.value);
+  settings.reviewVol = v;
+  if (reviewAudio) reviewAudio.volume = v;
+  saveSettings();
+});
 
 // =================================================
 // INFO & CLOSE BUTTONS
