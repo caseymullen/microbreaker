@@ -61,7 +61,7 @@ The app encourages working in **chunks** of 5–10 minutes, with 1–3 minute re
 
 **Interleaved practice** is encouraged — choose a different piece, passage, etude, or goal for each chunk. See Molly's work for the compelling research behind this.
 
-**Recording yourself** is encouraged! Turn on "Record / review practice" in Settings. Your playing will be recorded each round, and you can review it during the micro-break.
+**Recording yourself** is encouraged! Each practice round is recorded. Review it using the "waveform" button in the micro-break. You can turn recordings off in settings.
 
 The **keyboard shortcuts** work with a "page turner" footpedal (that can emulate a "SPACE" or "ENTER" key.) They eliminate most of your need to touch the screen during a normal practice flow.
 
@@ -73,7 +73,7 @@ The **keyboard shortcuts** work with a "page turner" footpedal (that can emulate
 | Rest "Countdown" | Pause / Play | End Countdown |
 | Rest "Ready?" | Start Practice | Start Practice |
 
-If you turn off **"Automatically advance"** in Settings, you will get an audible notification when a practice round ends, and the timer will wait for you to skip to the next phase manually.
+If **"Automatically advance"** is on in Settings, it automatically advances to the micro-break at the end of a practice round. If it is off, you get an audible notification when a practice round ends, but you must skip to the next phase manually.
 
 To add this app to your iPhone or iPad home screen, tap the **Share** button (the box with an arrow pointing up) in Safari, then scroll down and tap **"Add to Home Screen."** The app will open full-screen without the Safari browser controls.
 
@@ -233,7 +233,7 @@ Always be recording audio during the work phase (if the settings toggle has the 
 - A "Review Recording" button ONLY appears during the "break" phase, and (if the "record/review" toggle is on in settings) it ALWAYS appears in that phase. The user does not have to pause first. They just hit "Review Recording" (and that will automatically pause the phase while they listen to the recording. 
 - When they exit the recording, the "break" phase should remain paused.
 
- The "Review Recording" button appears below the "audio player" controls. If user hits "Review Recording", we enter a nested "review" phase, with its own screen.
+ The "Review Recording" button appears below the "audio player" controls. If user hits "Review Recording", we enter a nested "review" phase, with its own screen. Pause the countdown during the "review" phase, but unpause it when the "review" ends.
  
  The recorded audio clip is only for the most-recent work phase.
  
@@ -245,7 +245,7 @@ Always be recording audio during the work phase (if the settings toggle has the 
 - A "X" button that will close the screen/phase. It should be a deep red. When the user clicks it, play the notes C2 G3 as a "goodbye", with the G2 twice as long as the C1.
 - A volume slide beneath the playback controls. This volume should be independent of the notification volume. It should be remembered in localStorage. It should not be displayed in settings, but "reset to default" in settings should reset it to its default.
 
-In "settings" there should be a toggle "Record/review practice" that defaults to "off". When it is off, never show the "Review Recording" button.
+In "settings" there should be a toggle "Record/review practice" that defaults to "on". When it is off, never show the "Review Recording" button.
 - If the user turns the "record/review" setting on, immediately trigger a request to access the microphone. If they entered settings from the work phase, then immediately start recording.
 - If the user turns off the "record/review" setting, if there is a recording in progress, then stop it immediately and disgard it.
 

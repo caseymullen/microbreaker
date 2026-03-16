@@ -1,6 +1,3 @@
-Got it. Here is the entire specification enclosed within a single, easily copyable markdown block.
-
-```markdown
 # Specification: Micro-breaker Practice Timer
 
 ## 1. App Overview
@@ -81,18 +78,10 @@ function beep(freq, dur, gain, type, delay) {
 | --- | --- | --- | --- |
 | **Countdown (3, 2)** | `880Hz` | `0.11s` | Short beep at 3s and 2s remaining. |
 | **Countdown (1)** | `1047Hz` | `0.11s` | Higher pitched beep at 1s remaining. |
-| **Work Start** | `660Hz` (delay 0s)<br>
-
-<br>`880Hz` (delay 0.13s) | `0.10s`<br>
-
-<br>`0.18s` | Two-tone rising chime (up a perfect fourth). |
+| **Work Start** | `660Hz` (delay 0s)<br><br>`880Hz` (delay 0.13s) | `0.10s`<br><br>`0.18s` | Two-tone rising chime (up a perfect fourth). |
 | **Break Start** | `130.8Hz` (C3) | `3.0s` | Low, soothing, long-fading tone indicating rest. |
-| **Fanfare (Chunk End)** | `261.6`, `329.6`, `392.0`, `523.3` (staggered 0.16s apart) | `0.18s` (arpeggio)<br>
-
-<br>`0.60s` (final) | Triumphant C-major arpeggio (C-E-G-C). |
-| **Back to Work (Rest End)** | `440` (x3), `523` (x2), `660` (final) | `0.10s` (short)<br>
-
-<br>`0.50s` (final) | Rhythmic "da-da-da... da-da... DA!". |
+| **Fanfare (Chunk End)** | `261.6`, `329.6`, `392.0`, `523.3` (staggered 0.16s apart) | `0.18s` (arpeggio)<br><br>`0.60s` (final) | Triumphant C-major arpeggio (C-E-G-C). |
+| **Back to Work (Rest End)** | `440` (x3), `523` (x2), `660` (final) | `0.10s` (short)<br><br>`0.50s` (final) | Rhythmic "da-da-da... da-da... DA!". |
 | **Close App** | `196Hz`, `131Hz` | `0.45s`, `0.90s` | Two-tone descending chime indicating cancellation. |
 
 ---
@@ -161,7 +150,3 @@ To ensure smooth operation as a PWA, especially on iOS/Safari, the app uses seve
 4. **Auto-Play Review (iOS):** iOS requires `HTMLAudioElement.play()` to be called synchronously within a user gesture. In the `openReview` function, the object URL is mapped to `src` and `.play()` is chained *immediately* without awaiting any metadata to prevent the play request from being blocked.
 5. **Dynamic Apple Touch Icon:** Instead of requiring an external `.png`, the app generates its home screen icon programmatically using a `<canvas>`. It draws the orange background, radial vignette, semi-transparent rings, and a Palatino 'μ' symbol, converts it via `.toDataURL('image/png')`, and injects it into the `<link rel="apple-touch-icon">` tag dynamically on load.
 6. **Theme Color Syncing:** The `<meta name="theme-color">` and CSS variables (`env(safe-area-inset-...)`) are aggressively synced to the active phase's background edge color (`#bg-fill`) via JavaScript to ensure the iOS status bar seamlessly blends into the app UI, preventing ugly white/black bars at the top notch.
-
-```
-
-```
