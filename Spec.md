@@ -127,7 +127,7 @@ To save/close settings, use a circle button with a check mark in the upper right
 
 The "Recording" setting should come before the "Notifications" setting group.
 
-In the "Notifications", the setting should be "Audible notifications" and should default to "on".
+In the "Notifications", there should be a volume slider that increments in discrete steps of 5%. If the user wants no audible notifications, they can simply move the volume all the way to 0. Put a speaker icon to the left of the slider and add a "muted" indicator over it when the volume is all the way at zero.
 
 ## Keyboard input
 
