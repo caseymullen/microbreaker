@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0057)file:///C:/Users/CaseyM/Downloads/practice-timer_108.html -->
+<!-- saved from url=(0057)file:///C:/Users/CaseyM/Downloads/practice-timer_116.html -->
 <html lang="en" style="background-color: rgb(26, 26, 26);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -276,7 +276,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 }
 .s-title { font-size: clamp(19px, 5.5vw, 25px); font-weight: 600; letter-spacing: 0.04em; }
 #s-done-btn {
-  background: none; border: none; color: rgba(255,255,255,0.75);
+  background: none; border: none; color: #4d9966;
   cursor: pointer; padding: 4px; -webkit-appearance: none;
   transition: color 0.15s; flex-shrink: 0;
 }
@@ -653,7 +653,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 <button id="info-btn" aria-label="About this app" style="opacity: 1; pointer-events: auto;">
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
     <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
-    <text x="19" y="25" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-style="italic" fill="currentColor">i</text>
+    <text x="19" y="26.5" text-anchor="middle" font-family="Georgia, serif" font-size="21.6" font-style="italic" fill="currentColor">i</text>
   </svg>
 </button>
 
@@ -669,7 +669,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </button>
 
 <!-- INFO OVERLAY -->
-<div id="info-overlay">
+<div id="info-overlay" class="">
   <button id="info-close-btn" aria-label="Close">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
@@ -724,7 +724,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <p>If the record/review feature is not working on iPhone or iPad, go to <strong>Settings → Safari → Microphone</strong> and make sure it is not set to “Deny.” To avoid being prompted for microphone permission every time you use the app, you can set this to “Allow.”</p>
     <p>On Chrome and Android, the microphone indicator stays on between practice rounds — this is intentional, to avoid requesting permission at the start of each round. Recording only occurs during the Practice phase.</p>
     <p>If you have feedback, email <a id="contact-link" href="mailto:microbreaktimer@gmail.com">microbreaktimer@gmail.com</a>.</p>
-    <p style="opacity:0.45;margin-top:12px;">Version 2026-03-15-03:17</p>
+    <p style="opacity:0.45;margin-top:12px;">Version 2026-03-16-20:10</p>
   </div>
   <button id="info-close-btn-bottom" aria-label="Close" onclick="document.getElementById(&#39;info-overlay&#39;).classList.remove(&#39;open&#39;);render();" style="align-self:flex-end;background:none;border:none;color:rgba(0,0,0,0.45);cursor:pointer;padding:4px;margin-top:8px;-webkit-appearance:none;">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
@@ -782,53 +782,51 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <div class="s-row">
     <div>
       <div class="s-label"># of Rounds</div>
-      <div class="s-sub" id="sv-chunk-dur">5:00</div>
+      <div class="s-sub" id="sv-chunk-dur">6:00</div>
     </div>
     <div class="s-stepper">
       <button class="step-btn" data-field="rounds" data-dir="-1">−</button>
-      <div class="s-val" id="sv-rounds">5</div>
+      <div class="s-val" id="sv-rounds">6</div>
       <button class="step-btn" data-field="rounds" data-dir="1">+</button>
     </div>
   </div>
+
+  <div class="s-sec">Behavior</div>
   <div class="tog-row">
-    <div class="tog-label">Automatically advance</div>
+    <div class="tog-label">Automatically Advance</div>
     <label class="tog-sw">
-      <input type="checkbox" id="s-auto" checked="">
+      <input type="checkbox" id="s-auto">
       <div class="tog-track"></div>
       <div class="tog-thumb"></div>
     </label>
   </div>
-  <div class="s-sec">Recording</div>
   <div class="tog-row">
-    <div class="tog-label">Record / review practice</div>
+    <div class="tog-label">Record / Review Practice</div>
     <label class="tog-sw">
       <input type="checkbox" id="s-record">
       <div class="tog-track"></div>
       <div class="tog-thumb"></div>
     </label>
   </div>
-  <div class="s-sec">Notifications</div>
   <div class="s-row" style="padding: 8px 0; align-items: center;">
-    <div style="display:flex;align-items:center;gap:8px;flex:1;">
-      <div style="position:relative;flex-shrink:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
-        <svg id="s-vol-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" style="opacity: 1;">
+    <div class="s-label" style="flex:1;">Notification Volume</div>
+    <div class="s-stepper" style="width:142px;display:flex;align-items:center;gap:6px;">
+      <div style="position:relative;flex-shrink:0;width:22px;height:22px;display:flex;align-items:center;justify-content:center;">
+        <svg id="s-vol-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" style="opacity: 1;">
           <path d="M3 9v6h4l5 5V4L7 9H3z" fill="rgba(255,255,255,0.70)"></path>
           <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="rgba(255,255,255,0.70)"></path>
           <path d="M19.5 12c0 3.04-1.73 5.68-4.25 7.03l-.75-1.3A7 7 0 0 0 18 12a7 7 0 0 0-3.5-6.06l.74-1.3C17.77 6.32 19.5 8.96 19.5 12z" fill="rgba(255,255,255,0.40)"></path>
         </svg>
-        <div id="s-vol-muted" style="display: none; position: absolute; inset: 0px; align-items: center; justify-content: center;">
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-            <line x1="3" y1="3" x2="23" y2="23" stroke="rgba(255,80,80,0.90)" stroke-width="2.5" stroke-linecap="round"></line>
+        <div id="s-vol-muted" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <line x1="3" y1="3" x2="21" y2="21" stroke="rgba(255,80,80,0.90)" stroke-width="2.5" stroke-linecap="round"></line>
           </svg>
         </div>
       </div>
-      <div class="s-label">Volume</div>
-    </div>
-    <div class="s-stepper" style="width:142px;">
-      <input type="range" id="s-vol" min="0.0" max="1.0" step="0.05" value="0.35" style="width:142px;">
+      <input type="range" id="s-vol" min="0.0" max="1.0" step="0.05" value="0.35" style="flex:1;">
     </div>
   </div>
-  <div class="s-sec">Rest Questions</div>
+    <div class="s-sec">Rest Questions</div>
   <div class="s-row" style="flex-direction:column; align-items:stretch; gap:8px; padding: 10px 0;">
     <input type="text" class="msg-inp" id="s-restq1" placeholder="Question 1">
     <input type="text" class="msg-inp" id="s-restq2" placeholder="Question 2">
@@ -840,7 +838,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <button id="s-reset-btn">Reset to defaults…</button>
   <div style="height:20px"></div>
   <div style="display:flex;justify-content:flex-end;">
-    <button id="s-done-btn-bottom" aria-label="Done" onclick="document.getElementById(&#39;s-done-btn&#39;).click()" style="background:none;border:none;color:rgba(255,255,255,0.75);cursor:pointer;padding:4px;-webkit-appearance:none;">
+    <button id="s-done-btn-bottom" aria-label="Done" onclick="document.getElementById(&#39;s-done-btn&#39;).click()" style="background:none;border:none;color:#4d9966;cursor:pointer;padding:4px;-webkit-appearance:none;">
       <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
         <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
         <path d="M10 17 L15 22 L24 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -853,7 +851,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <!-- Reset confirmation dialog -->
-<div id="reset-overlay" class="">
+<div id="reset-overlay">
   <div id="reset-box">
     <div id="reset-title">Reset to defaults</div>
     <div id="reset-msg">Also reset the micro-break reminders?</div>
@@ -991,9 +989,10 @@ function ensureAudio() {
     masterGain.connect(audioCtx.destination);
   }
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume().then(() => { audioUnlocked = true; });
+    return audioCtx.resume().then(() => { audioUnlocked = true; });
   } else {
     audioUnlocked = true;
+    return Promise.resolve();
   }
 }
 
@@ -1100,7 +1099,7 @@ function _beginRec() {
       }
     };
     mr.start(250);
-    recCapTimer = setTimeout(() => stopRecording(), 5 * 60 * 1000);
+    recCapTimer = setTimeout(() => stopRecording(), 10 * 60 * 1000);
   } catch(e) {
     console.warn('MediaRecorder start failed:', e);
   }
@@ -1431,12 +1430,14 @@ function render() {
 // =================================================
 // BUTTON LISTENERS
 // =================================================
-$('btn-play-pause').addEventListener('click', () => { ensureAudio(); togglePlayPause(); });
-$('time-display').addEventListener('click', () => { ensureAudio(); if (waitingToAdvance) skipNext(); else togglePlayPause(); });
-$('ready-ring-text').addEventListener('click', () => { ensureAudio(); if (waitingToAdvance) skipNext(); else togglePlayPause(); });
-$('btn-prev').addEventListener('click',       () => { ensureAudio(); restartPhase(); });
-$('btn-next').addEventListener('click',       () => { ensureAudio(); skipNext(); });
-$('start-btn-inner').addEventListener('click', () => { ensureAudio(); startChunk(); });
+$('btn-play-pause').addEventListener('click', () => { ensureAudio().then(() => togglePlayPause()); });
+$('time-display').addEventListener('click', () => { ensureAudio().then(() => { if (waitingToAdvance) skipNext(); else togglePlayPause(); }); });
+$('ready-ring-text').addEventListener('click', () => { ensureAudio().then(() => { if (waitingToAdvance) skipNext(); else togglePlayPause(); }); });
+$('btn-prev').addEventListener('click',       () => { ensureAudio().then(() => restartPhase()); });
+$('btn-next').addEventListener('click',       () => { ensureAudio().then(() => skipNext()); });
+$('start-btn-inner').addEventListener('click', () => {
+  ensureAudio().then(() => { startChunk(); });
+});
 $('review-btn').addEventListener('click', openReview);
 
 document.addEventListener('keydown', e => {
