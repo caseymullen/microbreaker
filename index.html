@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0057)file:///C:/Users/CaseyM/Downloads/practice-timer_103.html -->
+<!-- saved from url=(0057)file:///C:/Users/CaseyM/Downloads/practice-timer_104.html -->
 <html lang="en" style="background-color: rgb(13, 13, 13);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -1292,7 +1292,7 @@ function render() {
   const bg     = isWork ? '#b83c08' : isBreak ? '#141560' : '#1e1e1e';
   const bgEdge = isWork ? '#4d1903' : isBreak ? '#080928' : '#0d0d0d';
   elApp.style.backgroundColor = bg;
-  if (!$('review-overlay').classList.contains('open')) {
+  if (!$('review-overlay').classList.contains('open') && !$('settings-overlay').classList.contains('open')) {
     $('bg-fill').style.backgroundColor = bgEdge;
     document.body.style.backgroundColor = bgEdge;
     document.documentElement.style.backgroundColor = bgEdge;
