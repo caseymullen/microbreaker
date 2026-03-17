@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)file:///C:/Users/CaseyM/Downloads/sound-lab.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sound Lab</title>
+<link href="./Sound Lab_files/css2" rel="stylesheet">
+<style>
+:root { --font: 'Inconsolata', monospace; --green: #1a3d28; --orange: #b83c08; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: var(--font); background: #111; color: #eee;
+  min-height: 100%; padding: 0;
+}
+body { padding: 20px 16px 60px; max-width: 600px; margin: 0 auto; }
+h1 { font-size: 26px; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 6px; color: #fff; }
+.subtitle { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 28px; }
+.sound-card {
+  background: #1e1e1e; border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px; padding: 16px; margin-bottom: 16px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.sound-name { font-size: 17px; font-weight: 600; letter-spacing: 0.04em; }
+.play-btn {
+  background: var(--green); border: none; color: #fff;
+  font-family: var(--font); font-size: 15px; font-weight: 600;
+  padding: 9px 22px; border-radius: 999px; cursor: pointer;
+  letter-spacing: 0.06em; transition: opacity 0.12s; flex-shrink: 0;
+}
+.play-btn:active { opacity: 0.7; }
+.params { display: flex; flex-direction: column; gap: 10px; }
+.param-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.param-label {
+  font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55);
+  min-width: 110px; flex-shrink: 0;
+}
+.param-ctrl { display: flex; align-items: center; gap: 8px; }
+.step-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20);
+  color: #fff; font-size: 18px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; font-family: var(--font);
+  padding-bottom: 1px; flex-shrink: 0; transition: background 0.1s;
+}
+.step-btn:active { background: rgba(255,255,255,0.25); }
+.param-val {
+  font-size: 14px; font-weight: 400; min-width: 54px; text-align: center;
+  color: rgba(255,255,255,0.90);
+}
+select {
+  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20);
+  color: #fff; font-family: var(--font); font-size: 14px;
+  padding: 5px 8px; border-radius: 7px; cursor: pointer; outline: none;
+  -webkit-appearance: none; min-width: 90px; text-align: center;
+}
+.divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 6px 0; }
+</style>
+</head>
+<body>
+<h1>🔊 Sound Lab</h1>
+<div class="subtitle">Tap a sound name to unlock audio, then play and tweak.</div>
+<div id="cards"><div class="sound-card"><div class="card-header"><div class="sound-name">Work Start</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note 1</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Note 2</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Duration 1 (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.10</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Duration 2 (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.18</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gap (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.13</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.32</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Break Chime</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Duration (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">4</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.40</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">High Chime</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Duration (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">4</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.30</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Countdown Beep</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Final Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Duration (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.35</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.28</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Fanfare (Chunk Complete)</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Base Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Note Dur (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.18</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Hold Dur (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.60</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.25</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Fanfare 2 (Trumpet)</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Base Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.35</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Back to Work Alarm</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">da-da-da Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">da-da Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">DA! Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Beat (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.15</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.28</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">DA! Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.50</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Boxing Ring Bell</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Duration (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">2.50</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Strikes</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">1</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gap (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.30</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.40</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Arpeggio (D♭ F# A)</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note 1</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Note 2</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Note 3</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Note Dur (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.25</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gap (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.18</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.30</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Jackpot!</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Base Note</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.30</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Close App</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note 1</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Note 2</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Duration 1 (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.45</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Duration 2 (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.90</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gap (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.50</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.30</div><button class="step-btn">+</button></div></div></div></div><div class="sound-card"><div class="card-header"><div class="sound-name">Review Close</div><button class="play-btn">▶ Play</button></div><hr class="divider"><div class="params"><div class="param-row"><div class="param-label">Note 1</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Note 2</div><div class="param-ctrl"><select><option value="C1">C1</option><option value="C#1">C#1</option><option value="D1">D1</option><option value="D#1">D#1</option><option value="E1">E1</option><option value="F1">F1</option><option value="F#1">F#1</option><option value="G1">G1</option><option value="G#1">G#1</option><option value="A1">A1</option><option value="A#1">A#1</option><option value="B1">B1</option><option value="C2">C2</option><option value="C#2">C#2</option><option value="D2">D2</option><option value="D#2">D#2</option><option value="E2">E2</option><option value="F2">F2</option><option value="F#2">F#2</option><option value="G2">G2</option><option value="G#2">G#2</option><option value="A2">A2</option><option value="A#2">A#2</option><option value="B2">B2</option><option value="C3">C3</option><option value="C#3">C#3</option><option value="D3">D3</option><option value="D#3">D#3</option><option value="E3">E3</option><option value="F3">F3</option><option value="F#3">F#3</option><option value="G3">G3</option><option value="G#3">G#3</option><option value="A3">A3</option><option value="A#3">A#3</option><option value="B3">B3</option><option value="C4">C4</option><option value="C#4">C#4</option><option value="D4">D4</option><option value="D#4">D#4</option><option value="E4">E4</option><option value="F4">F4</option><option value="F#4">F#4</option><option value="G4">G4</option><option value="G#4">G#4</option><option value="A4">A4</option><option value="A#4">A#4</option><option value="B4">B4</option><option value="C5">C5</option><option value="C#5">C#5</option><option value="D5">D5</option><option value="D#5">D#5</option><option value="E5">E5</option><option value="F5">F5</option><option value="F#5">F#5</option><option value="G5">G5</option><option value="G#5">G#5</option><option value="A5">A5</option><option value="A#5">A#5</option><option value="B5">B5</option><option value="C6">C6</option><option value="C#6">C#6</option><option value="D6">D6</option><option value="D#6">D#6</option><option value="E6">E6</option><option value="F6">F6</option><option value="F#6">F#6</option><option value="G6">G6</option><option value="G#6">G#6</option><option value="A6">A6</option><option value="A#6">A#6</option><option value="B6">B6</option><option value="C7">C7</option><option value="C#7">C#7</option><option value="D7">D7</option><option value="D#7">D#7</option><option value="E7">E7</option><option value="F7">F7</option><option value="F#7">F#7</option><option value="G7">G7</option><option value="G#7">G#7</option><option value="A7">A7</option><option value="A#7">A#7</option><option value="B7">B7</option></select></div></div><div class="param-row"><div class="param-label">Duration 1 (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.40</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Duration 2 (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.80</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gap (s)</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.45</div><button class="step-btn">+</button></div></div><div class="param-row"><div class="param-label">Gain</div><div class="param-ctrl"><button class="step-btn">−</button><div class="param-val">0.28</div><button class="step-btn">+</button></div></div></div></div></div>
+
+<script>
+'use strict';
+
+let audioCtx = null;
+let masterGain = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 1.0;
+    masterGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') return audioCtx.resume();
+  return Promise.resolve();
+}
+
+// Note name <-> frequency
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function noteToFreq(name, octave) {
+  const n = NOTE_NAMES.indexOf(name);
+  if (n < 0) return 440;
+  return 440 * Math.pow(2, (n - 9 + (octave - 4) * 12) / 12);
+}
+function freqToNote(freq) {
+  const midi = Math.round(12 * Math.log2(freq / 440) + 69);
+  const octave = Math.floor(midi / 12) - 1;
+  const note = NOTE_NAMES[midi % 12];
+  return { note, octave, label: note + octave };
+}
+function allNotes(octaves) {
+  const result = [];
+  octaves.forEach(o => NOTE_NAMES.forEach(n => result.push({ note: n, octave: o, label: n + o })));
+  return result;
+}
+
+function beep(freq, dur, gain, type, delay) {
+  const ctx = audioCtx;
+  const t = ctx.currentTime + (delay || 0);
+  const g = ctx.createGain();
+  const o = ctx.createOscillator();
+  o.type = type || 'sine';
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(masterGain);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+
+function bellPartial(freq, gain, dur, delay) {
+  // Bell uses multiple detuned partials with fast attack slow decay
+  const ctx = audioCtx;
+  [1, 2.756, 5.404, 8.933].forEach((ratio, i) => {
+    const t = ctx.currentTime + (delay || 0);
+    const g = ctx.createGain();
+    const o = ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = freq * ratio;
+    const partialGain = gain * [1, 0.5, 0.25, 0.12][i];
+    const partialDur  = dur  * [1, 0.7, 0.5,  0.3][i];
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(partialGain, t + 0.003);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + partialDur);
+    o.connect(g); g.connect(masterGain);
+    o.start(t); o.stop(t + partialDur + 0.05);
+  });
+}
+
+// ─── Sound definitions ───────────────────────────────────────────
+const SOUNDS = [
+  {
+    id: 'workStart',
+    name: 'Work Start',
+    params: {
+      freq1: { type: 'note', value: 'E5', label: 'Note 1' },
+      freq2: { type: 'note', value: 'A5', label: 'Note 2' },
+      dur1:  { type: 'float', value: 0.10, min: 0.05, max: 0.40, step: 0.05, label: 'Duration 1 (s)' },
+      dur2:  { type: 'float', value: 0.18, min: 0.05, max: 0.60, step: 0.05, label: 'Duration 2 (s)' },
+      gap:   { type: 'float', value: 0.13, min: 0.05, max: 0.40, step: 0.05, label: 'Gap (s)' },
+      gain:  { type: 'float', value: 0.32, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const f1 = noteToFreq(...p.freq1.value.match(/([A-G]#?)(\d)/).slice(1));
+      const f2 = noteToFreq(...p.freq2.value.match(/([A-G]#?)(\d)/).slice(1));
+      beep(f1, p.dur1.value, p.gain.value, 'sine', 0);
+      beep(f2, p.dur2.value, p.gain.value, 'sine', p.gap.value);
+    }
+  },
+  {
+    id: 'breakChime',
+    name: 'Break Chime',
+    params: {
+      freq:  { type: 'note', value: 'C3', label: 'Note' },
+      dur:   { type: 'float', value: 3.0, min: 0.5, max: 6.0, step: 0.5, label: 'Duration (s)' },
+      gain:  { type: 'float', value: 0.35, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const f = noteToFreq(...p.freq.value.match(/([A-G]#?)(\d)/).slice(1));
+      beep(f, p.dur.value, p.gain.value, 'sine', 0);
+    }
+  },
+  {
+    id: 'highChime',
+    name: 'High Chime',
+    params: {
+      freq:  { type: 'note', value: 'C4', label: 'Note' },
+      dur:   { type: 'float', value: 3.0, min: 0.5, max: 6.0, step: 0.5, label: 'Duration (s)' },
+      gain:  { type: 'float', value: 0.30, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const f = noteToFreq(...p.freq.value.match(/([A-G]#?)(\d)/).slice(1));
+      beep(f, p.dur.value, p.gain.value, 'sine', 0);
+    }
+  },
+  {
+    id: 'countdownBeep',
+    name: 'Countdown Beep',
+    params: {
+      freq:  { type: 'note', value: 'A5', label: 'Note' },
+      freqF: { type: 'note', value: 'C6', label: 'Final Note' },
+      dur:   { type: 'float', value: 0.11, min: 0.05, max: 0.40, step: 0.05, label: 'Duration (s)' },
+      gain:  { type: 'float', value: 0.28, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const f1 = noteToFreq(...p.freq.value.match(/([A-G]#?)(\d)/).slice(1));
+      const f2 = noteToFreq(...p.freqF.value.match(/([A-G]#?)(\d)/).slice(1));
+      beep(f1, p.dur.value, p.gain.value, 'sine', 0.0);
+      beep(f1, p.dur.value, p.gain.value, 'sine', 0.4);
+      beep(f2, p.dur.value, p.gain.value, 'sine', 0.8);
+    }
+  },
+  {
+    id: 'fanfare',
+    name: 'Fanfare (Chunk Complete)',
+    params: {
+      baseNote: { type: 'note', value: 'C4', label: 'Base Note' },
+      dur:      { type: 'float', value: 0.18, min: 0.05, max: 0.40, step: 0.05, label: 'Note Dur (s)' },
+      holdDur:  { type: 'float', value: 0.60, min: 0.10, max: 1.50, step: 0.10, label: 'Hold Dur (s)' },
+      gain:     { type: 'float', value: 0.25, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const base = noteToFreq(...p.baseNote.value.match(/([A-G]#?)(\d)/).slice(1));
+      const scale = [1, 5/4, 3/2, 2]; // C E G C
+      scale.forEach((r, i) => beep(base * r, p.dur.value, p.gain.value, 'sine', i * 0.16));
+      beep(base * 2, p.holdDur.value, p.gain.value + 0.03, 'sine', 0.70);
+    }
+  },
+  {
+    id: 'fanfare2',
+    name: 'Fanfare 2 (Trumpet)',
+    params: {
+      baseNote: { type: 'note', value: 'C4', label: 'Base Note' },
+      gain:     { type: 'float', value: 0.30, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const b = noteToFreq(...p.baseNote.value.match(/([A-G]#?)(\d)/).slice(1));
+      const g = p.gain.value;
+      // da-da-da-DAAA! (G G G Eb, then G) classic trumpet figure
+      beep(b * 3/2, 0.12, g, 'sawtooth', 0.00);
+      beep(b * 3/2, 0.12, g, 'sawtooth', 0.15);
+      beep(b * 3/2, 0.12, g, 'sawtooth', 0.30);
+      beep(b * 6/5, 0.35, g * 1.1, 'sawtooth', 0.48);
+      beep(b * 3/2, 0.55, g * 1.2, 'sawtooth', 0.90);
+    }
+  },
+  {
+    id: 'backToWork',
+    name: 'Back to Work Alarm',
+    params: {
+      note1: { type: 'note', value: 'A4', label: 'da-da-da Note' },
+      note2: { type: 'note', value: 'C5', label: 'da-da Note' },
+      note3: { type: 'note', value: 'E5', label: 'DA! Note' },
+      beat:  { type: 'float', value: 0.20, min: 0.10, max: 0.40, step: 0.05, label: 'Beat (s)' },
+      gain:  { type: 'float', value: 0.28, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+      gainDA:{ type: 'float', value: 0.50, min: 0.10, max: 1.00, step: 0.05, label: 'DA! Gain' },
+    },
+    play(p) {
+      const f1 = noteToFreq(...p.note1.value.match(/([A-G]#?)(\d)/).slice(1));
+      const f2 = noteToFreq(...p.note2.value.match(/([A-G]#?)(\d)/).slice(1));
+      const f3 = noteToFreq(...p.note3.value.match(/([A-G]#?)(\d)/).slice(1));
+      const T = p.beat.value;
+      const g = p.gain.value;
+      beep(f1, 0.10, g, 'sine', 0*T);
+      beep(f1, 0.10, g, 'sine', 1*T);
+      beep(f1, 0.10, g, 'sine', 2*T);
+      beep(f2, 0.10, g, 'sine', 6*T);
+      beep(f2, 0.10, g, 'sine', 7*T);
+      beep(f3, 0.50, p.gainDA.value, 'sine', 12*T);
+    }
+  },
+  {
+    id: 'boxingBell',
+    name: 'Boxing Ring Bell',
+    params: {
+      freq:    { type: 'note', value: 'A#4', label: 'Note' },
+      dur:     { type: 'float', value: 2.5, min: 0.5, max: 5.0, step: 0.5, label: 'Duration (s)' },
+      strikes: { type: 'int',   value: 3, min: 1, max: 5, step: 1, label: 'Strikes' },
+      gap:     { type: 'float', value: 0.30, min: 0.10, max: 0.80, step: 0.10, label: 'Gap (s)' },
+      gain:    { type: 'float', value: 0.40, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const f = noteToFreq(...p.freq.value.match(/([A-G]#?)(\d)/).slice(1));
+      for (let i = 0; i < p.strikes.value; i++) {
+        bellPartial(f, p.gain.value, p.dur.value, i * (p.gap.value + 0.05));
+      }
+    }
+  },
+  {
+    id: 'arpeggio',
+    name: 'Arpeggio (D♭ F# A)',
+    params: {
+      note1: { type: 'note', value: 'D3', label: 'Note 1' },
+      note2: { type: 'note', value: 'F#3', label: 'Note 2' },
+      note3: { type: 'note', value: 'A4', label: 'Note 3' },
+      noteDur: { type: 'float', value: 0.25, min: 0.10, max: 0.60, step: 0.05, label: 'Note Dur (s)' },
+      gap:     { type: 'float', value: 0.18, min: 0.05, max: 0.40, step: 0.05, label: 'Gap (s)' },
+      gain:    { type: 'float', value: 0.30, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const notes = [p.note1, p.note2, p.note3].map(n =>
+        noteToFreq(...n.value.match(/([A-G]#?)(\d)/).slice(1)));
+      notes.forEach((f, i) => beep(f, p.noteDur.value, p.gain.value, 'sine', i * p.gap.value));
+    }
+  },
+  {
+    id: 'jackpot',
+    name: 'Jackpot!',
+    params: {
+      baseNote: { type: 'note', value: 'C4', label: 'Base Note' },
+      gain:     { type: 'float', value: 0.30, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const b = noteToFreq(...p.baseNote.value.match(/([A-G]#?)(\d)/).slice(1));
+      const g = p.gain.value;
+      // Rising cascade then triumphant chord
+      [1, 5/4, 3/2, 2, 5/2, 3].forEach((r, i) =>
+        beep(b * r, 0.15, g, 'sine', i * 0.09));
+      // Final chord
+      [1, 5/4, 3/2, 2].forEach(r =>
+        beep(b * r * 2, 0.80, g * 0.8, 'sine', 0.65));
+    }
+  },
+  {
+    id: 'closeApp',
+    name: 'Close App',
+    params: {
+      note1: { type: 'note', value: 'G3', label: 'Note 1' },
+      note2: { type: 'note', value: 'C3', label: 'Note 2' },
+      dur1:  { type: 'float', value: 0.45, min: 0.10, max: 1.00, step: 0.05, label: 'Duration 1 (s)' },
+      dur2:  { type: 'float', value: 0.90, min: 0.10, max: 2.00, step: 0.10, label: 'Duration 2 (s)' },
+      gap:   { type: 'float', value: 0.50, min: 0.10, max: 1.00, step: 0.10, label: 'Gap (s)' },
+      gain:  { type: 'float', value: 0.30, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const f1 = noteToFreq(...p.note1.value.match(/([A-G]#?)(\d)/).slice(1));
+      const f2 = noteToFreq(...p.note2.value.match(/([A-G]#?)(\d)/).slice(1));
+      beep(f1, p.dur1.value, p.gain.value, 'sine', 0);
+      beep(f2, p.dur2.value, p.gain.value * 0.93, 'sine', p.gap.value);
+    }
+  },
+  {
+    id: 'reviewClose',
+    name: 'Review Close',
+    params: {
+      note1: { type: 'note', value: 'G4', label: 'Note 1' },
+      note2: { type: 'note', value: 'C4', label: 'Note 2' },
+      dur1:  { type: 'float', value: 0.40, min: 0.10, max: 1.00, step: 0.05, label: 'Duration 1 (s)' },
+      dur2:  { type: 'float', value: 0.80, min: 0.10, max: 2.00, step: 0.10, label: 'Duration 2 (s)' },
+      gap:   { type: 'float', value: 0.45, min: 0.10, max: 1.00, step: 0.10, label: 'Gap (s)' },
+      gain:  { type: 'float', value: 0.28, min: 0.05, max: 1.00, step: 0.05, label: 'Gain' },
+    },
+    play(p) {
+      const f1 = noteToFreq(...p.note1.value.match(/([A-G]#?)(\d)/).slice(1));
+      const f2 = noteToFreq(...p.note2.value.match(/([A-G]#?)(\d)/).slice(1));
+      beep(f1, p.dur1.value, p.gain.value, 'sine', 0);
+      beep(f2, p.dur2.value, p.gain.value * 0.89, 'sine', p.gap.value);
+    }
+  },
+];
+
+// ─── UI Builder ──────────────────────────────────────────────────
+const NOTE_OPTIONS = allNotes([1,2,3,4,5,6,7]);
+
+function buildCard(sound) {
+  const card = document.createElement('div');
+  card.className = 'sound-card';
+
+  const header = document.createElement('div');
+  header.className = 'card-header';
+
+  const name = document.createElement('div');
+  name.className = 'sound-name';
+  name.textContent = sound.name;
+
+  const playBtn = document.createElement('button');
+  playBtn.className = 'play-btn';
+  playBtn.textContent = '▶ Play';
+  playBtn.addEventListener('click', () => {
+    ensureAudio().then(() => sound.play(sound.params));
+  });
+
+  header.appendChild(name);
+  header.appendChild(playBtn);
+  card.appendChild(header);
+
+  const hr = document.createElement('hr');
+  hr.className = 'divider';
+  card.appendChild(hr);
+
+  const params = document.createElement('div');
+  params.className = 'params';
+
+  Object.entries(sound.params).forEach(([key, param]) => {
+    const row = document.createElement('div');
+    row.className = 'param-row';
+
+    const label = document.createElement('div');
+    label.className = 'param-label';
+    label.textContent = param.label;
+
+    const ctrl = document.createElement('div');
+    ctrl.className = 'param-ctrl';
+
+    if (param.type === 'note') {
+      const sel = document.createElement('select');
+      NOTE_OPTIONS.forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = n.label;
+        opt.textContent = n.label;
+        if (n.label === param.value) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', () => { param.value = sel.value; });
+      ctrl.appendChild(sel);
+    } else {
+      const minus = document.createElement('button');
+      minus.className = 'step-btn';
+      minus.textContent = '−';
+
+      const val = document.createElement('div');
+      val.className = 'param-val';
+      val.textContent = param.value % 1 === 0 ? param.value : param.value.toFixed(2);
+
+      const plus = document.createElement('button');
+      plus.className = 'step-btn';
+      plus.textContent = '+';
+
+      minus.addEventListener('click', () => {
+        param.value = Math.max(param.min, +(param.value - param.step).toFixed(4));
+        val.textContent = param.value % 1 === 0 ? param.value : param.value.toFixed(2);
+      });
+      plus.addEventListener('click', () => {
+        param.value = Math.min(param.max, +(param.value + param.step).toFixed(4));
+        val.textContent = param.value % 1 === 0 ? param.value : param.value.toFixed(2);
+      });
+
+      ctrl.appendChild(minus);
+      ctrl.appendChild(val);
+      ctrl.appendChild(plus);
+    }
+
+    row.appendChild(label);
+    row.appendChild(ctrl);
+    params.appendChild(row);
+  });
+
+  card.appendChild(params);
+  return card;
+}
+
+const container = document.getElementById('cards');
+SOUNDS.forEach(s => container.appendChild(buildCard(s)));
+</script>
+
+
+</body></html>
