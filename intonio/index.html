@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_10.html -->
+<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_11.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -257,7 +257,7 @@
     </div>
 
     <div class="section-label" style="margin-top:0.15rem">Detection log</div>
-    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">A3</span><span>18:49:14</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:13</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:13</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:12</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:11</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:11</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:10</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:10</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:09</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:08</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:08</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:07</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:06</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:06</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:05</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:04</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:04</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:03</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:02</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:02</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:01</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:00</span></div></div>
+    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">D♯4</span><span>18:59:51</span></div><div class="history-item"><span class="hn">G3</span><span>18:59:50</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:48</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:48</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:47</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:46</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:46</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:45</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:44</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:44</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:43</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:42</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:42</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:41</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:40</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:40</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:39</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:38</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:38</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:37</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:36</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:36</span></div></div>
   </div>
 </main>
 
@@ -792,10 +792,20 @@ function analyse() {
     for (let i = minBin; i <= maxBin; i++) if (hps[i] > 0) vals.push(hps[i]);
     vals.sort((a, b) => a - b);
     const p80 = vals[Math.floor(vals.length * 0.8)] || 0;
-    const threshold = p80 * (1 + sensitivity * 20);
+    const threshold = p80 * (1 + (0.51 - sensitivity) * 20);
 
     let peaks = suppressHarmonics(findPeaks(hps, minBin, maxBin, threshold), binHz);
-    const rawFreq = peaks[0] ? peaks[0].bin * binHz : 0;
+    // Among the top two surviving peaks, prefer the lower frequency.
+    // A violin's fundamental is almost always lower than any harmonic artifact,
+    // so this biases toward the correct pitch when the HPS is ambiguous.
+    let rawFreq = 0;
+    if (peaks.length >= 2) {
+      const f0 = peaks[0].bin * binHz;
+      const f1 = peaks[1].bin * binHz;
+      rawFreq = Math.min(f0, f1);
+    } else if (peaks[0]) {
+      rawFreq = peaks[0].bin * binHz;
+    }
 
     // Snap-or-smooth: jump immediately on note change, smooth within a note
     const ALPHA = 0.4;
