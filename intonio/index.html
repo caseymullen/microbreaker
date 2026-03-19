@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)file:///C:/Users/CaseyM/Downloads/violin-tuner_7.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d1117">
+<title>Fiddle Ear — Violin Pitch Detector</title>
+<link rel="manifest" href="data:application/json,{%22name%22:%22Fiddle%20Ear%22,%22short_name%22:%22Fiddle%20Ear%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230d1117%22,%22theme_color%22:%22%230d1117%22}">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #edecea;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #b8860b;
+    --accent2: #daa520;
+    --green: #1a7f37;
+    --red: #cf2020;
+    --blue: #1a52cf;
+    --note1: #b8860b;
+    --string-g: #a04010;
+    --string-d: #b07000;
+    --string-a: #1a52cf;
+    --string-e: #b8860b;
+  }
+
+  html, body { height: 100%; background: var(--bg); color: var(--text);
+    font-family: 'DM Mono', 'Courier New', monospace; overflow: hidden; }
+
+  body {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    height: 100vh;
+  }
+
+  header {
+    padding: 0.6rem 1.5rem;
+    display: flex; align-items: baseline; gap: 1rem;
+    border-bottom: 0.5px solid var(--border);
+    flex-shrink: 0;
+  }
+  header h1 { font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: 1.5rem; font-weight: 400; color: var(--accent); letter-spacing: -0.02em; }
+  header span { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  main {
+    display: grid;
+    grid-template-columns: 270px 1fr 250px;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* LEFT: note cards */
+  .cards-panel {
+    border-right: 0.5px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: 0.9rem;
+    gap: 0.7rem;
+    overflow: hidden;
+  }
+
+  .note-card {
+    flex: 1;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem 0.95rem;
+    display: flex; flex-direction: column;
+    gap: 0.2rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.15s, background 0.15s;
+    min-height: 0;
+  }
+  .note-card.active { border-color: var(--accent); background: var(--surface2); }
+  .note-card.active::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent); border-radius: 10px 10px 0 0;
+  }
+
+  .note-card-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.1rem;
+  }
+  .note-label { font-size: 0.72rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); }
+  .note-freq-small { font-size: 0.8rem; color: var(--muted); }
+
+  .note-big {
+    font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: 4rem; line-height: 1.0; font-weight: 400;
+    color: var(--text); letter-spacing: -0.03em;
+    transition: color 0.12s;
+  }
+  .note-card.active .note-big { color: var(--accent); }
+  .note-octave-sup { font-size: 1.5rem; font-family: 'Instrument Serif', serif;
+    font-style: italic; color: var(--muted); vertical-align: super; }
+
+  .inton-wrap { margin-top: 0.45rem; }
+  .inton-label-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.72rem; color: var(--muted); margin-bottom: 4px;
+  }
+  .inton-cents { font-size: 0.8rem; font-weight: 500; }
+  .inton-cents.sharp { color: var(--red); }
+  .inton-cents.flat { color: var(--blue); }
+  .inton-cents.intune { color: var(--green); }
+
+  .inton-track {
+    position: relative; height: 6px;
+    background: var(--surface2); border-radius: 3px;
+  }
+  .inton-center {
+    position: absolute; left: 50%; top: -3px;
+    width: 1px; height: 12px; background: var(--border2);
+  }
+  .inton-needle {
+    position: absolute; top: -4px;
+    width: 3px; height: 14px; border-radius: 2px;
+    background: var(--accent);
+    left: 50%; transform: translateX(-50%);
+    transition: left 0.07s ease-out;
+  }
+  .inton-scale {
+    display: flex; justify-content: space-between;
+    font-size: 0.68rem; color: var(--muted);
+    margin-top: 3px; padding: 0 2px;
+  }
+
+  /* CENTRE: scrolling pitch graph */
+  .graph-panel {
+    display: flex; flex-direction: column;
+    padding: 0.75rem 0.9rem;
+    gap: 0.4rem;
+    overflow: hidden; min-height: 0;
+  }
+  .graph-top-row {
+    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+  }
+  .graph-panel-label {
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+  .legend { display: flex; align-items: center; gap: 0.7rem; font-size: 0.75rem; color: var(--muted); }
+  .leg-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
+
+  .graph-wrap {
+    flex: 4; background: var(--surface);
+    border: 0.5px solid var(--border); border-radius: 10px;
+    overflow: hidden; position: relative; min-height: 0;
+  }
+  #pitch-canvas { width: 100%; height: 100%; display: block; }
+
+  /* Intonation scrolling graph */
+  .inton-graph-row {
+    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+  .inton-graph-wrap {
+    flex: 1; background: #ffffff;
+    border: 0.5px solid var(--border); border-radius: 10px;
+    overflow: hidden; position: relative; min-height: 0;
+  }
+  #inton-canvas { width: 100%; height: 100%; display: block; }
+
+  /* RIGHT panel */
+  .right-panel {
+    border-left: 0.5px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: 0.9rem; gap: 0.75rem; overflow-y: auto;
+  }
+  .section-label {
+    font-size: 0.75rem; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 0.35rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .string-list { display: flex; flex-direction: column; gap: 0.35rem; }
+  .string-row {
+    display: flex; align-items: center; gap: 0.55rem;
+    padding: 0.38rem 0.55rem; border-radius: 7px;
+    border: 0.5px solid var(--border); background: var(--surface);
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .string-row.highlight { background: var(--surface2); }
+  .string-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .string-name { font-size: 0.95rem; font-weight: 500; flex: 0 0 18px; }
+  .string-open { font-size: 0.8rem; color: var(--muted); flex: 1; }
+  .string-detected { font-size: 1.1rem; font-family: 'Instrument Serif', serif;
+    font-style: italic; text-align: right; min-width: 38px; }
+
+  .history-list { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.82rem; }
+  .history-item {
+    display: flex; justify-content: space-between; color: var(--muted);
+    padding: 0.18rem 0; border-bottom: 0.5px solid var(--border);
+    animation: fadeIn 0.2s ease-out;
+  }
+  .history-item .hn { color: var(--text); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
+
+  /* BOTTOM: compact spectrum strip */
+  .spectrum-strip {
+    height: 98px; flex-shrink: 0;
+    background: var(--surface);
+    border-top: 0.5px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  #spectrum-canvas { width: 100%; height: 100%; display: block; }
+  .spectrum-strip-label {
+    position: absolute; top: 5px; left: 10px;
+    font-size: 0.68rem; letter-spacing: 0.09em; text-transform: uppercase;
+    color: rgba(0,0,0,0.35); pointer-events: none;
+  }
+
+  /* Footer */
+  footer {
+    padding: 0.45rem 1.5rem;
+    border-top: 0.5px solid var(--border);
+    display: flex; align-items: center; gap: 0.8rem;
+    flex-shrink: 0;
+  }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%;
+    background: var(--muted); flex-shrink: 0; transition: background 0.2s; }
+  .status-dot.listening { background: var(--green); box-shadow: 0 0 0 2px rgba(26,127,55,0.22); }
+  .status-dot.error { background: var(--red); }
+  .status-text { font-size: 0.82rem; color: var(--muted); }
+  .spacer { flex: 1; }
+
+  .ctrl-group { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--muted); }
+  .ctrl-group input[type=range] { width: 68px; accent-color: var(--accent); cursor: pointer; }
+  .ctrl-group label { white-space: nowrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 5px; border: 0.5px solid var(--border2);
+    background: transparent; color: var(--text);
+    font-family: 'DM Mono', monospace; font-size: 0.82rem; cursor: pointer;
+    transition: background 0.12s;
+  }
+  .btn:hover { background: var(--surface); }
+  .btn.active { background: var(--accent2); border-color: var(--accent); color: #000; }
+  .btn.active:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fiddle Ear</h1>
+  <span>polyphonic violin pitch detector</span>
+</header>
+
+<main>
+  <!-- LEFT: single note card with intonation bar -->
+  <div class="cards-panel">
+
+    <div class="note-card" id="card0">
+      <div class="note-card-header">
+        <div class="note-label">Detected note</div>
+        <div class="note-freq-small" id="freq0">— Hz</div>
+      </div>
+      <div class="note-big" id="note0">—</div>
+      <div class="inton-wrap">
+        <div class="inton-label-row">
+          <span>Intonation</span>
+          <span class="inton-cents" id="cents0">—</span>
+        </div>
+        <div class="inton-track">
+          <div class="inton-center"></div>
+          <div class="inton-needle" id="needle0"></div>
+        </div>
+        <div class="inton-scale"><span>−50¢</span><span>0</span><span>+50¢</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CENTRE: scrolling pitch history graph -->
+  <div class="graph-panel">
+    <div class="graph-top-row">
+      <div class="graph-panel-label">Pitch history · 5 s window</div>
+    </div>
+    <div class="graph-wrap">
+      <canvas id="pitch-canvas"></canvas>
+    </div>
+
+    <div class="inton-graph-row">
+      <div class="graph-panel-label">Intonation · cents from nearest note</div>
+    </div>
+    <div class="inton-graph-wrap">
+      <canvas id="inton-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- RIGHT: open strings + detection log -->
+  <div class="right-panel">
+    <div class="section-label">Open strings</div>
+    <div class="string-list">
+      <div class="string-row" id="str-G">
+        <div class="string-dot" style="background:var(--string-g)"></div>
+        <div class="string-name" style="color:var(--string-g)">G</div>
+        <div class="string-open">G3 · 196 Hz</div>
+        <div class="string-detected" id="sdet-G">—</div>
+      </div>
+      <div class="string-row" id="str-D">
+        <div class="string-dot" style="background:var(--string-d)"></div>
+        <div class="string-name" style="color:var(--string-d)">D</div>
+        <div class="string-open">D4 · 293 Hz</div>
+        <div class="string-detected" id="sdet-D">—</div>
+      </div>
+      <div class="string-row" id="str-A">
+        <div class="string-dot" style="background:var(--string-a)"></div>
+        <div class="string-name" style="color:var(--string-a)">A</div>
+        <div class="string-open">A4 · 440 Hz</div>
+        <div class="string-detected" id="sdet-A">—</div>
+      </div>
+      <div class="string-row" id="str-E">
+        <div class="string-dot" style="background:var(--string-e)"></div>
+        <div class="string-name" style="color:var(--string-e)">E</div>
+        <div class="string-open">E5 · 659 Hz</div>
+        <div class="string-detected" id="sdet-E">—</div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:0.15rem">Detection log</div>
+    <div class="history-list" id="history-list">
+      <div class="history-item"><span class="hn" style="color:var(--muted)">Start listening…</span></div>
+    </div>
+  </div>
+</main>
+
+<!-- BOTTOM: compact spectrum strip -->
+<div class="spectrum-strip">
+  <div class="spectrum-strip-label">Spectrum · violin range · dashed red = volume threshold</div>
+  <canvas id="spectrum-canvas"></canvas>
+</div>
+
+<footer>
+  <div class="status-dot" id="status-dot"></div>
+  <div class="status-text" id="status-text">Microphone off</div>
+  <div class="spacer"></div>
+  <div class="ctrl-group">
+    <label for="thresh-slider">Vol threshold</label>
+    <input type="range" id="thresh-slider" min="-85" max="-25" step="1" value="-70">
+    <span id="thresh-val">−70 dB</span>
+  </div>
+  <div class="ctrl-group">
+    <label for="sens-slider">HPS sensitivity</label>
+    <input type="range" id="sens-slider" min="0.01" max="0.5" step="0.01" value="0.12">
+  </div>
+  <button class="btn" id="toggle-btn" onclick="toggleListen()">
+    <span>▶ Start listening</span>
+  </button>
+</footer>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const NOTE_NAMES = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const A4 = 440;
+const VIOLIN_MIN_HZ = 185;
+const VIOLIN_MAX_HZ = 1175;  // D6 — highest note played
+const FFT_SIZE = 8192;
+const SMOOTH = 0.75;
+const HPS_HARMONICS = 5;
+const SCROLL_SEC = 5;
+
+// All chromatic notes in violin range for pitch graph Y-axis
+const YLABELS = [
+  {n:'G3', f:196.0},{n:'G♯3',f:207.7},{n:'A3', f:220.0},{n:'A♯3',f:233.1},{n:'B3', f:246.9},
+  {n:'C4', f:261.6},{n:'C♯4',f:277.2},{n:'D4', f:293.7},{n:'D♯4',f:311.1},{n:'E4', f:329.6},
+  {n:'F4', f:349.2},{n:'F♯4',f:370.0},{n:'G4', f:392.0},{n:'G♯4',f:415.3},{n:'A4', f:440.0},
+  {n:'A♯4',f:466.2},{n:'B4', f:493.9},{n:'C5', f:523.3},{n:'C♯5',f:554.4},{n:'D5', f:587.3},
+  {n:'D♯5',f:622.3},{n:'E5', f:659.3},{n:'F5', f:698.5},{n:'F♯5',f:740.0},{n:'G5', f:784.0},
+  {n:'G♯5',f:830.6},{n:'A5', f:880.0},{n:'A♯5',f:932.3},{n:'B5', f:987.8},{n:'C6', f:1046.5},
+  {n:'C♯6',f:1108.7},{n:'D6',f:1174.7},
+];
+
+// ── State ────────────────────────────────────────────────────────────────────
+let audioCtx, analyser, micStream, animId;
+let isListening = false;
+let sensitivity = 0.12;
+let volumeThresholdDb = -70;
+let smoothedPeaks = [0, 0];
+let history = [];
+let lastLogTime = 0;
+let pitchBuf = [];  // { t, f0, f1 }
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function freqToNote(freq) {
+  if (!freq || freq <= 0) return null;
+  const n = Math.round(12 * Math.log2(freq / A4)); // semitones above/below A4
+  const semitoneAboveC = ((n + 9) % 12 + 12) % 12; // shift: A4 is 9 semitones above C
+  const name = NOTE_NAMES[semitoneAboveC];
+  // Octave: A4=oct4, so n=0→oct4. Each 12 semitones = 1 octave, but octave
+  // increments at C, which is 9 semitones below A of the same octave.
+  const octave = Math.floor((n + 9) / 12) + 4;
+  const idealFreq = A4 * Math.pow(2, n / 12);
+  const cents = Math.round(1200 * Math.log2(freq / idealFreq));
+  return { name, octave, cents, freq: Math.round(freq * 10) / 10 };
+}
+function inVRange(f) { return f >= VIOLIN_MIN_HZ && f <= VIOLIN_MAX_HZ; }
+
+// ── Note card UI ─────────────────────────────────────────────────────────────
+function updateNoteCard(idx, noteInfo) {
+  const card = document.getElementById('card' + idx);
+  const nameEl = document.getElementById('note' + idx);
+  const freqEl = document.getElementById('freq' + idx);
+  const centsEl = document.getElementById('cents' + idx);
+  const needle = document.getElementById('needle' + idx);
+
+  if (!noteInfo) {
+    card.classList.remove('active');
+    nameEl.innerHTML = '—';
+    freqEl.textContent = '— Hz';
+    centsEl.textContent = '—';
+    centsEl.className = 'inton-cents';
+    needle.style.left = '50%';
+    return;
+  }
+  card.classList.add('active');
+  nameEl.innerHTML = noteInfo.name + `<span class="note-octave-sup">${noteInfo.octave}</span>`;
+  freqEl.textContent = noteInfo.freq + ' Hz';
+  const c = noteInfo.cents;
+  const pct = 50 + (Math.max(-50, Math.min(50, c)) / 50) * 50;
+  needle.style.left = pct.toFixed(1) + '%';
+  if (Math.abs(c) <= 5) {
+    centsEl.textContent = '♦ in tune'; centsEl.className = 'inton-cents intune';
+  } else if (c > 0) {
+    centsEl.textContent = '+' + c + '¢ sharp'; centsEl.className = 'inton-cents sharp';
+  } else {
+    centsEl.textContent = c + '¢ flat'; centsEl.className = 'inton-cents flat';
+  }
+}
+
+function updateStrings(notes) {
+  ['G','D','A','E'].forEach(s => {
+    document.getElementById('str-'+s).classList.remove('highlight');
+    document.getElementById('sdet-'+s).textContent = '—';
+  });
+  for (const n of notes) {
+    if (!n) continue;
+    const f = n.freq;
+    let sk = f >= 185 && f < 290 ? 'G' : f >= 290 && f < 435 ? 'D' : f >= 435 && f < 655 ? 'A' : f >= 655 ? 'E' : null;
+    if (sk) {
+      document.getElementById('str-'+sk).classList.add('highlight');
+      document.getElementById('sdet-'+sk).textContent = n.name + n.octave;
+    }
+  }
+}
+
+function logHistory(notes) {
+  const now = Date.now();
+  if (now - lastLogTime < 650) return;
+  lastLogTime = now;
+  const valid = notes.filter(Boolean);
+  if (!valid.length) return;
+  const str = valid.map(n => n.name + n.octave).join(' + ');
+  history.unshift({ notes: str, time: new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'}) });
+  if (history.length > 22) history.pop();
+  document.getElementById('history-list').innerHTML = history.map(h =>
+    `<div class="history-item"><span class="hn">${h.notes}</span><span>${h.time}</span></div>`
+  ).join('');
+}
+
+// ── Cents → colour helper (shared by pitch and inton graphs) ──────────────────
+// 0¢ = black, sharp→ red, flat→ blue. Linear blend over ±50¢.
+function centsToColor(cents) {
+  if (cents === null) return '#1a1a1a';
+  const t = Math.min(1, Math.abs(cents) / 50);
+  if (cents >= 0) {
+    // black → red
+    const r = Math.round(26 + t * (207 - 26));
+    const g = Math.round(26 - t * 26);
+    const b = Math.round(26 - t * 26);
+    return `rgb(${r},${g},${b})`;
+  } else {
+    // black → blue
+    const r = Math.round(26 - t * 26);
+    const g = Math.round(26 - t * 26);
+    const b = Math.round(26 + t * (207 - 26));
+    return `rgb(${r},${g},${b})`;
+  }
+}
+
+// ── Pitch graph (scrolling) ──────────────────────────────────────────────────
+function drawPitchGraph() {
+  const wrap = document.querySelector('.graph-wrap');
+  const canvas = document.getElementById('pitch-canvas');
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  if (!W || !H) return;
+  if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const P = { l: 50, r: 8, t: 8, b: 16 };
+  const pw = W - P.l - P.r, ph = H - P.t - P.b;
+  const logMin = Math.log2(VIOLIN_MIN_HZ), logMax = Math.log2(VIOLIN_MAX_HZ);
+  const nowMs = performance.now();
+  const winMs = SCROLL_SEC * 1000;
+
+  function fy(f) { return P.t + ph - (Math.log2(f) - logMin) / (logMax - logMin) * ph; }
+  function tx(t) { return P.l + (1 - (nowMs - t) / winMs) * pw; }
+
+  // Y-axis grid + labels — naturals dark, sharps lighter
+  ctx.textAlign = 'right';
+  for (const lb of YLABELS) {
+    const y = fy(lb.f);
+    if (y < P.t - 2 || y > P.t + ph + 2) continue;
+    const isSharp = lb.n.includes('♯');
+    ctx.strokeStyle = isSharp ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0.10)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(P.l + pw, y); ctx.stroke();
+    ctx.font = isSharp ? '9px DM Mono, monospace' : 'bold 11px DM Mono, monospace';
+    ctx.fillStyle = isSharp ? '#aab0b8' : '#6b7580';
+    ctx.fillText(lb.n, P.l - 4, y + 4);
+  }
+
+  // Right-edge "now" line
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(P.l + pw, P.t); ctx.lineTo(P.l + pw, P.t + ph); ctx.stroke();
+
+  // Prune old entries
+  const cutoff = nowMs - winMs - 300;
+  while (pitchBuf.length && pitchBuf[0].t < cutoff) pitchBuf.shift();
+
+  // Draw single track with intonation colouring, segment-by-segment
+  ctx.lineWidth = 2;
+  let prevPt = null;
+  for (const entry of pitchBuf) {
+    if (!entry.f0 || !inVRange(entry.f0)) { prevPt = null; continue; }
+    const x = tx(entry.t);
+    if (x < P.l) { prevPt = null; continue; }
+    const y = fy(entry.f0);
+    const col = centsToColor(entry.c0);
+    if (prevPt) {
+      ctx.strokeStyle = col;
+      ctx.beginPath(); ctx.moveTo(prevPt.x, prevPt.y); ctx.lineTo(x, y); ctx.stroke();
+    }
+    prevPt = { x, y };
+  }
+}
+
+// ── Intonation graph (scrolling cents deviation) ─────────────────────────────
+function drawIntonGraph() {
+  const wrap = document.querySelector('.inton-graph-wrap');
+  const canvas = document.getElementById('inton-canvas');
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  if (!W || !H) return;
+  if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+  const ctx = canvas.getContext('2d');
+
+  // White background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  const P = { l: 50, r: 8, t: 14, b: 8 };
+  const pw = W - P.l - P.r, ph = H - P.t - P.b;
+  const nowMs = performance.now();
+  const winMs = SCROLL_SEC * 1000;
+
+  function tx(t) { return P.l + (1 - (nowMs - t) / winMs) * pw; }
+  // ±100¢ fills full height; edges = halfway to neighbouring note
+  const CENT_RANGE = 100;
+  function cy(cents) { return P.t + ph / 2 - (cents / CENT_RANGE) * (ph / 2); }
+
+  // ±50¢ guide lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([3, 4]);
+  for (const c of [-50, 50]) {
+    const y = cy(c);
+    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(P.l + pw, y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Zero line
+  ctx.strokeStyle = 'rgba(0,0,0,0.20)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(P.l, cy(0)); ctx.lineTo(P.l + pw, cy(0)); ctx.stroke();
+
+  // Y-axis labels
+  ctx.font = 'bold 10px DM Mono, monospace';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#8a9098';
+  ctx.fillText('+50¢', P.l - 4, cy(50) + 3);
+  ctx.fillText('0',    P.l - 4, cy(0)  + 3);
+  ctx.fillText('−50¢', P.l - 4, cy(-50) + 3);
+
+  // Right-edge "now" line
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(P.l + pw, P.t); ctx.lineTo(P.l + pw, P.t + ph); ctx.stroke();
+
+  // Draw trace — break on note change, draw vertical line + label at each break
+  ctx.lineWidth = 9;  // 5× the former 1.8px
+  let prevPt = null;
+  let prevNN = null;
+
+  for (let i = 0; i < pitchBuf.length; i++) {
+    const entry = pitchBuf[i];
+    if (entry.c0 === null || entry.f0 === 0) { prevPt = null; prevNN = null; continue; }
+    const x = tx(entry.t);
+    if (x < P.l) { prevPt = null; prevNN = null; continue; }
+    const y = cy(entry.c0);
+
+    // Detect note change — break the line and draw marker
+    const noteChanged = prevNN !== null && entry.nn !== prevNN;
+    if (noteChanged) {
+      prevPt = null;  // break the drawn line
+
+      // Vertical divider line
+      ctx.save();
+      ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Note name label just to the right of the line, at the top
+      ctx.fillStyle = '#444';
+      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(entry.nn, x + 3, P.t + 11);
+      ctx.restore();
+    }
+
+    // Also draw note name at the very start of the first appearance
+    if (prevNN === null && entry.nn) {
+      ctx.save();
+      ctx.fillStyle = '#444';
+      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(entry.nn, x + 3, P.t + 11);
+      ctx.restore();
+    }
+
+    prevNN = entry.nn;
+
+    if (prevPt) {
+      ctx.strokeStyle = centsToColor(entry.c0);
+      ctx.lineWidth = 9;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(prevPt.x, prevPt.y); ctx.lineTo(x, y); ctx.stroke();
+    }
+    prevPt = { x, y };
+  }
+}
+
+function drawSpectrum(freqData, sampleRate, detFreqs) {
+  const strip = document.querySelector('.spectrum-strip');
+  const canvas = document.getElementById('spectrum-canvas');
+  const W = strip.clientWidth, H = strip.clientHeight;
+  if (!W || !H) return;
+  if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const N = freqData.length;
+  const binHz = sampleRate / (2 * N);
+  const minBin = Math.floor(VIOLIN_MIN_HZ / binHz);
+  const maxBin = Math.min(N - 1, Math.ceil(VIOLIN_MAX_HZ / binHz));
+  const P = { l: 8, r: 8, t: 18, b: 16 };
+  const pw = W - P.l - P.r, ph = H - P.t - P.b;
+  const logMin = Math.log2(VIOLIN_MIN_HZ), logMax = Math.log2(VIOLIN_MAX_HZ);
+  function fx(f) { return P.l + (Math.log2(f) - logMin) / (logMax - logMin) * pw; }
+
+  // All chromatic notes G3–D6, ascending. Sharps drawn smaller and dimmer.
+  const gFs = [
+    196.0, 207.7, 220.0, 233.1, 246.9,
+    261.6, 277.2, 293.7, 311.1, 329.6,
+    349.2, 370.0, 392.0, 415.3, 440.0,
+    466.2, 493.9, 523.3, 554.4, 587.3,
+    622.3, 659.3, 698.5, 740.0, 784.0,
+    830.6, 880.0, 932.3, 987.8, 1046.5,
+    1108.7, 1174.7,
+  ];
+  const gLs = [
+    'G3','G♯3','A3','A♯3','B3',
+    'C4','C♯4','D4','D♯4','E4',
+    'F4','F♯4','G4','G♯4','A4',
+    'A♯4','B4','C5','C♯5','D5',
+    'D♯5','E5','F5','F♯5','G5',
+    'G♯5','A5','A♯5','B5','C6',
+    'C♯6','D6',
+  ];
+  ctx.textAlign = 'center';
+  for (let i = 0; i < gFs.length; i++) {
+    const x = fx(gFs[i]);
+    const isSharp = gLs[i].includes('♯');
+    ctx.strokeStyle = isSharp ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0.10)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph); ctx.stroke();
+    ctx.font = isSharp ? '8px DM Mono, monospace' : '10px DM Mono, monospace';
+    ctx.fillStyle = isSharp ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.55)';
+    ctx.fillText(gLs[i], x, P.t + ph + 12);
+  }
+
+  // Volume threshold line
+  const threshNorm = Math.max(0, Math.min(1, (volumeThresholdDb + 100) / 60));
+  const threshY = P.t + ph - threshNorm * ph;
+  ctx.strokeStyle = 'rgba(180,20,20,0.55)'; ctx.lineWidth = 0.9;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(P.l, threshY); ctx.lineTo(P.l + pw, threshY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Spectrum fill
+  ctx.beginPath();
+  let started = false;
+  for (let i = minBin; i <= maxBin; i++) {
+    const x = fx(i * binHz);
+    const norm = Math.max(0, (freqData[i] + 100) / 60);
+    const y = P.t + ph - norm * ph;
+    if (!started) { ctx.moveTo(x, P.t + ph); ctx.lineTo(x, y); started = true; }
+    else ctx.lineTo(x, y);
+  }
+  ctx.lineTo(fx(maxBin * binHz), P.t + ph); ctx.closePath();
+  const g = ctx.createLinearGradient(0, P.t, 0, P.t + ph);
+  g.addColorStop(0, 'rgba(100,120,180,0.35)'); g.addColorStop(1, 'rgba(100,120,180,0.02)');
+  ctx.fillStyle = g; ctx.fill();
+
+  // Spectrum line
+  ctx.beginPath(); started = false;
+  for (let i = minBin; i <= maxBin; i++) {
+    const x = fx(i * binHz);
+    const norm = Math.max(0, (freqData[i] + 100) / 60);
+    const y = P.t + ph - norm * ph;
+    started ? ctx.lineTo(x, y) : (ctx.moveTo(x, y), started = true);
+  }
+  ctx.strokeStyle = 'rgba(60,80,160,0.75)'; ctx.lineWidth = 1; ctx.stroke();
+
+  // Detected freq marker — use intonation colour
+  for (let d = 0; d < detFreqs.length; d++) {
+    const f = detFreqs[d];
+    if (!f || !inVRange(f)) continue;
+    const x = fx(f);
+    // Find the most recent cents value to colour the marker
+    const lastEntry = [...pitchBuf].reverse().find(e => e.f0 > 0);
+    const col = centsToColor(lastEntry ? lastEntry.c0 : null);
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(x, P.t + 3, 3, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+// ── HPS detection ────────────────────────────────────────────────────────────
+function computeHPS(freqData, sampleRate) {
+  const N = freqData.length, binHz = sampleRate / (2 * N);
+  const mag = new Float32Array(N);
+  for (let i = 0; i < N; i++) mag[i] = Math.pow(10, freqData[i] / 20);
+  const minBin = Math.max(1, Math.floor(VIOLIN_MIN_HZ / binHz));
+  const maxBin = Math.min(N - 1, Math.ceil(VIOLIN_MAX_HZ / binHz));
+  const hps = new Float32Array(maxBin + 1);
+  for (let i = minBin; i <= maxBin; i++) {
+    hps[i] = mag[i];
+    for (let h = 2; h <= HPS_HARMONICS; h++) {
+      const idx = Math.round(i * h);
+      if (idx < N) hps[i] *= mag[idx];
+    }
+  }
+  return { hps, binHz, minBin, maxBin };
+}
+
+function findPeaks(hps, minBin, maxBin, threshold) {
+  const peaks = [];
+  for (let i = minBin + 1; i < maxBin - 1; i++) {
+    if (hps[i] > hps[i-1] && hps[i] > hps[i+1] && hps[i] > threshold) {
+      const a = hps[i-1], b = hps[i], c = hps[i+1];
+      const p = 0.5 * (a - c) / (a - 2*b + c);
+      peaks.push({ bin: i + p, strength: b });
+    }
+  }
+  peaks.sort((a, b) => b.strength - a.strength);
+  return peaks;
+}
+
+function suppressHarmonics(peaks, binHz, tol = 0.04) {
+  const out = [];
+  for (const pk of peaks) {
+    const f = pk.bin * binHz;
+    let harm = false;
+    for (const base of out) {
+      const bf = base.bin * binHz;
+      for (let h = 2; h <= 6; h++) {
+        if (Math.abs(f / (bf * h) - 1) < tol) { harm = true; break; }
+      }
+      if (harm) break;
+    }
+    if (!harm) out.push(pk);
+  }
+  return out;
+}
+
+// Peak dB within violin range — used for volume gate
+function peakDbInRange(freqData, sampleRate) {
+  const N = freqData.length, binHz = sampleRate / (2 * N);
+  const minBin = Math.floor(VIOLIN_MIN_HZ / binHz);
+  const maxBin = Math.min(N - 1, Math.ceil(VIOLIN_MAX_HZ / binHz));
+  let peak = -Infinity;
+  for (let i = minBin; i <= maxBin; i++) if (freqData[i] > peak) peak = freqData[i];
+  return peak;
+}
+
+// ── Main loop ────────────────────────────────────────────────────────────────
+function analyse() {
+  if (!analyser) return;
+  const freqData = new Float32Array(analyser.frequencyBinCount);
+  analyser.getFloatFrequencyData(freqData);
+  const sampleRate = audioCtx.sampleRate;
+
+  // Volume gate
+  const peakDb = peakDbInRange(freqData, sampleRate);
+  const loud = peakDb >= volumeThresholdDb;
+
+  let note0 = null;
+  let detFreq = 0;
+
+  if (loud) {
+    const { hps, binHz, minBin, maxBin } = computeHPS(freqData, sampleRate);
+    const vals = [];
+    for (let i = minBin; i <= maxBin; i++) if (hps[i] > 0) vals.push(hps[i]);
+    vals.sort((a, b) => a - b);
+    const p80 = vals[Math.floor(vals.length * 0.8)] || 0;
+    const threshold = p80 * (1 + sensitivity * 20);
+
+    let peaks = suppressHarmonics(findPeaks(hps, minBin, maxBin, threshold), binHz);
+    const rawFreq = peaks[0] ? peaks[0].bin * binHz : 0;
+
+    // Snap-or-smooth: jump immediately on note change, smooth within a note
+    const ALPHA = 0.4;
+    if (rawFreq > 0 && inVRange(rawFreq)) {
+      const prev = smoothedPeaks[0];
+      if (!prev) {
+        smoothedPeaks[0] = rawFreq;
+      } else {
+        const centsDiff = Math.abs(1200 * Math.log2(rawFreq / prev));
+        smoothedPeaks[0] = centsDiff > 25 ? rawFreq : ALPHA * rawFreq + (1 - ALPHA) * prev;
+      }
+    } else {
+      smoothedPeaks[0] = 0;
+    }
+
+    if (smoothedPeaks[0] > 0) {
+      note0 = freqToNote(smoothedPeaks[0]);
+      detFreq = note0.freq;  // ideal freq for spectrum marker
+    }
+  } else {
+    smoothedPeaks[0] = 0;
+  }
+
+  // Push to pitch buffer — raw smoothed freq + cents + note name for break detection
+  pitchBuf.push({
+    t: performance.now(),
+    f0: smoothedPeaks[0] > 0 ? smoothedPeaks[0] : 0,
+    c0: note0 ? note0.cents : null,
+    nn: note0 ? (note0.name + note0.octave) : null,  // note name for break detection
+  });
+
+  updateNoteCard(0, note0);
+  updateStrings([note0]);
+  logHistory([note0]);
+  drawPitchGraph();
+  drawIntonGraph();
+  drawSpectrum(freqData, sampleRate, detFreq ? [detFreq] : []);
+
+  animId = requestAnimationFrame(analyse);
+}
+
+// ── Mic control ──────────────────────────────────────────────────────────────
+async function toggleListen() {
+  isListening ? stopListening() : await startListening();
+}
+
+async function startListening() {
+  try {
+    document.getElementById('status-text').textContent = 'Requesting microphone…';
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, autoGainControl: false, noiseSuppression: false }
+    });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = FFT_SIZE;
+    analyser.smoothingTimeConstant = SMOOTH;
+    analyser.minDecibels = -100;
+    analyser.maxDecibels = -20;
+    audioCtx.createMediaStreamSource(micStream).connect(analyser);
+    isListening = true; pitchBuf = [];
+    document.getElementById('status-dot').className = 'status-dot listening';
+    document.getElementById('status-text').textContent = 'Listening…';
+    document.getElementById('toggle-btn').innerHTML = '<span>■ Stop</span>';
+    document.getElementById('toggle-btn').classList.add('active');
+    analyse();
+  } catch(e) {
+    document.getElementById('status-dot').className = 'status-dot error';
+    document.getElementById('status-text').textContent = 'Mic error: ' + e.message;
+  }
+}
+
+function stopListening() {
+  if (animId) cancelAnimationFrame(animId);
+  if (micStream) micStream.getTracks().forEach(t => t.stop());
+  if (audioCtx) audioCtx.close();
+  analyser = null; audioCtx = null; micStream = null;
+  isListening = false; smoothedPeaks = [0, 0]; pitchBuf = [];
+  document.getElementById('status-dot').className = 'status-dot';
+  document.getElementById('status-text').textContent = 'Microphone off';
+  document.getElementById('toggle-btn').innerHTML = '<span>▶ Start listening</span>';
+  document.getElementById('toggle-btn').classList.remove('active');
+  updateNoteCard(0, null);
+  ['G','D','A','E'].forEach(s => {
+    document.getElementById('str-'+s).classList.remove('highlight');
+    document.getElementById('sdet-'+s).textContent = '—';
+  });
+  ['pitch-canvas','inton-canvas','spectrum-canvas'].forEach(id => {
+    const c = document.getElementById(id);
+    if (c.width) c.getContext('2d').clearRect(0,0,c.width,c.height);
+  });
+}
+
+// ── Controls ─────────────────────────────────────────────────────────────────
+document.getElementById('sens-slider').addEventListener('input', function() {
+  sensitivity = parseFloat(this.value);
+});
+document.getElementById('thresh-slider').addEventListener('input', function() {
+  volumeThresholdDb = parseInt(this.value);
+  document.getElementById('thresh-val').textContent =
+    (this.value > 0 ? '+' : '') + this.value + ' dB';
+});
+
+// ── PWA ───────────────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  const sw = new Blob([`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('offline'))));`],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(sw)).catch(()=>{});
+}
+</script>
+
+
+</body></html>
