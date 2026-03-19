@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)file:///C:/Users/CaseyM/Downloads/violin-tuner_7.html -->
+<!-- saved from url=(0053)file:///C:/Users/CaseyM/Downloads/violin-tuner_9.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -465,21 +465,24 @@ function logHistory(notes) {
 }
 
 // ── Cents → colour helper (shared by pitch and inton graphs) ──────────────────
-// 0¢ = black, sharp→ red, flat→ blue. Linear blend over ±50¢.
+// Black within ±3¢, fully saturated red/blue at ±10¢.
 function centsToColor(cents) {
   if (cents === null) return '#1a1a1a';
-  const t = Math.min(1, Math.abs(cents) / 50);
-  if (cents >= 0) {
-    // black → red
-    const r = Math.round(26 + t * (207 - 26));
+  const abs = Math.abs(cents);
+  if (abs <= 3) return 'rgb(26,26,26)';  // in tune — black
+  // t goes 0→1 over the range 3¢→10¢, then stays at 1
+  const t = Math.min(1, (abs - 3) / 7);
+  if (cents > 0) {
+    // black → bright red
+    const r = Math.round(26 + t * (220 - 26));
     const g = Math.round(26 - t * 26);
     const b = Math.round(26 - t * 26);
     return `rgb(${r},${g},${b})`;
   } else {
-    // black → blue
+    // black → bright blue
     const r = Math.round(26 - t * 26);
     const g = Math.round(26 - t * 26);
-    const b = Math.round(26 + t * (207 - 26));
+    const b = Math.round(26 + t * (220 - 26));
     return `rgb(${r},${g},${b})`;
   }
 }
@@ -526,20 +529,49 @@ function drawPitchGraph() {
   const cutoff = nowMs - winMs - 300;
   while (pitchBuf.length && pitchBuf[0].t < cutoff) pitchBuf.shift();
 
-  // Draw single track with intonation colouring, segment-by-segment
-  ctx.lineWidth = 2;
+  // Draw track: 4px line, break if consecutive freqs are >50¢ apart,
+  // label note name just above the plot point when note changes.
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
   let prevPt = null;
+  let prevF = 0;
+  let prevNN = null;
+
   for (const entry of pitchBuf) {
-    if (!entry.f0 || !inVRange(entry.f0)) { prevPt = null; continue; }
+    if (!entry.f0 || !inVRange(entry.f0)) { prevPt = null; prevF = 0; prevNN = null; continue; }
     const x = tx(entry.t);
-    if (x < P.l) { prevPt = null; continue; }
+    if (x < P.l) { prevPt = null; prevF = 0; prevNN = null; continue; }
     const y = fy(entry.f0);
+
+    // Break line if frequency jumped more than 50 cents from previous point
+    if (prevF > 0) {
+      const jump = Math.abs(1200 * Math.log2(entry.f0 / prevF));
+      if (jump > 50) { prevPt = null; }
+    }
+
+    // Draw segment
     const col = centsToColor(entry.c0);
     if (prevPt) {
       ctx.strokeStyle = col;
       ctx.beginPath(); ctx.moveTo(prevPt.x, prevPt.y); ctx.lineTo(x, y); ctx.stroke();
     }
+
+    // Note name label when note changes (or first appearance)
+    const noteChanged = entry.nn && entry.nn !== prevNN;
+    if (noteChanged) {
+      ctx.save();
+      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#333';
+      // Position label above the plotted point, clipped to stay inside
+      const labelY = Math.max(P.t + 11, y - 6);
+      ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, labelY);
+      ctx.restore();
+    }
+
     prevPt = { x, y };
+    prevF = entry.f0;
+    prevNN = entry.nn;
   }
 }
 
@@ -623,7 +655,7 @@ function drawIntonGraph() {
       ctx.fillStyle = '#444';
       ctx.font = 'bold 11px DM Mono, monospace';
       ctx.textAlign = 'left';
-      ctx.fillText(entry.nn, x + 3, P.t + 11);
+      ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, P.t + 11);
       ctx.restore();
     }
 
@@ -633,7 +665,7 @@ function drawIntonGraph() {
       ctx.fillStyle = '#444';
       ctx.font = 'bold 11px DM Mono, monospace';
       ctx.textAlign = 'left';
-      ctx.fillText(entry.nn, x + 3, P.t + 11);
+      ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, P.t + 11);
       ctx.restore();
     }
 
