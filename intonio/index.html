@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)file:///C:/Users/CaseyM/Downloads/violin-tuner_9.html -->
+<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_10.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0d1117">
-<title>Fiddle Ear — Violin Pitch Detector</title>
-<link rel="manifest" href="data:application/json,{%22name%22:%22Fiddle%20Ear%22,%22short_name%22:%22Fiddle%20Ear%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230d1117%22,%22theme_color%22:%22%230d1117%22}">
+<meta name="theme-color" content="#f5f4f0">
+<title>Intonation Monitor</title>
+<link rel="manifest" href="data:application/json,{%22name%22:%22Intonation%20Monitor%22,%22short_name%22:%22Intonation%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f5f4f0%22,%22theme_color%22:%22%23f5f4f0%22}">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;500;600;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -32,7 +32,7 @@
   }
 
   html, body { height: 100%; background: var(--bg); color: var(--text);
-    font-family: 'DM Mono', 'Courier New', monospace; overflow: hidden; }
+    font-family: 'Inconsolata', 'Courier New', monospace; overflow: hidden; }
 
   body {
     display: grid;
@@ -41,64 +41,43 @@
   }
 
   header {
-    padding: 0.6rem 1.5rem;
-    display: flex; align-items: baseline; gap: 1rem;
+    padding: 0.5rem 1.5rem;
+    display: flex; align-items: center;
     border-bottom: 0.5px solid var(--border);
     flex-shrink: 0;
   }
-  header h1 { font-family: 'Instrument Serif', serif; font-style: italic;
-    font-size: 1.5rem; font-weight: 400; color: var(--accent); letter-spacing: -0.02em; }
-  header span { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  header h1 { font-family: 'Inconsolata', monospace;
+    font-size: 1.3rem; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
 
   main {
     display: grid;
-    grid-template-columns: 270px 1fr 250px;
+    grid-template-columns: 1fr;
     overflow: hidden;
     min-height: 0;
   }
 
-  /* LEFT: note cards */
-  .cards-panel {
-    border-right: 0.5px solid var(--border);
-    display: flex; flex-direction: column;
-    padding: 0.9rem;
-    gap: 0.7rem;
-    overflow: hidden;
-  }
+  /* LEFT: note card — hidden on iPad layout */
+  .cards-panel { display: none; }
 
   .note-card {
-    flex: 1;
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 10px;
-    padding: 0.8rem 0.95rem;
-    display: flex; flex-direction: column;
-    gap: 0.2rem;
+    flex: 1; background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 10px; padding: 0.8rem 0.95rem;
+    display: flex; flex-direction: column; gap: 0.2rem;
     position: relative; overflow: hidden;
-    transition: border-color 0.15s, background 0.15s;
-    min-height: 0;
+    transition: border-color 0.15s, background 0.15s; min-height: 0;
   }
   .note-card.active { border-color: var(--accent); background: var(--surface2); }
   .note-card.active::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
     background: var(--accent); border-radius: 10px 10px 0 0;
   }
-
-  .note-card-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.1rem;
-  }
+  .note-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.1rem; }
   .note-label { font-size: 0.72rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); }
   .note-freq-small { font-size: 0.8rem; color: var(--muted); }
-
-  .note-big {
-    font-family: 'Instrument Serif', serif; font-style: italic;
-    font-size: 4rem; line-height: 1.0; font-weight: 400;
-    color: var(--text); letter-spacing: -0.03em;
-    transition: color 0.12s;
-  }
+  .note-big { font-family: 'Inconsolata', monospace; font-size: 4rem; line-height: 1.0; font-weight: 600;
+    color: var(--text); transition: color 0.12s; }
   .note-card.active .note-big { color: var(--accent); }
-  .note-octave-sup { font-size: 1.5rem; font-family: 'Instrument Serif', serif;
-    font-style: italic; color: var(--muted); vertical-align: super; }
+  .note-octave-sup { font-size: 1.5rem; font-family: 'Inconsolata', monospace; color: var(--muted); vertical-align: super; }
 
   .inton-wrap { margin-top: 0.45rem; }
   .inton-label-row {
@@ -131,20 +110,16 @@
     margin-top: 3px; padding: 0 2px;
   }
 
-  /* CENTRE: scrolling pitch graph */
+  /* CENTRE: scrolling graphs — fills entire main area */
   .graph-panel {
     display: flex; flex-direction: column;
-    padding: 0.75rem 0.9rem;
-    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    gap: 0.35rem;
     overflow: hidden; min-height: 0;
   }
-  .graph-top-row {
-    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
-  }
-  .graph-panel-label {
-    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
-  }
-  .legend { display: flex; align-items: center; gap: 0.7rem; font-size: 0.75rem; color: var(--muted); }
+  .graph-top-row { display: none; }
+  .graph-panel-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .legend { display: none; }
   .leg-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
 
   .graph-wrap {
@@ -154,11 +129,7 @@
   }
   #pitch-canvas { width: 100%; height: 100%; display: block; }
 
-  /* Intonation scrolling graph */
-  .inton-graph-row {
-    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
-    margin-top: 0.25rem;
-  }
+  .inton-graph-row { display: none; }
   .inton-graph-wrap {
     flex: 1; background: #ffffff;
     border: 0.5px solid var(--border); border-radius: 10px;
@@ -166,39 +137,8 @@
   }
   #inton-canvas { width: 100%; height: 100%; display: block; }
 
-  /* RIGHT panel */
-  .right-panel {
-    border-left: 0.5px solid var(--border);
-    display: flex; flex-direction: column;
-    padding: 0.9rem; gap: 0.75rem; overflow-y: auto;
-  }
-  .section-label {
-    font-size: 0.75rem; letter-spacing: 0.13em; text-transform: uppercase;
-    color: var(--muted); padding-bottom: 0.35rem;
-    border-bottom: 0.5px solid var(--border);
-  }
-  .string-list { display: flex; flex-direction: column; gap: 0.35rem; }
-  .string-row {
-    display: flex; align-items: center; gap: 0.55rem;
-    padding: 0.38rem 0.55rem; border-radius: 7px;
-    border: 0.5px solid var(--border); background: var(--surface);
-    transition: border-color 0.12s, background 0.12s;
-  }
-  .string-row.highlight { background: var(--surface2); }
-  .string-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .string-name { font-size: 0.95rem; font-weight: 500; flex: 0 0 18px; }
-  .string-open { font-size: 0.8rem; color: var(--muted); flex: 1; }
-  .string-detected { font-size: 1.1rem; font-family: 'Instrument Serif', serif;
-    font-style: italic; text-align: right; min-width: 38px; }
-
-  .history-list { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.82rem; }
-  .history-item {
-    display: flex; justify-content: space-between; color: var(--muted);
-    padding: 0.18rem 0; border-bottom: 0.5px solid var(--border);
-    animation: fadeIn 0.2s ease-out;
-  }
-  .history-item .hn { color: var(--text); }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
+  /* RIGHT panel — hidden on iPad layout */
+  .right-panel { display: none; }
 
   /* BOTTOM: compact spectrum strip */
   .spectrum-strip {
@@ -228,8 +168,8 @@
   .status-text { font-size: 0.82rem; color: var(--muted); }
   .spacer { flex: 1; }
 
-  .ctrl-group { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--muted); }
-  .ctrl-group input[type=range] { width: 68px; accent-color: var(--accent); cursor: pointer; }
+  .ctrl-group { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--muted); font-family: 'Inconsolata', monospace; }
+  .ctrl-group input[type=range] { width: 80px; accent-color: var(--accent); cursor: pointer; }
   .ctrl-group label { white-space: nowrap; }
 
   .btn {
@@ -237,7 +177,7 @@
     padding: 0.35rem 0.85rem;
     border-radius: 5px; border: 0.5px solid var(--border2);
     background: transparent; color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 0.82rem; cursor: pointer;
+    font-family: 'Inconsolata', monospace; font-size: 0.82rem; cursor: pointer;
     transition: background 0.12s;
   }
   .btn:hover { background: var(--surface); }
@@ -248,8 +188,7 @@
 <body>
 
 <header>
-  <h1>Fiddle Ear</h1>
-  <span>polyphonic violin pitch detector</span>
+  <h1>Intonation Monitor</h1>
 </header>
 
 <main>
@@ -269,7 +208,7 @@
         </div>
         <div class="inton-track">
           <div class="inton-center"></div>
-          <div class="inton-needle" id="needle0"></div>
+          <div class="inton-needle" id="needle0" style="left: 50%;"></div>
         </div>
         <div class="inton-scale"><span>−50¢</span><span>0</span><span>+50¢</span></div>
       </div>
@@ -277,20 +216,13 @@
 
   </div>
 
-  <!-- CENTRE: scrolling pitch history graph -->
+  <!-- CENTRE: scrolling graphs -->
   <div class="graph-panel">
-    <div class="graph-top-row">
-      <div class="graph-panel-label">Pitch history · 5 s window</div>
-    </div>
     <div class="graph-wrap">
-      <canvas id="pitch-canvas"></canvas>
-    </div>
-
-    <div class="inton-graph-row">
-      <div class="graph-panel-label">Intonation · cents from nearest note</div>
+      <canvas id="pitch-canvas" width="1894" height="697"></canvas>
     </div>
     <div class="inton-graph-wrap">
-      <canvas id="inton-canvas"></canvas>
+      <canvas id="inton-canvas" width="1894" height="174"></canvas>
     </div>
   </div>
 
@@ -325,34 +257,33 @@
     </div>
 
     <div class="section-label" style="margin-top:0.15rem">Detection log</div>
-    <div class="history-list" id="history-list">
-      <div class="history-item"><span class="hn" style="color:var(--muted)">Start listening…</span></div>
-    </div>
+    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">A3</span><span>18:49:14</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:13</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:13</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:12</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:11</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:11</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:10</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:10</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:09</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:08</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:08</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:07</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:06</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:06</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:05</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:04</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:04</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:03</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:02</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:02</span></div><div class="history-item"><span class="hn">A4</span><span>18:49:01</span></div><div class="history-item"><span class="hn">A3</span><span>18:49:00</span></div></div>
   </div>
 </main>
 
 <!-- BOTTOM: compact spectrum strip -->
 <div class="spectrum-strip">
   <div class="spectrum-strip-label">Spectrum · violin range · dashed red = volume threshold</div>
-  <canvas id="spectrum-canvas"></canvas>
+  <canvas id="spectrum-canvas" width="1920" height="97"></canvas>
 </div>
 
 <footer>
-  <div class="status-dot" id="status-dot"></div>
-  <div class="status-text" id="status-text">Microphone off</div>
+  <div class="status-dot listening" id="status-dot"></div>
+  <div class="status-text" id="status-text">Listening</div>
   <div class="spacer"></div>
   <div class="ctrl-group">
-    <label for="thresh-slider">Vol threshold</label>
+    <label for="speed-slider">Speed</label>
+    <input type="range" id="speed-slider" min="0" max="2" step="0.01" value="1">
+  </div>
+  <div class="ctrl-group">
+    <label for="thresh-slider">Threshold</label>
     <input type="range" id="thresh-slider" min="-85" max="-25" step="1" value="-70">
     <span id="thresh-val">−70 dB</span>
   </div>
   <div class="ctrl-group">
-    <label for="sens-slider">HPS sensitivity</label>
+    <label for="sens-slider">Sensitivity</label>
     <input type="range" id="sens-slider" min="0.01" max="0.5" step="0.01" value="0.12">
   </div>
-  <button class="btn" id="toggle-btn" onclick="toggleListen()">
-    <span>▶ Start listening</span>
-  </button>
 </footer>
 
 <script>
@@ -382,10 +313,13 @@ let audioCtx, analyser, micStream, animId;
 let isListening = false;
 let sensitivity = 0.12;
 let volumeThresholdDb = -70;
+// scrollSec: slider goes 0→2 mapping to SCROLL_SEC*2 → SCROLL_SEC*0.5
+// centre (1) = SCROLL_SEC (5s), max (2) = 2.5s (fastest), min (0) = 10s (slowest)
+let scrollSec = SCROLL_SEC;
 let smoothedPeaks = [0, 0];
 let history = [];
 let lastLogTime = 0;
-let pitchBuf = [];  // { t, f0, f1 }
+let pitchBuf = [];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function freqToNote(freq) {
@@ -501,7 +435,7 @@ function drawPitchGraph() {
   const pw = W - P.l - P.r, ph = H - P.t - P.b;
   const logMin = Math.log2(VIOLIN_MIN_HZ), logMax = Math.log2(VIOLIN_MAX_HZ);
   const nowMs = performance.now();
-  const winMs = SCROLL_SEC * 1000;
+  const winMs = scrollSec * 1000;
 
   function fy(f) { return P.t + ph - (Math.log2(f) - logMin) / (logMax - logMin) * ph; }
   function tx(t) { return P.l + (1 - (nowMs - t) / winMs) * pw; }
@@ -515,7 +449,7 @@ function drawPitchGraph() {
     ctx.strokeStyle = isSharp ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0.10)';
     ctx.lineWidth = 0.5;
     ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(P.l + pw, y); ctx.stroke();
-    ctx.font = isSharp ? '9px DM Mono, monospace' : 'bold 11px DM Mono, monospace';
+    ctx.font = isSharp ? '9px Inconsolata, monospace' : 'bold 11px Inconsolata, monospace';
     ctx.fillStyle = isSharp ? '#aab0b8' : '#6b7580';
     ctx.fillText(lb.n, P.l - 4, y + 4);
   }
@@ -560,7 +494,7 @@ function drawPitchGraph() {
     const noteChanged = entry.nn && entry.nn !== prevNN;
     if (noteChanged) {
       ctx.save();
-      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.font = 'bold 11px Inconsolata, monospace';
       ctx.textAlign = 'left';
       ctx.fillStyle = '#333';
       // Position label above the plotted point, clipped to stay inside
@@ -591,7 +525,7 @@ function drawIntonGraph() {
   const P = { l: 50, r: 8, t: 14, b: 8 };
   const pw = W - P.l - P.r, ph = H - P.t - P.b;
   const nowMs = performance.now();
-  const winMs = SCROLL_SEC * 1000;
+  const winMs = scrollSec * 1000;
 
   function tx(t) { return P.l + (1 - (nowMs - t) / winMs) * pw; }
   // ±100¢ fills full height; edges = halfway to neighbouring note
@@ -614,7 +548,7 @@ function drawIntonGraph() {
   ctx.beginPath(); ctx.moveTo(P.l, cy(0)); ctx.lineTo(P.l + pw, cy(0)); ctx.stroke();
 
   // Y-axis labels
-  ctx.font = 'bold 10px DM Mono, monospace';
+  ctx.font = 'bold 10px Inconsolata, monospace';
   ctx.textAlign = 'right';
   ctx.fillStyle = '#8a9098';
   ctx.fillText('+50¢', P.l - 4, cy(50) + 3);
@@ -627,7 +561,7 @@ function drawIntonGraph() {
   ctx.beginPath(); ctx.moveTo(P.l + pw, P.t); ctx.lineTo(P.l + pw, P.t + ph); ctx.stroke();
 
   // Draw trace — break on note change, draw vertical line + label at each break
-  ctx.lineWidth = 9;  // 5× the former 1.8px
+  ctx.lineWidth = 9;
   let prevPt = null;
   let prevNN = null;
 
@@ -641,7 +575,7 @@ function drawIntonGraph() {
     // Detect note change — break the line and draw marker
     const noteChanged = prevNN !== null && entry.nn !== prevNN;
     if (noteChanged) {
-      prevPt = null;  // break the drawn line
+      prevPt = null;
 
       // Vertical divider line
       ctx.save();
@@ -653,17 +587,17 @@ function drawIntonGraph() {
 
       // Note name label just to the right of the line, at the top
       ctx.fillStyle = '#444';
-      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.font = 'bold 11px Inconsolata, monospace';
       ctx.textAlign = 'left';
       ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, P.t + 11);
       ctx.restore();
     }
 
-    // Also draw note name at the very start of the first appearance
+    // Draw note name at the very start of the first appearance
     if (prevNN === null && entry.nn) {
       ctx.save();
       ctx.fillStyle = '#444';
-      ctx.font = 'bold 11px DM Mono, monospace';
+      ctx.font = 'bold 11px Inconsolata, monospace';
       ctx.textAlign = 'left';
       ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, P.t + 11);
       ctx.restore();
@@ -725,7 +659,7 @@ function drawSpectrum(freqData, sampleRate, detFreqs) {
     ctx.strokeStyle = isSharp ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0.10)';
     ctx.lineWidth = 0.5;
     ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph); ctx.stroke();
-    ctx.font = isSharp ? '8px DM Mono, monospace' : '10px DM Mono, monospace';
+    ctx.font = isSharp ? '8px Inconsolata, monospace' : '10px Inconsolata, monospace';
     ctx.fillStyle = isSharp ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.55)';
     ctx.fillText(gLs[i], x, P.t + ph + 12);
   }
@@ -903,11 +837,7 @@ function analyse() {
   animId = requestAnimationFrame(analyse);
 }
 
-// ── Mic control ──────────────────────────────────────────────────────────────
-async function toggleListen() {
-  isListening ? stopListening() : await startListening();
-}
-
+// ── Mic control — always listening, auto-starts on load ──────────────────────
 async function startListening() {
   try {
     document.getElementById('status-text').textContent = 'Requesting microphone…';
@@ -923,35 +853,12 @@ async function startListening() {
     audioCtx.createMediaStreamSource(micStream).connect(analyser);
     isListening = true; pitchBuf = [];
     document.getElementById('status-dot').className = 'status-dot listening';
-    document.getElementById('status-text').textContent = 'Listening…';
-    document.getElementById('toggle-btn').innerHTML = '<span>■ Stop</span>';
-    document.getElementById('toggle-btn').classList.add('active');
+    document.getElementById('status-text').textContent = 'Listening';
     analyse();
   } catch(e) {
     document.getElementById('status-dot').className = 'status-dot error';
     document.getElementById('status-text').textContent = 'Mic error: ' + e.message;
   }
-}
-
-function stopListening() {
-  if (animId) cancelAnimationFrame(animId);
-  if (micStream) micStream.getTracks().forEach(t => t.stop());
-  if (audioCtx) audioCtx.close();
-  analyser = null; audioCtx = null; micStream = null;
-  isListening = false; smoothedPeaks = [0, 0]; pitchBuf = [];
-  document.getElementById('status-dot').className = 'status-dot';
-  document.getElementById('status-text').textContent = 'Microphone off';
-  document.getElementById('toggle-btn').innerHTML = '<span>▶ Start listening</span>';
-  document.getElementById('toggle-btn').classList.remove('active');
-  updateNoteCard(0, null);
-  ['G','D','A','E'].forEach(s => {
-    document.getElementById('str-'+s).classList.remove('highlight');
-    document.getElementById('sdet-'+s).textContent = '—';
-  });
-  ['pitch-canvas','inton-canvas','spectrum-canvas'].forEach(id => {
-    const c = document.getElementById(id);
-    if (c.width) c.getContext('2d').clearRect(0,0,c.width,c.height);
-  });
 }
 
 // ── Controls ─────────────────────────────────────────────────────────────────
@@ -963,6 +870,22 @@ document.getElementById('thresh-slider').addEventListener('input', function() {
   document.getElementById('thresh-val').textContent =
     (this.value > 0 ? '+' : '') + this.value + ' dB';
 });
+// Speed slider: 0=slowest(10s), 1=default(5s), 2=fastest(2.5s)
+// mapping: scrollSec = SCROLL_SEC * 2^(1 - sliderValue)
+// at 0: 5 * 2^1 = 10s; at 1: 5 * 2^0 = 5s; at 2: 5 * 2^-1 = 2.5s
+document.getElementById('speed-slider').addEventListener('input', function() {
+  scrollSec = SCROLL_SEC * Math.pow(2, 1 - parseFloat(this.value));
+});
+
+// ── Auto-start ────────────────────────────────────────────────────────────────
+// iOS/iPadOS requires a user gesture to start AudioContext.
+// We start immediately on desktop; on touch devices we wait for the first tap.
+function tryStart() {
+  if (!isListening) startListening();
+}
+document.addEventListener('click', tryStart, { once: true });
+document.addEventListener('touchstart', tryStart, { once: true });
+startListening();  // works immediately on desktop; silently fails on iOS until gesture
 
 // ── PWA ───────────────────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
