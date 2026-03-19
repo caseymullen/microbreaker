@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_11.html -->
+<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_15.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -127,7 +127,7 @@
     border: 0.5px solid var(--border); border-radius: 10px;
     overflow: hidden; position: relative; min-height: 0;
   }
-  #pitch-canvas { width: 100%; height: 100%; display: block; }
+  #pitch-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
 
   .inton-graph-row { display: none; }
   .inton-graph-wrap {
@@ -135,7 +135,7 @@
     border: 0.5px solid var(--border); border-radius: 10px;
     overflow: hidden; position: relative; min-height: 0;
   }
-  #inton-canvas { width: 100%; height: 100%; display: block; }
+  #inton-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
 
   /* RIGHT panel — hidden on iPad layout */
   .right-panel { display: none; }
@@ -257,7 +257,7 @@
     </div>
 
     <div class="section-label" style="margin-top:0.15rem">Detection log</div>
-    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">D♯4</span><span>18:59:51</span></div><div class="history-item"><span class="hn">G3</span><span>18:59:50</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:48</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:48</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:47</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:46</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:46</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:45</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:44</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:44</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:43</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:42</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:42</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:41</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:40</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:40</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:39</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:38</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:38</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:37</span></div><div class="history-item"><span class="hn">D4</span><span>18:59:36</span></div><div class="history-item"><span class="hn">A3</span><span>18:59:36</span></div></div>
+    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">D4</span><span>19:44:49</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:48</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:48</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:47</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:46</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:46</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:45</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:44</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:44</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:43</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:42</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:41</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:41</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:39</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:39</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:38</span></div><div class="history-item"><span class="hn">F♯4 + A4</span><span>19:44:37</span></div><div class="history-item"><span class="hn">F♯4 + A4</span><span>19:44:36</span></div><div class="history-item"><span class="hn">F♯4 + A5</span><span>19:44:35</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:35</span></div><div class="history-item"><span class="hn">A4</span><span>19:44:34</span></div><div class="history-item"><span class="hn">D4 + E4</span><span>19:44:32</span></div></div>
   </div>
 </main>
 
@@ -316,6 +316,7 @@ let volumeThresholdDb = -70;
 // scrollSec: slider goes 0→2 mapping to SCROLL_SEC*2 → SCROLL_SEC*0.5
 // centre (1) = SCROLL_SEC (5s), max (2) = 2.5s (fastest), min (0) = 10s (slowest)
 let scrollSec = SCROLL_SEC;
+let graphPaused = false;  // true while history views are paused by tap
 let smoothedPeaks = [0, 0];
 let history = [];
 let lastLogTime = 0;
@@ -339,6 +340,7 @@ function inVRange(f) { return f >= VIOLIN_MIN_HZ && f <= VIOLIN_MAX_HZ; }
 // ── Note card UI ─────────────────────────────────────────────────────────────
 function updateNoteCard(idx, noteInfo) {
   const card = document.getElementById('card' + idx);
+  if (!card) return;  // card may not exist in DOM (e.g. card1 is hidden)
   const nameEl = document.getElementById('note' + idx);
   const freqEl = document.getElementById('freq' + idx);
   const centsEl = document.getElementById('cents' + idx);
@@ -463,8 +465,25 @@ function drawPitchGraph() {
   const cutoff = nowMs - winMs - 300;
   while (pitchBuf.length && pitchBuf[0].t < cutoff) pitchBuf.shift();
 
-  // Draw track: 4px line, break if consecutive freqs are >50¢ apart,
-  // label note name just above the plot point when note changes.
+  // Draw secondary note track (f1) in blue, behind primary
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  let prevPt1 = null, prevF1 = 0;
+  for (const entry of pitchBuf) {
+    if (!entry.f1 || !inVRange(entry.f1)) { prevPt1 = null; prevF1 = 0; continue; }
+    const x = tx(entry.t);
+    if (x < P.l) { prevPt1 = null; prevF1 = 0; continue; }
+    const y = fy(entry.f1);
+    if (prevF1 > 0 && Math.abs(1200 * Math.log2(entry.f1 / prevF1)) > 50) prevPt1 = null;
+    if (prevPt1) {
+      ctx.strokeStyle = '#1a52cf';
+      ctx.beginPath(); ctx.moveTo(prevPt1.x, prevPt1.y); ctx.lineTo(x, y); ctx.stroke();
+    }
+    prevPt1 = { x, y };
+    prevF1 = entry.f1;
+  }
+
+  // Draw primary note track (f0) with intonation colouring, on top
   ctx.lineWidth = 4;
   ctx.lineCap = 'round';
   let prevPt = null;
@@ -497,7 +516,6 @@ function drawPitchGraph() {
       ctx.font = 'bold 11px Inconsolata, monospace';
       ctx.textAlign = 'left';
       ctx.fillStyle = '#333';
-      // Position label above the plotted point, clipped to stay inside
       const labelY = Math.max(P.t + 11, y - 6);
       ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, labelY);
       ctx.restore();
@@ -729,16 +747,19 @@ function computeHPS(freqData, sampleRate) {
       if (idx < N) hps[i] *= mag[idx];
     }
   }
-  return { hps, binHz, minBin, maxBin };
+  return { hps, mag, binHz, minBin, maxBin };
 }
 
-function findPeaks(hps, minBin, maxBin, threshold) {
+function findPeaks(hps, mag, minBin, maxBin, threshold) {
   const peaks = [];
   for (let i = minBin + 1; i < maxBin - 1; i++) {
     if (hps[i] > hps[i-1] && hps[i] > hps[i+1] && hps[i] > threshold) {
       const a = hps[i-1], b = hps[i], c = hps[i+1];
       const p = 0.5 * (a - c) / (a - 2*b + c);
-      peaks.push({ bin: i + p, strength: b });
+      // Store both HPS strength (for threshold gating) and raw FFT magnitude
+      // (for the 50% amplitude comparison — this is what the spectrum shows).
+      const binInterp = Math.round(i + p);
+      peaks.push({ bin: i + p, strength: b, rawMag: mag[binInterp] });
     }
   }
   peaks.sort((a, b) => b.strength - a.strength);
@@ -783,66 +804,79 @@ function analyse() {
   const peakDb = peakDbInRange(freqData, sampleRate);
   const loud = peakDb >= volumeThresholdDb;
 
-  let note0 = null;
+  let note0 = null, note1 = null;
   let detFreq = 0;
 
   if (loud) {
-    const { hps, binHz, minBin, maxBin } = computeHPS(freqData, sampleRate);
+    const { hps, mag, binHz, minBin, maxBin } = computeHPS(freqData, sampleRate);
     const vals = [];
     for (let i = minBin; i <= maxBin; i++) if (hps[i] > 0) vals.push(hps[i]);
     vals.sort((a, b) => a - b);
     const p80 = vals[Math.floor(vals.length * 0.8)] || 0;
     const threshold = p80 * (1 + (0.51 - sensitivity) * 20);
 
-    let peaks = suppressHarmonics(findPeaks(hps, minBin, maxBin, threshold), binHz);
-    // Among the top two surviving peaks, prefer the lower frequency.
-    // A violin's fundamental is almost always lower than any harmonic artifact,
-    // so this biases toward the correct pitch when the HPS is ambiguous.
-    let rawFreq = 0;
-    if (peaks.length >= 2) {
-      const f0 = peaks[0].bin * binHz;
-      const f1 = peaks[1].bin * binHz;
-      rawFreq = Math.min(f0, f1);
-    } else if (peaks[0]) {
-      rawFreq = peaks[0].bin * binHz;
+    let peaks = suppressHarmonics(findPeaks(hps, mag, minBin, maxBin, threshold), binHz);
+    // Candidates: strongest-HPS peak plus any with rawMag >= 50% of the top.
+    // Sort by ascending frequency. Primary = lowest freq, secondary = next-lowest.
+    let rawFreq0 = 0, rawFreq1 = 0;
+    if (peaks.length >= 1) {
+      const topRawMag = peaks[0].rawMag;
+      const candidates = peaks
+        .filter(p => p.rawMag >= topRawMag * 0.5)
+        .map(p => p.bin * binHz)
+        .sort((a, b) => a - b);
+      rawFreq0 = candidates[0] || 0;
+      rawFreq1 = candidates[1] || 0;
     }
 
-    // Snap-or-smooth: jump immediately on note change, smooth within a note
+    // Snap-or-smooth for both notes
     const ALPHA = 0.4;
-    if (rawFreq > 0 && inVRange(rawFreq)) {
-      const prev = smoothedPeaks[0];
-      if (!prev) {
-        smoothedPeaks[0] = rawFreq;
+    for (let i = 0; i < 2; i++) {
+      const rawFreq = i === 0 ? rawFreq0 : rawFreq1;
+      if (rawFreq > 0 && inVRange(rawFreq)) {
+        const prev = smoothedPeaks[i];
+        if (!prev) {
+          smoothedPeaks[i] = rawFreq;
+        } else {
+          const centsDiff = Math.abs(1200 * Math.log2(rawFreq / prev));
+          smoothedPeaks[i] = centsDiff > 25 ? rawFreq : ALPHA * rawFreq + (1 - ALPHA) * prev;
+        }
       } else {
-        const centsDiff = Math.abs(1200 * Math.log2(rawFreq / prev));
-        smoothedPeaks[0] = centsDiff > 25 ? rawFreq : ALPHA * rawFreq + (1 - ALPHA) * prev;
+        smoothedPeaks[i] = 0;
       }
-    } else {
-      smoothedPeaks[0] = 0;
     }
 
     if (smoothedPeaks[0] > 0) {
       note0 = freqToNote(smoothedPeaks[0]);
-      detFreq = note0.freq;  // ideal freq for spectrum marker
+      detFreq = note0.freq;
+    }
+    if (smoothedPeaks[1] > 0) {
+      note1 = freqToNote(smoothedPeaks[1]);
     }
   } else {
     smoothedPeaks[0] = 0;
+    smoothedPeaks[1] = 0;
   }
 
-  // Push to pitch buffer — raw smoothed freq + cents + note name for break detection
-  pitchBuf.push({
-    t: performance.now(),
-    f0: smoothedPeaks[0] > 0 ? smoothedPeaks[0] : 0,
-    c0: note0 ? note0.cents : null,
-    nn: note0 ? (note0.name + note0.octave) : null,  // note name for break detection
-  });
+  // Only update pitch buffer and redraw graphs when not paused
+  if (!graphPaused) {
+    pitchBuf.push({
+      t: performance.now(),
+      f0: smoothedPeaks[0] > 0 ? smoothedPeaks[0] : 0,
+      f1: smoothedPeaks[1] > 0 ? smoothedPeaks[1] : 0,
+      c0: note0 ? note0.cents : null,
+      nn: note0 ? (note0.name + note0.octave) : null,
+    });
+    drawPitchGraph();
+    drawIntonGraph();
+  }
 
   updateNoteCard(0, note0);
-  updateStrings([note0]);
-  logHistory([note0]);
-  drawPitchGraph();
-  drawIntonGraph();
-  drawSpectrum(freqData, sampleRate, detFreq ? [detFreq] : []);
+  updateNoteCard(1, note1);
+  updateStrings([note0, note1]);
+  logHistory([note0, note1]);
+  const detFreqs = [detFreq, note1 ? note1.freq : 0].filter(f => f > 0);
+  drawSpectrum(freqData, sampleRate, detFreqs);
 
   animId = requestAnimationFrame(analyse);
 }
@@ -881,10 +915,49 @@ document.getElementById('thresh-slider').addEventListener('input', function() {
     (this.value > 0 ? '+' : '') + this.value + ' dB';
 });
 // Speed slider: 0=slowest(10s), 1=default(5s), 2=fastest(2.5s)
-// mapping: scrollSec = SCROLL_SEC * 2^(1 - sliderValue)
-// at 0: 5 * 2^1 = 10s; at 1: 5 * 2^0 = 5s; at 2: 5 * 2^-1 = 2.5s
 document.getElementById('speed-slider').addEventListener('input', function() {
   scrollSec = SCROLL_SEC * Math.pow(2, 1 - parseFloat(this.value));
+});
+
+// ── Pause history views on tap/click ─────────────────────────────────────────
+let pauseStartTime = 0;
+
+function togglePause() {
+  graphPaused = !graphPaused;
+
+  if (graphPaused) {
+    pauseStartTime = performance.now();
+    // Draw PAUSED banner over both canvases
+    ['pitch-canvas', 'inton-canvas'].forEach(id => {
+      const canvas = document.getElementById(id);
+      if (!canvas.width) return;
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = 'bold 16px Inconsolata, monospace';
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.textAlign = 'center';
+      ctx.fillText('PAUSED — tap to resume', canvas.width / 2, canvas.height / 2);
+      ctx.restore();
+    });
+  } else {
+    // Shift all buffered timestamps forward by the pause duration so the
+    // history appears to continue seamlessly from where it froze.
+    const pausedFor = performance.now() - pauseStartTime;
+    for (const entry of pitchBuf) entry.t += pausedFor;
+    // Graphs will redraw naturally on the next analyse() frame
+  }
+}
+
+['pitch-canvas', 'inton-canvas'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('click', togglePause);
+  el.addEventListener('touchstart', e => { e.preventDefault(); togglePause(); }, { passive: false });
+});
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); togglePause(); }
 });
 
 // ── Auto-start ────────────────────────────────────────────────────────────────
