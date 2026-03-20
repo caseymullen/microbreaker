@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_25.html -->
+<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_35.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -122,12 +122,47 @@
   .legend { display: none; }
   .leg-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
 
+  /* View toggle + key selector row above pitch canvas */
+  .pitch-header {
+    display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;
+    padding: 0 0.1rem 0.2rem;
+  }
+  .view-toggle {
+    font-family: 'Inconsolata', monospace; font-size: 0.78rem;
+    padding: 0.25rem 0.7rem; border-radius: 5px;
+    border: 0.5px solid var(--border2); background: transparent;
+    color: var(--text); cursor: pointer; transition: background 0.12s;
+    flex-shrink: 0;
+  }
+  .view-toggle:hover { background: var(--surface2); }
+  .view-toggle.active { background: var(--accent2); border-color: var(--accent); color: #000; }
+
+  .key-selector {
+    display: none; align-items: center; gap: 0.3rem;
+  }
+  .key-selector.visible { display: flex; }
+  /* In footer context key-selector is always shown when staff view active */
+  .key-btn {
+    font-family: 'Inconsolata', monospace; font-size: 1rem; font-weight: 600;
+    padding: 0.15rem 0.55rem; border-radius: 4px;
+    border: 0.5px solid var(--border2); background: transparent;
+    color: var(--text); cursor: pointer; transition: background 0.12s; line-height: 1.4;
+  }
+  .key-btn:hover { background: var(--surface2); }
+  .key-display {
+    font-family: 'Inconsolata', monospace; font-size: 0.9rem; font-weight: 600;
+    min-width: 3.5rem; text-align: center; padding: 0.15rem 0.4rem;
+    border: 0.5px solid var(--border); border-radius: 4px;
+    background: var(--surface2); color: var(--text);
+  }
+
   .graph-wrap {
     flex: 4; background: var(--surface);
     border: 0.5px solid var(--border); border-radius: 10px;
     overflow: hidden; position: relative; min-height: 0;
   }
   #pitch-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
+  #staff-canvas { width: 100%; height: 100%; display: none; cursor: pointer; }
 
   .inton-graph-row { display: none; }
   .inton-graph-wrap {
@@ -220,13 +255,14 @@
   <!-- CENTRE: scrolling graphs -->
   <div class="graph-panel">
     <div class="graph-wrap">
-      <canvas id="pitch-canvas" width="1894" height="561"></canvas>
+      <canvas id="pitch-canvas" width="1894" height="552" style="display: none;"></canvas>
+      <canvas id="staff-canvas" width="1894" height="552" style="display: block;"></canvas>
     </div>
     <div class="inton-graph-wrap">
-      <canvas id="inton-canvas2" width="1894" height="140"></canvas>
+      <canvas id="inton-canvas2" width="1894" height="138"></canvas>
     </div>
     <div class="inton-graph-wrap">
-      <canvas id="inton-canvas" width="1894" height="140"></canvas>
+      <canvas id="inton-canvas" width="1894" height="138"></canvas>
     </div>
   </div>
 
@@ -261,7 +297,7 @@
     </div>
 
     <div class="section-label" style="margin-top:0.15rem">Detection log</div>
-    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">D4</span><span>22:11:12</span></div><div class="history-item"><span class="hn">D4</span><span>22:11:11</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:10</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:10</span></div><div class="history-item"><span class="hn">D4 + D5</span><span>22:11:09</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:08</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:08</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:07</span></div><div class="history-item"><span class="hn">D4</span><span>22:11:06</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:06</span></div><div class="history-item"><span class="hn">D4</span><span>22:11:05</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:04</span></div><div class="history-item"><span class="hn">D4</span><span>22:11:04</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:03</span></div><div class="history-item"><span class="hn">D4</span><span>22:11:03</span></div><div class="history-item"><span class="hn">D4</span><span>22:11:02</span></div><div class="history-item"><span class="hn">D4</span><span>22:11:01</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:01</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:11:00</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:10:59</span></div><div class="history-item"><span class="hn">D5 + F♯5</span><span>22:10:59</span></div><div class="history-item"><span class="hn">D4</span><span>22:10:58</span></div></div>
+    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">C4 + F4</span><span>23:43:34</span></div><div class="history-item"><span class="hn">D4 + F♯4</span><span>23:38:08</span></div><div class="history-item"><span class="hn">D4</span><span>23:38:07</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:06</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:05</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:05</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:04</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:03</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:03</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:02</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:01</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:01</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:38:00</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:37:59</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:37:59</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:37:58</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:37:57</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:37:57</span></div><div class="history-item"><span class="hn">D4 + B4</span><span>23:37:56</span></div><div class="history-item"><span class="hn">D4</span><span>23:37:56</span></div><div class="history-item"><span class="hn">D4</span><span>23:37:55</span></div><div class="history-item"><span class="hn">D4</span><span>23:37:54</span></div></div>
   </div>
 </main>
 
@@ -276,12 +312,20 @@
   <div class="status-text" id="status-text">Listening</div>
   <div class="spacer"></div>
   <div class="ctrl-group">
+    <button class="view-toggle active" id="view-toggle" onclick="toggleStaffView()">〜 Pitch view</button>
+  </div>
+  <div class="ctrl-group key-selector" id="key-selector" style="display: flex;">
+    <button class="key-btn" onclick="adjustKey(-1)">♭</button>
+    <div class="key-display" id="key-display">G</div>
+    <button class="key-btn" onclick="adjustKey(1)">♯</button>
+  </div>
+  <div class="ctrl-group">
     <label for="speed-slider">Speed</label>
     <input type="range" id="speed-slider" min="0" max="2" step="0.01" value="1">
   </div>
   <div class="ctrl-group">
     <label for="thresh-slider">Threshold</label>
-    <input type="range" id="thresh-slider" min="-85" max="-25" step="1" value="-70">
+    <input type="range" id="thresh-slider" min="-80" max="-50" step="5" value="-70">
     <span id="thresh-val">−70 dB</span>
   </div>
   <div class="ctrl-group">
@@ -294,6 +338,16 @@
     <input type="range" id="peak-thresh-slider" min="0.20" max="0.80" step="0.05" value="0.45">
     <span id="peak-thresh-val">45%</span>
   </div>
+  <div class="ctrl-group">
+    <label for="fft-smooth-slider">FFT smooth</label>
+    <input type="range" id="fft-smooth-slider" min="0" max="0.95" step="0.05" value="0.35">
+    <span id="fft-smooth-val">0.70</span>
+  </div>
+  <div class="ctrl-group">
+    <label for="snap-cents-slider">Snap ¢</label>
+    <input type="range" id="snap-cents-slider" min="5" max="50" step="5" value="10">
+    <span id="snap-cents-val">10¢</span>
+  </div>
 </footer>
 
 <script>
@@ -302,9 +356,8 @@ const NOTE_NAMES = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','
 const A4 = 440;
 const VIOLIN_MIN_HZ = 185;
 const VIOLIN_MAX_HZ = 1175;  // D6 — highest note played
-const FFT_SIZE = 8192;
-const SMOOTH = 0.75;
-const SCROLL_SEC = 5;
+const FFT_SIZE = 4096;  // 4096 = ~93ms window at 44.1kHz — halves temporal overlap vs 8192
+const SCROLL_SEC = 10;  // base scroll window — slider maps to 5s–20s around this
 
 // All chromatic notes in violin range for pitch graph Y-axis
 const YLABELS = [
@@ -317,7 +370,46 @@ const YLABELS = [
   {n:'C♯6',f:1108.7},{n:'D6',f:1174.7},
 ];
 
-// ── State ────────────────────────────────────────────────────────────────────
+// ── Music theory ─────────────────────────────────────────────────────────────
+// Diatonic note names in order (C=0..B=6)
+const DIATONIC = ['C','D','E','F','G','A','B'];
+// Semitone offset of each diatonic note from C
+const DIATONIC_SEMITONE = [0,2,4,5,7,9,11];
+
+// Circle of fifths: keyIndex -6(6♭) to +6(6♯). 0=C, 1=G, 2=D...  -1=F, -2=B♭...
+// Sharps added in order: F C G D A E B  (indices into DIATONIC)
+const SHARP_ORDER = [3,0,4,1,5,2,6]; // F C G D A E B
+const FLAT_ORDER  = [6,2,5,1,4,0,3]; // B E A D G C F
+// Key names indexed by keyIndex+6 (0=6♭..6=C..12=6♯)
+const KEY_NAMES = ['G♭','D♭','A♭','E♭','B♭','F','C','G','D','A','E','B','F♯'];
+
+// Staff position: diatonic step from middle C (C4=0, D4=1, E4=2, ... B4=6, C5=7 ...)
+// We map each chromatic note to its diatonic staff position and an accidental
+// Given a note name like 'C♯', the diatonic base is 'C', accidental is '♯'
+function noteToStaffInfo(noteName, octave) {
+  // Find diatonic base and accidental
+  let base, acc;
+  if (noteName.length === 1) { base = noteName; acc = ''; }
+  else if (noteName[1] === '♯') { base = noteName[0]; acc = '♯'; }
+  else if (noteName[1] === '♭') { base = noteName[0]; acc = '♭'; }
+  else { base = noteName[0]; acc = ''; }
+  const diatIdx = DIATONIC.indexOf(base);
+  // Staff step from C4: each octave = 7 steps
+  const staffStep = (octave - 4) * 7 + diatIdx;
+  return { base, acc, diatIdx, staffStep };
+}
+
+// Given a keyIndex, return the set of accidentals in effect.
+// Returns an object keyed by diatonic note name → '♯' or '♭'
+function keyAccidentals(keyIndex) {
+  const result = {};
+  if (keyIndex > 0) {
+    for (let i = 0; i < keyIndex; i++) result[DIATONIC[SHARP_ORDER[i]]] = '♯';
+  } else if (keyIndex < 0) {
+    for (let i = 0; i < -keyIndex; i++) result[DIATONIC[FLAT_ORDER[i]]] = '♭';
+  }
+  return result;
+}
 let audioCtx, analyser, micStream, animId;
 let isListening = false;
 let volumeThresholdDb = -70;
@@ -325,6 +417,10 @@ let scrollSec = SCROLL_SEC;
 let graphPaused = false;
 let peakThreshold = 0.45;
 let blackCents = 5;
+let fftSmoothing = 0.35;  // Web Audio analyser smoothingTimeConstant (0=instant, 1=max smooth)
+let snapCents = 10;        // cents threshold above which smoothedPeaks snaps instead of blends
+let staffView = true;    // default to staff view
+let keyIndex = 1;        // default to G major (1 sharp)
 let smoothedPeaks = [0, 0];
 let history = [];
 let lastLogTime = 0;
@@ -541,7 +637,227 @@ function drawPitchGraph() {
   }
 }
 
-// ── Intonation graph (scrolling cents deviation) ─────────────────────────────
+// ── Staff view (scrolling musical staff) ─────────────────────────────────────
+function drawStaffView() {
+  const wrap = document.querySelector('.graph-wrap');
+  const canvas = document.getElementById('staff-canvas');
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  if (!W || !H) return;
+  if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, W, H);
+
+  const nowMs = performance.now();
+  const winMs = scrollSec * 1000;
+
+  // Layout: left margin for clef + key sig, right margin, top/bottom padding
+  const P = { l: 68, r: 10, t: 20, b: 20 };
+  const pw = W - P.l - P.r;
+  const ph = H - P.t - P.b;
+
+  // Violin range: G3(step −7) to D6(step +14). Add blank space at bottom so
+  // the staff occupies ~75% of panel height, leaving room for a future panel.
+  const STAFF_MIN = -17;  // ~10 extra blank steps below G3 ≈ 25% dead space at bottom
+  const STAFF_MAX = 16;
+  const STAFF_SPAN = STAFF_MAX - STAFF_MIN;
+
+  // stepToY: staffStep 0=C4. Y increases downward; higher notes = smaller Y.
+  function stepToY(step) {
+    return P.t + ph - (step - STAFF_MIN) / STAFF_SPAN * ph;
+  }
+  const lineStep = ph / STAFF_SPAN; // pixels per diatonic step
+
+  // Draw the 5 staff lines (steps 2=G4? No — treble clef lines are E4,G4,B4,D5,F5)
+  // staffStep from C4: E4=2, G4=4, B4=6, D5=8, F5=10
+  const staffLines = [2, 4, 6, 8, 10]; // E4, G4, B4, D5, F5
+  ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+  ctx.lineWidth = 0.8;
+  for (const s of staffLines) {
+    const y = stepToY(s);
+    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(P.l + pw, y); ctx.stroke();
+  }
+
+  // Key signature accidentals
+  const keyAcc = keyAccidentals(keyIndex);
+  // Draw key sig symbols on the correct staff lines/spaces
+  // Sharp positions (treble clef): F5,C5,G5,D5,A4,E5,B4 → staffSteps: 10,7,11,8,5,9,6
+  const SHARP_STAFF_STEPS = [10, 7, 11, 8, 5, 9, 6];
+  // Flat positions (treble clef): B4,E5,A4,D5,G4,C5,F4 → staffSteps: 6,9,5,8,4,7,3
+  const FLAT_STAFF_STEPS  = [6, 9, 5, 8, 4, 7, 3];
+  ctx.font = 'bold 14px serif';
+  ctx.fillStyle = '#222';
+  ctx.textAlign = 'center';
+  let keySigX = 8;
+  if (keyIndex > 0) {
+    for (let i = 0; i < keyIndex; i++) {
+      ctx.fillText('♯', keySigX + i * 9, stepToY(SHARP_STAFF_STEPS[i]) + 5);
+    }
+  } else if (keyIndex < 0) {
+    for (let i = 0; i < -keyIndex; i++) {
+      ctx.fillText('♭', keySigX + i * 9, stepToY(FLAT_STAFF_STEPS[i]) + 5);
+    }
+  }
+
+  // Treble clef symbol
+  ctx.font = 'bold 52px serif';
+  ctx.fillStyle = '#333';
+  ctx.textAlign = 'left';
+  ctx.fillText('𝄞', 1, stepToY(4) + 28); // anchor near G4 line
+
+  function tx(t) { return P.l + (1 - (nowMs - t) / winMs) * pw; }
+
+  // Draw ledger lines needed for a given staffStep at x position
+  function drawLedgerLines(ctx, step, x) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 0.8;
+    const lw = 10;
+    // Below staff: E4=2, so steps 0,−1(C4),−2(B3),−4(A3/G3) etc need ledger lines
+    // Ledger lines at even steps (line positions): 0(C4),−2(A3),−4(F3)... and
+    // above staff: 12(G5),14(B5),etc.
+    // Lines are at staffSteps: ...−4,−2,0, then above: 12,14,16...
+    if (step <= 0) {
+      for (let ls = 0; ls >= step - 1; ls -= 2) {
+        if (ls > 1) continue; // inside staff
+        const ly = stepToY(ls);
+        ctx.beginPath(); ctx.moveTo(x - lw, ly); ctx.lineTo(x + lw, ly); ctx.stroke();
+      }
+    }
+    if (step >= 12) {
+      for (let ls = 12; ls <= step + 1; ls += 2) {
+        const ly = stepToY(ls);
+        ctx.beginPath(); ctx.moveTo(x - lw, ly); ctx.lineTo(x + lw, ly); ctx.stroke();
+      }
+    }
+  }
+
+  // Prune old pitch buffer entries
+  // Dashed potential ledger lines — only within violin range (G3 step −7 to D6 step +14)
+  ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+  ctx.lineWidth = 0.6;
+  ctx.setLineDash([4, 4]);
+  for (let s = -6; s <= 14; s += 2) {
+    if (s >= 2 && s <= 10) continue; // skip inside staff — real lines drawn
+    const y = stepToY(s);
+    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(P.l + pw, y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  const cutoff = nowMs - winMs - 300;
+  while (pitchBuf.length && pitchBuf[0].t < cutoff) pitchBuf.shift();
+
+  // Draw note tracks
+  // For each entry, map to staffStep and determine accidental vs key sig.
+  // We track the last-displayed accidental per staff position so we can show
+  // ♮ when a note reverts from a prior accidental back to the key-sig default.
+  function getStaffEntry(freq, nn) {
+    if (!freq || !nn) return null;
+    const match = nn.match(/^([A-G][♯♭]?)(\d+)$/);
+    if (!match) return null;
+    const noteName = match[1], octave = parseInt(match[2]);
+    const { base, acc, staffStep } = noteToStaffInfo(noteName, octave);
+    const keySigAcc = keyAcc[base] || '';
+    // displayAcc: what to show. '' = show nothing (matches key sig, no prior accident)
+    // We'll compute whether ♮ is needed in the drawing loop using lastAccByStep.
+    return { staffStep, acc, keySigAcc, base };
+  }
+
+  // Draw tracks (f1 behind f0)
+  for (const track of ['f1', 'f0']) {
+    const nnKey = track === 'f0' ? 'nn' : 'nn1';
+    const c0Key = track === 'f0' ? 'c0' : 'c1';
+    let prevPt = null, prevNN = null, lastSeenNN = null;
+    // Track the last accidental shown at each staffStep key ("step:octave" → acc string)
+    const lastAccByStep = {};
+
+    for (const entry of pitchBuf) {
+      const freq = entry[track];
+      const nn   = entry[nnKey];
+      if (!freq || !inVRange(freq) || !nn) { prevPt = null; continue; }
+      const x = tx(entry.t);
+      if (x < P.l) { prevPt = null; prevNN = null; lastSeenNN = null; continue; }
+      const se = getStaffEntry(freq, nn);
+      if (!se) { prevPt = null; continue; }
+      const y = stepToY(se.staffStep);
+
+      // Break on note change
+      if (prevPt && prevNN && nn !== prevNN) prevPt = null;
+
+      const col = centsToColor(entry[c0Key]);
+      ctx.lineWidth = 8; ctx.lineCap = 'round';
+
+      if (prevPt) {
+        ctx.strokeStyle = col;
+        ctx.beginPath(); ctx.moveTo(prevPt.x, prevPt.y); ctx.lineTo(x, y); ctx.stroke();
+      }
+
+      // Determine what accidental symbol to display on a true note change
+      const trueChange = nn !== lastSeenNN;
+      if (trueChange) {
+        const stepKey = se.staffStep; // unique per staff line/space across octaves
+        const prevAcc = lastAccByStep[stepKey]; // last acc shown at this position
+        let showAcc = '';
+
+        if (se.acc !== se.keySigAcc) {
+          // Playing something other than what the key sig implies
+          showAcc = se.acc === '' ? '♮' : se.acc;
+        } else if (prevAcc !== undefined && prevAcc !== se.keySigAcc) {
+          // Reverting back to the key signature's expected note.
+          // Show the key-sig symbol: ♮ in key of C, ♯ in key of G for F, etc.
+          showAcc = se.keySigAcc === '' ? '♮' : se.keySigAcc;
+        }
+
+        if (showAcc) {
+          ctx.save();
+          ctx.font = 'bold 18px serif';
+          ctx.fillStyle = '#333';
+          ctx.textAlign = 'center';
+          ctx.fillText(showAcc, x, y - 10);
+          ctx.restore();
+        }
+
+        // Record what accidental is now in effect at this step
+        lastAccByStep[stepKey] = se.acc;
+      }
+
+      // Solid ledger lines at this x position
+      drawLedgerLines(ctx, se.staffStep, x);
+
+      lastSeenNN = nn;
+      prevNN = nn;
+      prevPt = { x, y };
+    }
+  }
+}
+
+function toggleStaffView() {
+  staffView = !staffView;
+  const btn = document.getElementById('view-toggle');
+  const pitchCanvas = document.getElementById('pitch-canvas');
+  const staffCanvas = document.getElementById('staff-canvas');
+  const keySelector = document.getElementById('key-selector');
+  if (staffView) {
+    pitchCanvas.style.display = 'none';
+    staffCanvas.style.display = 'block';
+    keySelector.style.display = 'flex';
+    btn.classList.add('active');
+    btn.textContent = '〜 Pitch view';
+  } else {
+    pitchCanvas.style.display = 'block';
+    staffCanvas.style.display = 'none';
+    keySelector.style.display = 'none';
+    btn.classList.remove('active');
+    btn.textContent = '♩ Staff view';
+  }
+}
+
+function adjustKey(delta) {
+  keyIndex = Math.max(-6, Math.min(6, keyIndex + delta));
+  document.getElementById('key-display').textContent = KEY_NAMES[keyIndex + 6];
+}
+
+
 function drawIntonGraph(canvasId, freqKey, centsKey, nameKey, sideLabel) {
   const wrap = document.getElementById(canvasId).parentElement;
   const canvas = document.getElementById(canvasId);
@@ -898,10 +1214,30 @@ let debugGates = { g1: [], g2: [], g3: [], g4: [] };
           smoothedPeaks[i] = rawFreq;
         } else {
           const centsDiff = Math.abs(1200 * Math.log2(rawFreq / prev));
-          smoothedPeaks[i] = centsDiff > 25 ? rawFreq : ALPHA * rawFreq + (1 - ALPHA) * prev;
+          smoothedPeaks[i] = centsDiff > snapCents ? rawFreq : ALPHA * rawFreq + (1 - ALPHA) * prev;
         }
       } else {
         smoothedPeaks[i] = 0;
+      }
+    }
+
+    // NOTE: The hold-off block below forces an immediate snap when the note name
+    // changes. This may cause jitter if the detector briefly misidentifies a note
+    // during a transition. Consider reverting if it causes problems.
+    for (let i = 0; i < 2; i++) {
+      if (smoothedPeaks[i] > 0) {
+        const newNote = freqToNote(smoothedPeaks[i]);
+        const prevNote = i === 0 ? note0 : note1;
+        // prevNote is still null at this point — compare against last pitchBuf entry
+        if (pitchBuf.length > 0) {
+          const lastNN = i === 0 ? pitchBuf[pitchBuf.length - 1].nn
+                                 : pitchBuf[pitchBuf.length - 1].nn1;
+          const newNN = newNote ? (newNote.name + newNote.octave) : null;
+          if (lastNN && newNN && newNN !== lastNN) {
+            // Note changed — snap, don't blend
+            smoothedPeaks[i] = i === 0 ? rawFreq0 : rawFreq1;
+          }
+        }
       }
     }
 
@@ -911,6 +1247,22 @@ let debugGates = { g1: [], g2: [], g3: [], g4: [] };
     }
     if (smoothedPeaks[1] > 0) {
       note1 = freqToNote(smoothedPeaks[1]);
+    }
+
+    // Temporal overlap guard: when the primary note changes, the secondary slot
+    // often still holds the previous note (brief acoustic overlap as you shift
+    // fingers on a single string). If f1 is an octave or more below f0, or if
+    // the note name of f1 matches the previous f0, it's almost certainly the
+    // dying ring of the old note — discard it.
+    if (note0 && note1 && pitchBuf.length > 0) {
+      const prevNN0 = pitchBuf[pitchBuf.length - 1].nn;
+      const curNN0  = note0.name + note0.octave;
+      const curNN1  = note1.name + note1.octave;
+      // f0 just changed AND f1 matches the previous f0 → f1 is the old note ringing
+      if (prevNN0 && curNN0 !== prevNN0 && curNN1 === prevNN0) {
+        note1 = null;
+        smoothedPeaks[1] = 0;
+      }
     }
   } else {
     smoothedPeaks[0] = 0;
@@ -929,6 +1281,7 @@ let debugGates = { g1: [], g2: [], g3: [], g4: [] };
       nn1: note1 ? (note1.name + note1.octave) : null,
     });
     drawPitchGraph();
+    if (staffView) drawStaffView();
     drawIntonGraph('inton-canvas2', 'f1', 'c1', 'nn1', 'high note');
     drawIntonGraph('inton-canvas',  'f0', 'c0', 'nn',  'low note');
   }
@@ -945,6 +1298,7 @@ let debugGates = { g1: [], g2: [], g3: [], g4: [] };
 
 // ── Mic control — always listening, auto-starts on load ──────────────────────
 async function startListening() {
+  if (isListening) return;
   try {
     document.getElementById('status-text').textContent = 'Requesting microphone…';
     micStream = await navigator.mediaDevices.getUserMedia({
@@ -953,10 +1307,29 @@ async function startListening() {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = FFT_SIZE;
-    analyser.smoothingTimeConstant = SMOOTH;
+    analyser.smoothingTimeConstant = fftSmoothing;
     analyser.minDecibels = -100;
     analyser.maxDecibels = -20;
-    audioCtx.createMediaStreamSource(micStream).connect(analyser);
+
+    // High-pass filter: removes HVAC rumble, fan noise, footsteps.
+    // Cutoff at 150 Hz — well below G3 (196 Hz), so no violin notes are affected.
+    const hpf = audioCtx.createBiquadFilter();
+    hpf.type = 'highpass';
+    hpf.frequency.value = 150;
+    hpf.Q.value = 0.7;  // gentle Butterworth-style rolloff
+
+    // Low-pass filter: removes hiss and high-frequency noise.
+    // Cutoff at 4000 Hz — well above D6 (1175 Hz) and its harmonics in our detection range.
+    const lpf = audioCtx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.value = 4000;
+    lpf.Q.value = 0.7;
+
+    // Chain: mic source → highpass → lowpass → analyser
+    const src = audioCtx.createMediaStreamSource(micStream);
+    src.connect(hpf);
+    hpf.connect(lpf);
+    lpf.connect(analyser);
     isListening = true; pitchBuf = [];
     document.getElementById('status-dot').className = 'status-dot listening';
     document.getElementById('status-text').textContent = 'Listening';
@@ -985,7 +1358,15 @@ document.getElementById('peak-thresh-slider').addEventListener('input', function
   document.getElementById('peak-thresh-val').textContent = Math.round(peakThreshold * 100) + '%';
 });
 
-// ── Pause history views on tap/click ─────────────────────────────────────────
+document.getElementById('fft-smooth-slider').addEventListener('input', function() {
+  fftSmoothing = parseFloat(this.value);
+  document.getElementById('fft-smooth-val').textContent = fftSmoothing.toFixed(2);
+  if (analyser) analyser.smoothingTimeConstant = fftSmoothing;
+});
+document.getElementById('snap-cents-slider').addEventListener('input', function() {
+  snapCents = parseInt(this.value);
+  document.getElementById('snap-cents-val').textContent = snapCents + '¢';
+});
 let pauseStartTime = 0;
 
 function togglePause() {
@@ -994,7 +1375,7 @@ function togglePause() {
   if (graphPaused) {
     pauseStartTime = performance.now();
     // Draw PAUSED banner over both canvases
-    ['pitch-canvas', 'inton-canvas', 'inton-canvas2'].forEach(id => {
+    ['pitch-canvas', 'staff-canvas', 'inton-canvas', 'inton-canvas2'].forEach(id => {
       const canvas = document.getElementById(id);
       if (!canvas.width) return;
       const ctx = canvas.getContext('2d');
@@ -1016,7 +1397,7 @@ function togglePause() {
   }
 }
 
-['pitch-canvas', 'inton-canvas', 'inton-canvas2'].forEach(id => {
+['pitch-canvas', 'staff-canvas', 'inton-canvas', 'inton-canvas2'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('click', togglePause);
   el.addEventListener('touchstart', e => { e.preventDefault(); togglePause(); }, { passive: false });
@@ -1026,15 +1407,22 @@ document.addEventListener('keydown', e => {
   if (e.code === 'Space') { e.preventDefault(); togglePause(); }
 });
 
+// ── Initial UI state ─────────────────────────────────────────────────────────
+document.getElementById('key-display').textContent = KEY_NAMES[keyIndex + 6];
+document.getElementById('pitch-canvas').style.display = 'none';
+document.getElementById('staff-canvas').style.display = 'block';
+document.getElementById('key-selector').style.display = 'flex';
+document.getElementById('view-toggle').classList.add('active');
+document.getElementById('view-toggle').textContent = '〜 Pitch view';
+
 // ── Auto-start ────────────────────────────────────────────────────────────────
-// iOS/iPadOS requires a user gesture to start AudioContext.
-// We start immediately on desktop; on touch devices we wait for the first tap.
+// gesture — the once listeners catch the first tap and retry if needed.
 function tryStart() {
   if (!isListening) startListening();
 }
 document.addEventListener('click', tryStart, { once: true });
 document.addEventListener('touchstart', tryStart, { once: true });
-startListening();  // works immediately on desktop; silently fails on iOS until gesture
+startListening();
 
 // ── PWA ───────────────────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
