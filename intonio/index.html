@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_15.html -->
+<!-- saved from url=(0054)file:///C:/Users/CaseyM/Downloads/violin-tuner_17.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -135,7 +135,8 @@
     border: 0.5px solid var(--border); border-radius: 10px;
     overflow: hidden; position: relative; min-height: 0;
   }
-  #inton-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
+  #inton-canvas  { width: 100%; height: 100%; display: block; cursor: pointer; }
+  #inton-canvas2 { width: 100%; height: 100%; display: block; cursor: pointer; }
 
   /* RIGHT panel — hidden on iPad layout */
   .right-panel { display: none; }
@@ -219,10 +220,13 @@
   <!-- CENTRE: scrolling graphs -->
   <div class="graph-panel">
     <div class="graph-wrap">
-      <canvas id="pitch-canvas" width="1894" height="697"></canvas>
+      <canvas id="pitch-canvas" width="1894" height="576"></canvas>
     </div>
     <div class="inton-graph-wrap">
-      <canvas id="inton-canvas" width="1894" height="174"></canvas>
+      <canvas id="inton-canvas2" width="1894" height="144"></canvas>
+    </div>
+    <div class="inton-graph-wrap">
+      <canvas id="inton-canvas" width="1894" height="144"></canvas>
     </div>
   </div>
 
@@ -257,7 +261,7 @@
     </div>
 
     <div class="section-label" style="margin-top:0.15rem">Detection log</div>
-    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">D4</span><span>19:44:49</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:48</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:48</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:47</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:46</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:46</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:45</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:44</span></div><div class="history-item"><span class="hn">D4</span><span>19:44:44</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:43</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:42</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:41</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:41</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:39</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:39</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:38</span></div><div class="history-item"><span class="hn">F♯4 + A4</span><span>19:44:37</span></div><div class="history-item"><span class="hn">F♯4 + A4</span><span>19:44:36</span></div><div class="history-item"><span class="hn">F♯4 + A5</span><span>19:44:35</span></div><div class="history-item"><span class="hn">F♯4</span><span>19:44:35</span></div><div class="history-item"><span class="hn">A4</span><span>19:44:34</span></div><div class="history-item"><span class="hn">D4 + E4</span><span>19:44:32</span></div></div>
+    <div class="history-list" id="history-list"><div class="history-item"><span class="hn">G♯3 + A♯3</span><span>20:19:05</span></div><div class="history-item"><span class="hn">G♯3</span><span>20:15:58</span></div><div class="history-item"><span class="hn">A♯3</span><span>20:15:26</span></div><div class="history-item"><span class="hn">A3</span><span>20:15:26</span></div><div class="history-item"><span class="hn">A3</span><span>20:15:25</span></div><div class="history-item"><span class="hn">A♯3</span><span>20:15:24</span></div><div class="history-item"><span class="hn">A♯3</span><span>20:15:24</span></div><div class="history-item"><span class="hn">G♯3</span><span>20:15:23</span></div><div class="history-item"><span class="hn">G♯3</span><span>20:15:22</span></div><div class="history-item"><span class="hn">G3 + G4</span><span>20:15:22</span></div><div class="history-item"><span class="hn">F♯3 + F♯4</span><span>20:15:21</span></div><div class="history-item"><span class="hn">F♯3</span><span>20:15:19</span></div><div class="history-item"><span class="hn">G3</span><span>20:15:18</span></div><div class="history-item"><span class="hn">F♯3 + F♯4</span><span>20:15:18</span></div><div class="history-item"><span class="hn">F♯3 + F♯4</span><span>20:15:17</span></div><div class="history-item"><span class="hn">F♯3</span><span>20:15:16</span></div><div class="history-item"><span class="hn">F♯3</span><span>20:15:16</span></div><div class="history-item"><span class="hn">G3 + F4</span><span>20:15:15</span></div><div class="history-item"><span class="hn">F4 + C5</span><span>20:15:15</span></div><div class="history-item"><span class="hn">D4 + A4</span><span>20:15:13</span></div><div class="history-item"><span class="hn">D4 + A4</span><span>20:15:11</span></div><div class="history-item"><span class="hn">A3 + D4</span><span>20:15:11</span></div></div>
   </div>
 </main>
 
@@ -278,7 +282,12 @@
   <div class="ctrl-group">
     <label for="thresh-slider">Threshold</label>
     <input type="range" id="thresh-slider" min="-85" max="-25" step="1" value="-70">
-    <span id="thresh-val">−70 dB</span>
+    <span id="thresh-val">-66 dB</span>
+  </div>
+  <div class="ctrl-group">
+    <label for="peak-thresh-slider">Peak threshold</label>
+    <input type="range" id="peak-thresh-slider" min="0" max="1" step="0.01" value="0.4">
+    <span id="peak-thresh-val">16%</span>
   </div>
   <div class="ctrl-group">
     <label for="sens-slider">Sensitivity</label>
@@ -316,7 +325,8 @@ let volumeThresholdDb = -70;
 // scrollSec: slider goes 0→2 mapping to SCROLL_SEC*2 → SCROLL_SEC*0.5
 // centre (1) = SCROLL_SEC (5s), max (2) = 2.5s (fastest), min (0) = 10s (slowest)
 let scrollSec = SCROLL_SEC;
-let graphPaused = false;  // true while history views are paused by tap
+let graphPaused = false;
+let peakThreshold = 0.4;  // candidate rawMag must be >= this fraction of top peak
 let smoothedPeaks = [0, 0];
 let history = [];
 let lastLogTime = 0;
@@ -465,7 +475,7 @@ function drawPitchGraph() {
   const cutoff = nowMs - winMs - 300;
   while (pitchBuf.length && pitchBuf[0].t < cutoff) pitchBuf.shift();
 
-  // Draw secondary note track (f1) in blue, behind primary
+  // Draw secondary note track (f1) with same intonation colour scheme, behind primary
   ctx.lineWidth = 4;
   ctx.lineCap = 'round';
   let prevPt1 = null, prevF1 = 0;
@@ -476,7 +486,7 @@ function drawPitchGraph() {
     const y = fy(entry.f1);
     if (prevF1 > 0 && Math.abs(1200 * Math.log2(entry.f1 / prevF1)) > 50) prevPt1 = null;
     if (prevPt1) {
-      ctx.strokeStyle = '#1a52cf';
+      ctx.strokeStyle = centsToColor(entry.c1 !== undefined ? entry.c1 : null);
       ctx.beginPath(); ctx.moveTo(prevPt1.x, prevPt1.y); ctx.lineTo(x, y); ctx.stroke();
     }
     prevPt1 = { x, y };
@@ -528,35 +538,34 @@ function drawPitchGraph() {
 }
 
 // ── Intonation graph (scrolling cents deviation) ─────────────────────────────
-function drawIntonGraph() {
-  const wrap = document.querySelector('.inton-graph-wrap');
-  const canvas = document.getElementById('inton-canvas');
+// canvasId: which canvas; freqKey/centsKey/nameKey: which pitchBuf fields to read
+function drawIntonGraph(canvasId, freqKey, centsKey, nameKey) {
+  const wrap = document.getElementById(canvasId).parentElement;
+  const canvas = document.getElementById(canvasId);
   const W = wrap.clientWidth, H = wrap.clientHeight;
   if (!W || !H) return;
   if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
   const ctx = canvas.getContext('2d');
 
-  // White background
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, W, H);
 
-  const P = { l: 50, r: 8, t: 14, b: 8 };
+  // Tighter padding — less dead space above/below the ±50¢ marks
+  const P = { l: 50, r: 8, t: 8, b: 6 };
   const pw = W - P.l - P.r, ph = H - P.t - P.b;
   const nowMs = performance.now();
   const winMs = scrollSec * 1000;
 
   function tx(t) { return P.l + (1 - (nowMs - t) / winMs) * pw; }
-  // ±100¢ fills full height; edges = halfway to neighbouring note
   const CENT_RANGE = 100;
   function cy(cents) { return P.t + ph / 2 - (cents / CENT_RANGE) * (ph / 2); }
 
-  // ±50¢ guide lines
+  // ±50¢ guide lines (these are now very close to the edges with tight padding)
   ctx.strokeStyle = 'rgba(0,0,0,0.08)';
   ctx.lineWidth = 0.5;
   ctx.setLineDash([3, 4]);
   for (const c of [-50, 50]) {
-    const y = cy(c);
-    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(P.l + pw, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(P.l, cy(c)); ctx.lineTo(P.l + pw, cy(c)); ctx.stroke();
   }
   ctx.setLineDash([]);
 
@@ -565,8 +574,8 @@ function drawIntonGraph() {
   ctx.lineWidth = 0.8;
   ctx.beginPath(); ctx.moveTo(P.l, cy(0)); ctx.lineTo(P.l + pw, cy(0)); ctx.stroke();
 
-  // Y-axis labels
-  ctx.font = 'bold 10px Inconsolata, monospace';
+  // Y-axis labels — only 3, squeezed into tight space
+  ctx.font = 'bold 9px Inconsolata, monospace';
   ctx.textAlign = 'right';
   ctx.fillStyle = '#8a9098';
   ctx.fillText('+50¢', P.l - 4, cy(50) + 3);
@@ -578,53 +587,50 @@ function drawIntonGraph() {
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(P.l + pw, P.t); ctx.lineTo(P.l + pw, P.t + ph); ctx.stroke();
 
-  // Draw trace — break on note change, draw vertical line + label at each break
+  // Draw trace
   ctx.lineWidth = 9;
   let prevPt = null;
   let prevNN = null;
 
   for (let i = 0; i < pitchBuf.length; i++) {
     const entry = pitchBuf[i];
-    if (entry.c0 === null || entry.f0 === 0) { prevPt = null; prevNN = null; continue; }
+    const cents = entry[centsKey];
+    const freq  = entry[freqKey];
+    const nn    = entry[nameKey];
+    if (cents === null || cents === undefined || !freq) { prevPt = null; prevNN = null; continue; }
     const x = tx(entry.t);
     if (x < P.l) { prevPt = null; prevNN = null; continue; }
-    const y = cy(entry.c0);
+    const y = cy(cents);
 
-    // Detect note change — break the line and draw marker
-    const noteChanged = prevNN !== null && entry.nn !== prevNN;
+    const noteChanged = prevNN !== null && nn !== prevNN;
     if (noteChanged) {
       prevPt = null;
-
-      // Vertical divider line
       ctx.save();
       ctx.strokeStyle = 'rgba(0,0,0,0.25)';
       ctx.lineWidth = 1;
       ctx.setLineDash([2, 3]);
       ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph); ctx.stroke();
       ctx.setLineDash([]);
-
-      // Note name label just to the right of the line, at the top
       ctx.fillStyle = '#444';
       ctx.font = 'bold 11px Inconsolata, monospace';
       ctx.textAlign = 'left';
-      ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, P.t + 11);
+      ctx.fillText(nn.replace(/\d+$/, ''), x + 3, P.t + 10);
       ctx.restore();
     }
 
-    // Draw note name at the very start of the first appearance
-    if (prevNN === null && entry.nn) {
+    if (prevNN === null && nn) {
       ctx.save();
       ctx.fillStyle = '#444';
       ctx.font = 'bold 11px Inconsolata, monospace';
       ctx.textAlign = 'left';
-      ctx.fillText(entry.nn.replace(/\d+$/, ''), x + 3, P.t + 11);
+      ctx.fillText(nn.replace(/\d+$/, ''), x + 3, P.t + 10);
       ctx.restore();
     }
 
-    prevNN = entry.nn;
+    prevNN = nn;
 
     if (prevPt) {
-      ctx.strokeStyle = centsToColor(entry.c0);
+      ctx.strokeStyle = centsToColor(cents);
       ctx.lineWidth = 9;
       ctx.lineCap = 'round';
       ctx.beginPath(); ctx.moveTo(prevPt.x, prevPt.y); ctx.lineTo(x, y); ctx.stroke();
@@ -633,7 +639,7 @@ function drawIntonGraph() {
   }
 }
 
-function drawSpectrum(freqData, sampleRate, detFreqs) {
+function drawSpectrum(freqData, sampleRate, detFreqs, candidateFreqs) {
   const strip = document.querySelector('.spectrum-strip');
   const canvas = document.getElementById('spectrum-canvas');
   const W = strip.clientWidth, H = strip.clientHeight;
@@ -715,17 +721,50 @@ function drawSpectrum(freqData, sampleRate, detFreqs) {
   }
   ctx.strokeStyle = 'rgba(60,80,160,0.75)'; ctx.lineWidth = 1; ctx.stroke();
 
-  // Detected freq marker — use intonation colour
+  // Debug: grey dashed lines for candidate peaks NOT chosen as primary or secondary
+  if (candidateFreqs && candidateFreqs.length) {
+    const chosenSet = new Set(detFreqs.map(f => Math.round(f)));
+    for (const f of candidateFreqs) {
+      if (!f || !inVRange(f)) continue;
+      if (detFreqs.some(df => Math.abs(df / f - 1) < 0.02)) continue; // skip chosen
+      const x = fx(f);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(100,100,100,0.5)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+  }
+
+  // Debug: orange triangles at bottom for all candidates
+  if (candidateFreqs && candidateFreqs.length) {
+    for (const f of candidateFreqs) {
+      if (!f || !inVRange(f)) continue;
+      const x = fx(f);
+      ctx.fillStyle = 'rgba(200,100,0,0.75)';
+      ctx.beginPath();
+      ctx.moveTo(x, P.t + ph);
+      ctx.lineTo(x - 5, P.t + ph - 8);
+      ctx.lineTo(x + 5, P.t + ph - 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  // Selected note markers (dashed vertical lines with dot at top)
   for (let d = 0; d < detFreqs.length; d++) {
     const f = detFreqs[d];
     if (!f || !inVRange(f)) continue;
     const x = fx(f);
-    // Find the most recent cents value to colour the marker
     const lastEntry = [...pitchBuf].reverse().find(e => e.f0 > 0);
-    const col = centsToColor(lastEntry ? lastEntry.c0 : null);
+    const cents = d === 0 ? (lastEntry ? lastEntry.c0 : null)
+                          : (lastEntry ? lastEntry.c1 : null);
+    const col = centsToColor(cents);
     ctx.strokeStyle = col; ctx.lineWidth = 1.5;
     ctx.setLineDash([2, 3]);
-    ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x, P.t); ctx.lineTo(x, P.t + ph - 10); ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = col;
     ctx.beginPath(); ctx.arc(x, P.t + 3, 3, 0, Math.PI * 2); ctx.fill();
@@ -783,6 +822,22 @@ function suppressHarmonics(peaks, binHz, tol = 0.04) {
   return out;
 }
 
+// Find peaks in the raw FFT magnitude spectrum (not HPS).
+// This catches notes whose HPS product is weak due to shared harmonics with
+// another note (e.g. the upper note of a perfect 5th double-stop).
+function findRawMagPeaks(mag, minBin, maxBin, threshold) {
+  const peaks = [];
+  for (let i = minBin + 1; i < maxBin - 1; i++) {
+    if (mag[i] > mag[i-1] && mag[i] > mag[i+1] && mag[i] > threshold) {
+      const a = mag[i-1], b = mag[i], c = mag[i+1];
+      const p = 0.5 * (a - c) / (a - 2*b + c);
+      peaks.push({ bin: i + p, strength: b, rawMag: b });
+    }
+  }
+  peaks.sort((a, b) => b.strength - a.strength);
+  return peaks;
+}
+
 // Peak dB within violin range — used for volume gate
 function peakDbInRange(freqData, sampleRate) {
   const N = freqData.length, binHz = sampleRate / (2 * N);
@@ -806,6 +861,7 @@ function analyse() {
 
   let note0 = null, note1 = null;
   let detFreq = 0;
+  let allCandidateFreqs = [];
 
   if (loud) {
     const { hps, mag, binHz, minBin, maxBin } = computeHPS(freqData, sampleRate);
@@ -815,21 +871,43 @@ function analyse() {
     const p80 = vals[Math.floor(vals.length * 0.8)] || 0;
     const threshold = p80 * (1 + (0.51 - sensitivity) * 20);
 
-    let peaks = suppressHarmonics(findPeaks(hps, mag, minBin, maxBin, threshold), binHz);
-    // Candidates: strongest-HPS peak plus any with rawMag >= 50% of the top.
-    // Sort by ascending frequency. Primary = lowest freq, secondary = next-lowest.
+    let hpsPeaks = suppressHarmonics(findPeaks(hps, mag, minBin, maxBin, threshold), binHz);
+
+    // Also find peaks in the raw FFT magnitude. This catches notes whose HPS
+    // product is weak because they share harmonics with another played note
+    // (e.g. the upper note of a perfect 5th or 4th double-stop).
+    const rawMagThreshold = hpsPeaks.length > 0
+      ? hpsPeaks[0].rawMag * peakThreshold   // relative to strongest raw peak
+      : 0;
+    const rawPeaks = suppressHarmonics(
+      findRawMagPeaks(mag, minBin, maxBin, rawMagThreshold), binHz
+    );
+
+    // Merge: combine both lists, deduplicate peaks within 3% of each other in freq
+    const merged = [...hpsPeaks];
+    for (const rp of rawPeaks) {
+      const rf = rp.bin * binHz;
+      const alreadyPresent = merged.some(p => Math.abs(p.bin * binHz / rf - 1) < 0.03);
+      if (!alreadyPresent) merged.push(rp);
+    }
+
+    // Sort merged list by HPS strength descending so topRawMag comes from the
+    // strongest HPS peak (most likely the true fundamental).
+    merged.sort((a, b) => b.rawMag - a.rawMag);
+
+    // Candidates: merged peak with highest rawMag, plus any within peakThreshold fraction.
+    // Sort ascending by frequency: primary = lowest, secondary = next-lowest.
     let rawFreq0 = 0, rawFreq1 = 0;
-    if (peaks.length >= 1) {
-      const topRawMag = peaks[0].rawMag;
-      const candidates = peaks
-        .filter(p => p.rawMag >= topRawMag * 0.5)
+    if (merged.length >= 1) {
+      const topRawMag = merged[0].rawMag;
+      const candidates = merged
+        .filter(p => p.rawMag >= topRawMag * peakThreshold)
         .map(p => p.bin * binHz)
         .sort((a, b) => a - b);
+      allCandidateFreqs = candidates;
       rawFreq0 = candidates[0] || 0;
       rawFreq1 = candidates[1] || 0;
     }
-
-    // Snap-or-smooth for both notes
     const ALPHA = 0.4;
     for (let i = 0; i < 2; i++) {
       const rawFreq = i === 0 ? rawFreq0 : rawFreq1;
@@ -865,10 +943,13 @@ function analyse() {
       f0: smoothedPeaks[0] > 0 ? smoothedPeaks[0] : 0,
       f1: smoothedPeaks[1] > 0 ? smoothedPeaks[1] : 0,
       c0: note0 ? note0.cents : null,
+      c1: note1 ? note1.cents : null,
       nn: note0 ? (note0.name + note0.octave) : null,
+      nn1: note1 ? (note1.name + note1.octave) : null,
     });
     drawPitchGraph();
-    drawIntonGraph();
+    drawIntonGraph('inton-canvas2', 'f1', 'c1', 'nn1');  // upper = higher note
+    drawIntonGraph('inton-canvas',  'f0', 'c0', 'nn');   // lower = lower note
   }
 
   updateNoteCard(0, note0);
@@ -876,7 +957,7 @@ function analyse() {
   updateStrings([note0, note1]);
   logHistory([note0, note1]);
   const detFreqs = [detFreq, note1 ? note1.freq : 0].filter(f => f > 0);
-  drawSpectrum(freqData, sampleRate, detFreqs);
+  drawSpectrum(freqData, sampleRate, detFreqs, allCandidateFreqs || []);
 
   animId = requestAnimationFrame(analyse);
 }
@@ -914,9 +995,12 @@ document.getElementById('thresh-slider').addEventListener('input', function() {
   document.getElementById('thresh-val').textContent =
     (this.value > 0 ? '+' : '') + this.value + ' dB';
 });
-// Speed slider: 0=slowest(10s), 1=default(5s), 2=fastest(2.5s)
 document.getElementById('speed-slider').addEventListener('input', function() {
   scrollSec = SCROLL_SEC * Math.pow(2, 1 - parseFloat(this.value));
+});
+document.getElementById('peak-thresh-slider').addEventListener('input', function() {
+  peakThreshold = parseFloat(this.value);
+  document.getElementById('peak-thresh-val').textContent = Math.round(peakThreshold * 100) + '%';
 });
 
 // ── Pause history views on tap/click ─────────────────────────────────────────
@@ -928,7 +1012,7 @@ function togglePause() {
   if (graphPaused) {
     pauseStartTime = performance.now();
     // Draw PAUSED banner over both canvases
-    ['pitch-canvas', 'inton-canvas'].forEach(id => {
+    ['pitch-canvas', 'inton-canvas', 'inton-canvas2'].forEach(id => {
       const canvas = document.getElementById(id);
       if (!canvas.width) return;
       const ctx = canvas.getContext('2d');
@@ -950,7 +1034,7 @@ function togglePause() {
   }
 }
 
-['pitch-canvas', 'inton-canvas'].forEach(id => {
+['pitch-canvas', 'inton-canvas', 'inton-canvas2'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('click', togglePause);
   el.addEventListener('touchstart', e => { e.preventDefault(); togglePause(); }, { passive: false });
