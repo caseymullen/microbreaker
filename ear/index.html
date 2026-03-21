@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_33.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_35.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -47,6 +47,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   transition: background-color 0.5s ease;
 }
 #app.review-mode { background-color: var(--green); }
+#app.retest-mode { background-color: #080928; }
+#exit-retest-btn {
+  display: none;
+  -webkit-appearance: none; font-family: var(--font);
+  font-size: clamp(12px, 3.2vw, 14px); letter-spacing: 0.10em;
+  padding: 7px 18px; border-radius: 999px; cursor: pointer;
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.65);
+  margin-top: 12px; flex-shrink: 0;
+  transition: background 0.15s;
+}
+#exit-retest-btn:active { background: rgba(255,255,255,0.18); }
+
 #app::after {
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.55) 100%);
@@ -377,7 +391,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 <script src="./index_files/soundfont-player.min.js.download"></script>
 </head>
 <body>
-<div id="bg-fill"></div>
+<div id="bg-fill" style="background-color: rgb(77, 25, 3);"></div>
 
 <!-- ═══ MAIN APP ═══ -->
 <div id="app">
@@ -385,11 +399,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
   <!-- Diff label centered in the upper half (between phase-label and circles) -->
   <div id="upper-half" style="visibility: visible;">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <div id="retest-label" style="font-size: clamp(13px, 3.8vw, 17px); font-weight: 400; letter-spacing: 0.08em; opacity: 0.8; text-align: center;">Re-testing E4</div>
-      <div id="diff-label">20¢ difference</div>
-      <button id="exit-retest-btn" onclick="exitRetest()" style="appearance: none; font-family: var(--font); font-size: clamp(12px, 3.2vw, 14px); letter-spacing: 0.1em; padding: 6px 16px; border-radius: 999px; cursor: pointer; background: rgba(0, 0, 0, 0.22); border: 1.5px solid rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 0.8);">Exit re-test</button>
-    </div>
+    <div id="diff-label">20¢ difference</div>
   </div>
 
   <!-- Note circles, vertically centered in the middle third -->
@@ -397,11 +407,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <div id="tap-instruction" style="">Tap the higher one</div>
     <div id="note-row" style="">
       <div class="note-circle" id="note-left" onclick="handleTap(&#39;left&#39;)">
-        <div class="nc-name" id="note-left-name">E4</div>
+        <div class="nc-name" id="note-left-name">F♯6</div>
         <div class="nc-detail" id="note-left-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
       </div>
       <div class="note-circle" id="note-right" onclick="handleTap(&#39;right&#39;)">
-        <div class="nc-name" id="note-right-name">E4</div>
+        <div class="nc-name" id="note-right-name">F♯6</div>
         <div class="nc-detail" id="note-right-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
       </div>
     </div>
@@ -430,7 +440,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     </button>
 
     <div id="progress-row">
-      <div class="prog-slot" id="prog0"></div>
+      <div class="prog-slot" id="prog0"><svg class="prog-check" width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="12" fill="rgba(60,200,80,0.25)" stroke="rgba(80,220,100,0.70)" stroke-width="1.5"></circle>
+      <path d="M8 14 L12 18 L20 10" stroke="#6fe882" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg></div>
       <div class="prog-slot" id="prog1"></div>
       <div class="prog-slot" id="prog2"></div>
     </div>
@@ -441,6 +454,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       <button class="round-action-btn" id="review-action-btn" onclick="enterReview()">Review</button>
       <button class="round-action-btn" id="continue-action-btn" onclick="continueAfterFail()">Continue</button>
     </div>
+    <button id="exit-retest-btn" onclick="exitRetest()" style="display: none;">Exit re-test</button>
   </div>
 </div>
 
@@ -558,215 +572,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <div class="info-sec">History</div>
     <table id="stats-table">
       <thead><tr><th>Note</th><th>Best</th><th>Failed</th><th>Prob</th><th>Actions</th></tr></thead>
-      <tbody id="stats-tbody"><tr><td class="stat-note-name">G3</td>
-        <td class="stat-best">25¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">3.29%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G3&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯3</td>
-        <td class="stat-best">15¢</td>
-        <td class="stat-failed">15¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.97%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#3&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A3</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.63%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A3&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯3</td>
-        <td class="stat-best">15¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.97%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#3&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B3</td>
-        <td class="stat-best">10¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.31%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B3&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C4</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.63%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C♯4</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">7¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C#4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C#4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D4</td>
-        <td class="stat-best">10¢</td>
-        <td class="stat-failed">10¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.31%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D♯4</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.63%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D#4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D#4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">E4</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.63%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;E4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F4</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">F♯4</td>
-        <td class="stat-best">10¢</td>
-        <td class="stat-failed">7¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.64%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F#4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">G4</td>
-        <td class="stat-best">15¢</td>
-        <td class="stat-failed">5¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.46%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯4</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">A4</td>
-        <td class="stat-best">15¢</td>
-        <td class="stat-failed">10¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.46%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯4</td>
-        <td class="stat-best">25¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">3.29%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B4</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">15¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B4&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">C5</td>
-        <td class="stat-best">25¢</td>
-        <td class="stat-failed">15¢</td>
-        <td style="color:#2a2018;font-weight:400;">4.11%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C♯5</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C#5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D5</td>
-        <td class="stat-best">50¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">6.57%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D5&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">D♯5</td>
-        <td class="stat-best">50¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">8.21%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D#5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">E5</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;E5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F5</td>
-        <td class="stat-best">10¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.31%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F5&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">F♯5</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">7¢</td>
-        <td style="color:#2a2018;font-weight:400;">3.29%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F#5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G5</td>
-        <td class="stat-best">50¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">6.57%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯5</td>
-        <td class="stat-best">50¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">6.57%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A5</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">7¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯5</td>
-        <td class="stat-best">15¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.97%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B5</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.63%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B5&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C6</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.92%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C♯6</td>
-        <td class="stat-best">5¢</td>
-        <td class="stat-failed">5¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.66%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C#6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C#6&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">D6</td>
-        <td class="stat-best">25¢</td>
-        <td class="stat-failed">5¢</td>
-        <td style="color:#2a2018;font-weight:400;">4.11%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D♯6</td>
-        <td class="stat-best">25¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">3.29%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D#6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">E6</td>
-        <td class="stat-best">10¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.31%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;E6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F6</td>
-        <td class="stat-best">5¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.66%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F♯6</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">50¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.63%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F#6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G6</td>
-        <td class="stat-best">5¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">0.66%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯6</td>
-        <td class="stat-best">15¢</td>
-        <td class="stat-failed">15¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.97%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A6</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">25¢</td>
-        <td style="color:#2a2018;font-weight:400;">2.63%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯6</td>
-        <td class="stat-best">15¢</td>
-        <td class="stat-failed">20¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.97%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B6</td>
-        <td class="stat-best">10¢</td>
-        <td class="stat-failed">15¢</td>
-        <td style="color:#2a2018;font-weight:400;">1.31%</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B6&#39;)">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B6&#39;)">Retest</button></td></tr></tbody>
+      <tbody id="stats-tbody"></tbody>
     </table>
     <div class="info-sec">Progress Chart</div>
-    <div id="stats-chart-wrap"><canvas id="stats-chart" width="648" height="180" style="width: 648px; height: 180px;"></canvas></div>
+    <div id="stats-chart-wrap"><canvas id="stats-chart"></canvas></div>
     <button id="info-global-reset" onclick="confirmResetAll()">Reset All History</button>
     <button id="info-fake-history" onclick="fakeHistory()" style="-webkit-appearance:none;font-family:var(--font);font-size:clamp(13px,3.5vw,15px);
       padding:10px 22px;border-radius:999px;cursor:pointer;
@@ -1285,6 +1094,7 @@ function handleAnswer(guessSecondHigher) {
 function enterReview() {
   inReview=true; roundFailed=false;
   $('round-actions').style.display='none';
+  $('app').classList.remove('retest-mode');
   $('app').classList.add('review-mode');
   $('bg-fill').style.backgroundColor='#0d2a1a';
   $('phase-label').textContent='Review';
@@ -1321,7 +1131,8 @@ function exitReview() {
   $('note-left').classList.remove('playing'); $('note-right').classList.remove('playing');
 
   $('app').classList.remove('review-mode');
-  $('bg-fill').style.backgroundColor='#4d1903';
+  if (retestNote) $('app').classList.add('retest-mode');
+  $('bg-fill').style.backgroundColor = retestNote ? '#020215' : '#4d1903';
   $('phase-label').textContent = 'Listen';
   $('tap-instruction').textContent='Tap the higher one';
   $('swipe-hint').style.display='';
@@ -1344,8 +1155,12 @@ function continueAfterFail() {
   if (retestEnding) {
     retestEnding = false;
     exitRetest();
-  } else {
+  } else if (retestNote) {
+    // In retest, stay on same note, step was already adjusted
     setTimeout(startRound, 200);
+  } else {
+    // In normal mode, replay the same note (don't pick a new one)
+    setTimeout(setupAttempt, 200);
   }
 }
 
@@ -1647,9 +1462,11 @@ function exitRetest() {
   retestNote               = null;
   firstRoundOfRetest       = false;
   atLeastOneSuccessfulRetest = false;
+  retestEnding             = false;
   roundAttempts = 0; roundResults = [];
+  $('round-actions').style.display = 'none';
+  $('status-msg').textContent = '';
   updateRetestUI();
-  $('phase-label').textContent = 'Listen';
   startRound();
 }
 
@@ -1659,12 +1476,14 @@ function endNoteTest()    { exitRetest(); }
 
 function updateRetestUI() {
   if (retestNote) {
-    $('retest-label').textContent = 'Re-testing ' + dn(retestNote);
-    $('retest-label').style.display = '';
+    $('phase-label').textContent = 'Re-testing ' + dn(retestNote);
+    $('app').classList.add('retest-mode');
+    $('bg-fill').style.backgroundColor = '#020215';
     $('exit-retest-btn').style.display = '';
-    $('phase-label').textContent = 'Listen';
   } else {
-    $('retest-label').style.display = 'none';
+    $('phase-label').textContent = 'Listen';
+    $('app').classList.remove('retest-mode');
+    $('bg-fill').style.backgroundColor = '#4d1903';
     $('exit-retest-btn').style.display = 'none';
   }
 }
