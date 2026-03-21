@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0059)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_6.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_20.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -96,6 +96,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   width: 100%; padding-top: 14px;
 }
 
+/* ── Start button ── */
+#start-btn {
+  display: none;
+  background: rgba(255,255,255,0.13);
+  border: 2px solid rgba(255,255,255,0.45);
+  border-radius: 999px; color: #fff;
+  font-family: var(--font);
+  font-size: clamp(22px, 7vw, 34px); font-weight: 400;
+  letter-spacing: 0.18em; padding: 18px 48px;
+  cursor: pointer; -webkit-appearance: none;
+  transition: background 0.15s, transform 0.1s;
+}
+#start-btn:active { background: rgba(255,255,255,0.26); transform: scale(0.96); }
+
 #tap-instruction {
   font-size: clamp(15px, 4.2vw, 19px); font-weight: 300;
   letter-spacing: 0.08em; opacity: 0.72;
@@ -142,9 +156,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   text-align: center; min-height: 1.2em;
 }
 
-/* ── Replay button: graphical circle-arrow + play triangle ── */
+/* ── Replay button ── */
 #replay-btn {
-  margin-top: 18px; flex-shrink: 0;
+  flex-shrink: 0;
   width: 52px; height: 52px; border-radius: 50%;
   background: rgba(0,0,0,0.22);
   border: 1.5px solid rgba(255,255,255,0.32);
@@ -204,16 +218,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 /* ── Review close button (red X circle from reference app) ── */
 #review-close-btn {
   display: none;
-  position: fixed; top: calc(var(--safe-top) + 8px); right: calc(var(--safe-r) + 10px);
-  /* matches .rev-btn .rev-sm .rev-exit-btn from reference */
   width: 60px; height: 60px; border-radius: 50%;
   background: rgba(200,40,40,0.10);
   border: 1.5px solid rgba(200,40,40,0.40);
-  color: #fff; cursor: pointer; padding: 0; z-index: 20;
+  color: #fff; cursor: pointer; padding: 0;
   -webkit-appearance: none;
-  display: none;
   align-items: center; justify-content: center;
   transition: background 0.12s, transform 0.1s;
+  flex-shrink: 0; margin-top: 14px;
 }
 #review-close-btn:active { background: rgba(200,40,40,0.25); transform: scale(0.90); }
 
@@ -327,6 +339,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 #stats-table td { padding: 7px 8px; border-bottom: 1px solid rgba(0,0,0,0.08); vertical-align: middle; color: #2a2018; }
 .stat-note-name { font-weight: 600; }
 .stat-best { font-weight: 500; color: #7a2900; }
+.stat-failed { font-weight: 500; color: #7a2900; }
+.stat-row-regressed { background: rgba(255, 220, 0, 0.25); }
 .stat-btn { -webkit-appearance: none; font-family: var(--font); font-size: clamp(11px, 3vw, 13px); padding: 5px 10px; border-radius: 999px; cursor: pointer; border: none; transition: opacity 0.15s; }
 .stat-btn:active { opacity: 0.6; }
 .stat-reset-btn { background: rgba(180,60,20,0.15); color: #7a2900; }
@@ -362,17 +376,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
 <!-- ═══ MAIN APP ═══ -->
 <div id="app">
-  <div id="phase-label">Listening</div>
+  <div id="phase-label">Listen</div>
 
   <!-- Diff label centered in the upper half (between phase-label and circles) -->
-  <div id="upper-half">
-    <div id="diff-label">50¢ difference</div>
+  <div id="upper-half" style="visibility: hidden;">
+    <div id="diff-label"></div>
   </div>
 
   <!-- Note circles, vertically centered in the middle third -->
   <div id="circles-zone">
-    <div id="tap-instruction">Tap the higher one</div>
-    <div id="note-row">
+    <div id="tap-instruction" style="display: none;">Tap the higher one</div>
+    <div id="note-row" style="display: none;">
       <div class="note-circle" id="note-left" onclick="handleTap(&#39;left&#39;)">
         <div class="nc-name" id="note-left-name">?</div>
         <div class="nc-detail" id="note-left-detail"></div>
@@ -382,20 +396,29 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
         <div class="nc-detail" id="note-right-detail"></div>
       </div>
     </div>
-  </div>
-
-  <!-- Controls below circles, stacked from top of lower third -->
-  <div id="lower-half">
-    <!-- Graphical replay button -->
-    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay">
+    <!-- Replay button: center aligned with bottom of note circles -->
+    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: -26px; display: none;">
       <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 11 6.6 A 12 12 0 1 1 11 27.4" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
-        <polyline points="7.3,21.8 11,27.4 4.3,27.0" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"></polyline>
+        <path d="M 20.1 5.4 A 12 12 0 1 1 5.4 13.9" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
+        <!-- Filled arrowhead triangle. tip=(5.4,13.9), barbs same as before but wider -->
+        <polygon points="11.9,18.9 5.4,13.9 1.0,20.8" fill="white"></polygon>
         <polygon points="14,12 23,17 14,22" fill="white"></polygon>
       </svg>
     </button>
+    <!-- Start button shown before first round -->
+    <button id="start-btn" onclick="handleStart()" style="display: block;">Start</button>
+  </div>
 
+  <!-- Controls below circles, stacked from top of lower third -->
+  <div id="lower-half" style="visibility: hidden;">
     <div id="swipe-hint">You can also swipe up / down to indicate<br>that the 2nd note is higher / lower</div>
+
+    <!-- Review close button: shown below replay during review mode -->
+    <button id="review-close-btn" onclick="exitReview()" aria-label="Close review">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M4 4 L18 18M18 4 L4 18" stroke="#e03030" stroke-width="2.6" stroke-linecap="round"></path>
+      </svg>
+    </button>
 
     <div id="progress-row">
       <div class="prog-slot" id="prog0"></div>
@@ -411,13 +434,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     </div>
   </div>
 </div>
-
-<!-- Review close button: red X circle, exact style from reference app -->
-<button id="review-close-btn" onclick="exitReview()" aria-label="Close review" style="display:none;">
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-    <path d="M4 4 L18 18M18 4 L4 18" stroke="#e03030" stroke-width="2.6" stroke-linecap="round"></path>
-  </svg>
-</button>
 
 <!-- Fixed corner buttons -->
 <button id="info-btn" aria-label="About" onclick="openInfo()">
@@ -436,7 +452,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 <button id="end-test-btn" onclick="endNoteTest()"></button>
 
 <!-- ═══ SETTINGS OVERLAY ═══ -->
-<div id="settings-overlay" class="overlay open">
+<div id="settings-overlay" class="overlay">
   <button id="s-done-btn" onclick="closeSettings()">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
@@ -448,7 +464,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       <div class="s-title-row"><span class="s-title">Settings</span></div>
 
       <div class="s-sec">Note Sound</div>
-      <div id="sound-grid"><button class="sound-btn">Violin</button><button class="sound-btn">Sine Wave</button><button class="sound-btn">Violin (sample)</button><button class="sound-btn">Viola</button><button class="sound-btn">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn active">Guitar harmonics</button><button class="sound-btn loading">Electric Bass</button></div>
+      <div id="sound-grid"><button class="sound-btn">Violin (synth)</button><button class="sound-btn">Sine Wave</button><button class="sound-btn active loading">Violin (sample)</button><button class="sound-btn loading">Viola</button><button class="sound-btn loading">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn loading">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn loading">Piano</button><button class="sound-btn loading">Electric Bass</button></div>
 
       <div class="s-sec">Note Range</div>
       <div class="s-row">
@@ -511,7 +527,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <!-- ═══ INFO OVERLAY ═══ -->
-<div id="info-overlay" class="overlay">
+<div id="info-overlay" class="overlay open">
   <button id="info-close-btn" onclick="closeInfo()">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
@@ -522,14 +538,229 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <p id="info-inspiration">
       This app was inspired by the work of <strong>Molly Gebrian</strong> to help musicians develop a more discriminating ear.
     </p>
-    <div class="info-sec">Statistics</div>
+    <div class="info-sec">History</div>
     <table id="stats-table">
-      <thead><tr><th>Note</th><th>Best</th><th>Actions</th></tr></thead>
-      <tbody id="stats-tbody"></tbody>
+      <thead><tr><th>Note</th><th>Best</th><th>Failed</th><th>Prob</th><th>Actions</th></tr></thead>
+      <tbody id="stats-tbody"><tr><td class="stat-note-name">G3</td>
+        <td class="stat-best">50¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">5.82%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G3&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯3</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">15¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.75%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#3&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A3</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.33%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A3&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯3</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.75%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#3&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B3</td>
+        <td class="stat-best">10¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.16%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B3&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B3&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C4</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.33%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C♯4</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">7¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.81%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C#4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C#4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D4</td>
+        <td class="stat-best">10¢</td>
+        <td class="stat-failed">15¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.16%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D♯4</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.33%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D#4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D#4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">E4</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.33%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;E4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F4</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.81%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F♯4</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">15¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.75%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F#4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">G4</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">5¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.18%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯4</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.81%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">A4</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">10¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.18%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">A♯4</td>
+        <td class="stat-best">50¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">7.28%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B4</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">15¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.81%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B4&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B4&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">C5</td>
+        <td class="stat-best">50¢</td>
+        <td class="stat-failed">15¢</td>
+        <td style="color:#2a2018;font-weight:400;">7.28%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C♯5</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.81%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C#5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D5</td>
+        <td class="stat-best">50¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">5.82%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D5&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">D♯5</td>
+        <td class="stat-best">50¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">7.28%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D#5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">E5</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.81%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;E5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F5</td>
+        <td class="stat-best">10¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.16%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F5&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">F♯5</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">7¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.91%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F#5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G5</td>
+        <td class="stat-best">50¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">5.82%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯5</td>
+        <td class="stat-best">50¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">5.82%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#5&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">A5</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">5¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.02%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯5</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.75%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B5</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.33%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B5&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B5&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C6</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.81%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">C♯6</td>
+        <td class="stat-best">5¢</td>
+        <td class="stat-failed">5¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.58%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;C#6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;C#6&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">D6</td>
+        <td class="stat-best">25¢</td>
+        <td class="stat-failed">5¢</td>
+        <td style="color:#2a2018;font-weight:400;">3.64%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D♯6</td>
+        <td class="stat-best">25¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.91%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;D#6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">E6</td>
+        <td class="stat-best">10¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.16%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;E6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F6</td>
+        <td class="stat-best">5¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.58%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">F♯6</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">50¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.33%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;F#6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G6</td>
+        <td class="stat-best">5¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">0.58%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">G♯6</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">15¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.75%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;G#6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;G#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A6</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">25¢</td>
+        <td style="color:#2a2018;font-weight:400;">2.33%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯6</td>
+        <td class="stat-best">15¢</td>
+        <td class="stat-failed">20¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.75%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;A#6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">B6</td>
+        <td class="stat-best">10¢</td>
+        <td class="stat-failed">15¢</td>
+        <td style="color:#2a2018;font-weight:400;">1.16%</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote(&#39;B6&#39;)">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;B6&#39;)">Retest</button></td></tr></tbody>
     </table>
     <div class="info-sec">Progress Chart</div>
-    <div id="stats-chart-wrap"><canvas id="stats-chart"></canvas></div>
-    <button id="info-global-reset" onclick="confirmResetAll()">Reset All Statistics</button>
+    <div id="stats-chart-wrap"><canvas id="stats-chart" width="600" height="160" style="width: 600px; height: 160px;"></canvas></div>
+    <button id="info-global-reset" onclick="confirmResetAll()">Reset All History</button>
+    <button id="info-fake-history" onclick="fakeHistory()" style="-webkit-appearance:none;font-family:var(--font);font-size:clamp(13px,3.5vw,15px);
+      padding:10px 22px;border-radius:999px;cursor:pointer;
+      border:1.5px solid rgba(60,100,180,0.40);background:rgba(60,100,180,0.10);color:#1a3a7a;
+      align-self:flex-start;margin-top:0;transition:background 0.15s;">
+      Fake History
+    </button>
+
+    <p style="font-size:clamp(11px,3vw,13px);color:rgba(0,0,0,0.40);line-height:1.6;margin-top:4px;">
+      Instrument samples from the <a href="https://github.com/gleitz/midi-js-soundfonts" target="_blank" style="color:rgba(0,0,0,0.50);">MusyngKite soundfont</a>, used under <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" style="color:rgba(0,0,0,0.50);">CC BY-SA 3.0</a>.
+    </p>
   </div>
 </div>
 
@@ -552,7 +783,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 // SOUND DEFINITIONS — soundfont-player uses gleitz MusyngKite by default
 // ══════════════════════════════════════════════════════
 const SOUNDS = [
-  { id:'synth-violin',  label:'Violin',            type:'synth'                              },
+  { id:'synth-violin',  label:'Violin (synth)',    type:'synth'                              },
   { id:'sine',          label:'Sine Wave',          type:'sine'                               },
   { id:'violin',        label:'Violin (sample)',    type:'sf', sfName:'violin'                },
   { id:'viola',         label:'Viola',              type:'sf', sfName:'viola'                 },
@@ -560,7 +791,7 @@ const SOUNDS = [
   { id:'contrabass',    label:'Contrabass',         type:'sf', sfName:'contrabass'            },
   { id:'gtr-nylon',     label:'Guitar (nylon)',     type:'sf', sfName:'acoustic_guitar_nylon' },
   { id:'gtr-steel',     label:'Guitar (steel)',     type:'sf', sfName:'acoustic_guitar_steel' },
-  { id:'gtr-harm',      label:'Guitar harmonics',   type:'sf', sfName:'guitar_harmonics'      },
+  { id:'piano',         label:'Piano',              type:'sf', sfName:'acoustic_grand_piano'  },
   { id:'elec-bass',     label:'Electric Bass',      type:'sf', sfName:'electric_bass_finger'  },
 ];
 
@@ -594,7 +825,7 @@ const dn        = name => name.replace('#','♯');
 // ══════════════════════════════════════════════════════
 let settings = {
   lowestNote:0, highestNote:ALL_NOTES.length-1,
-  startCentsIdx:0, noteDurIdx:4, attack:1, decay:1, soundIdx:0,
+  startCentsIdx:0, noteDurIdx:4, attack:1, decay:1, soundIdx:2,
 };
 let stats = {}; // noteName → { bestCents, attempts }
 
@@ -644,8 +875,8 @@ async function loadSfInstrument(sfName) {
   if (sfInstruments[sfName]) return sfInstruments[sfName];
   if (sfLoadingP[sfName])    return sfLoadingP[sfName];
   sfLoadingP[sfName] = Soundfont.instrument(audioCtx, sfName, {
-    soundfont: 'MusyngKite',
-    gain: 3.0,
+    from: 'https://caseymullen.github.io/microbreaker/ear/sounds/',
+    gain: 1.0,
   }).then(inst => {
     sfInstruments[sfName] = inst;
     return inst;
@@ -659,7 +890,7 @@ async function loadSfInstrument(sfName) {
 function playSfNote(inst, midiF, startTime, duration) {
   // soundfont-player: inst.play(note, time, options) — accepts fractional midi for detuning
   // Returns an AudioNode with .stop(when)
-  const node = inst.play(midiF, startTime, { duration: duration, gain: 1.0 });
+  const node = inst.play(midiF, startTime, { duration: duration, gain: 4.5 });
   return {
     stopAt(t) { try { node.stop(t); } catch(e){} }
   };
@@ -745,10 +976,15 @@ function beepWrong() {
 }
 
 // ══════════════════════════════════════════════════════
-// NOTE SELECTION (smart weighting)
-// Prefer untested notes first. Once all tested, weight by
-// bestCents descending (harder notes = higher bestCents = more likely).
+// NOTE SELECTION
+// Untested notes first. Then weighted by bestCents (higher = more practice needed).
+// Regressed notes (lastFailureCents < bestCents) get 25% extra weight.
 // ══════════════════════════════════════════════════════
+function isRegressed(noteName) {
+  const st = stats[noteName];
+  return st && st.bestCents != null && st.lastFailureCents != null && st.lastFailureCents < st.bestCents;
+}
+
 function pickNote() {
   if (noteTestMode) return ALL_NOTES.find(n=>n.name===noteTestMode);
 
@@ -760,12 +996,8 @@ function pickNote() {
     return untested[Math.floor(Math.random()*untested.length)];
   }
 
-  // All tested — weight by bestCents (higher = harder = more likely)
-  // Notes with no bestCents (tried but never succeeded) get max weight (50)
-  const weights = pool.map(n => {
-    const bc = stats[n.name]?.bestCents;
-    return (bc == null) ? 50 : bc; // bigger cents = harder = more practice needed
-  });
+  // All tested — weight by bestCents + 25% bonus for regressions
+  const weights = pool.map(n => noteWeight(n.name));
   const total = weights.reduce((a,b)=>a+b, 0);
   let r = Math.random() * total;
   for (let i=0; i<pool.length; i++) {
@@ -790,31 +1022,52 @@ function startRound() {
   roundAttempts=0; roundResults=[];
   $('round-actions').style.display='none';
 
+  const prevNote = currentNote;
   const note = pickNote(); currentNote=note;
   markAttempt(note.name);
   saveStats();
 
-  setupAttempt(); // sets secondIsHigher randomly and prepares currentRound
+  // If switching to a note that has a bestCents, start there.
+  // If it's the very first note (prevNote null) and no bestCents, use startCentsIdx setting.
+  // Otherwise carry forward the centsIdx adjusted by the previous round's success/fail.
+  const bestCents = stats[note.name]?.bestCents;
+  if (bestCents != null) {
+    // Find index in CENTS_SEQ at or just below bestCents
+    let idx = CENTS_SEQ.findIndex(c => c <= bestCents);
+    if (idx < 0) idx = CENTS_SEQ.length - 1;
+    centsIdx = idx;
+  } else if (prevNote === null) {
+    centsIdx = settings.startCentsIdx;
+  }
+  // else: keep current centsIdx (already stepped up/down by last round result)
+
+  setupAttempt();
 }
 
 // Called for each new attempt within a round (same note, same cents level)
 function setupAttempt() {
   const cents = CENTS_SEQ[centsIdx];
-  // Each attempt: independently random sharp or flat
-  const secondIsHigher = Math.random() < 0.5;
-  currentRound.secondIsHigher = secondIsHigher;
+  // Each attempt: randomly pick which note is the "off" one and which direction
+  const offIsSecond  = Math.random() < 0.5; // true=right circle is off, false=left circle is off
+  const offIsHigher  = Math.random() < 0.5; // true=off note is sharp, false=off note is flat
+  currentRound.offIsSecond = offIsSecond;
+  currentRound.offIsHigher = offIsHigher;
+  // The "higher" note is whichever side has the off-higher or the reference when off is flat
+  // secondIsHigher: true if the right circle's note is higher pitch
+  currentRound.secondIsHigher = offIsSecond ? offIsHigher : !offIsHigher;
 
   const baseHz  = midiToHz(currentNote.midi);
-  const note2Hz = secondIsHigher ? centsToHz(baseHz, cents) : centsToHz(baseHz, -cents);
-  currentRound.note1Midi = currentNote.midi;
-  currentRound.note2Midi = hzToMidi(note2Hz); // fractional midi for pitch shifting
+  const offHz   = offIsHigher ? centsToHz(baseHz, cents) : centsToHz(baseHz, -cents);
+  // note1Midi = left circle, note2Midi = right circle
+  currentRound.note1Midi = offIsSecond ? currentNote.midi : hzToMidi(offHz);
+  currentRound.note2Midi = offIsSecond ? hzToMidi(offHz)  : currentNote.midi;
   currentRound.cents     = cents;
 
   const nd = dn(currentNote.name);
   $('note-left-name').textContent   = nd;
-  $('note-left-detail').textContent  = '';
+  $('note-left-detail').innerHTML   = '<span style="font-size:1.6em;opacity:0.55;">?</span>';
   $('note-right-name').textContent   = nd;
-  $('note-right-detail').textContent = '';
+  $('note-right-detail').innerHTML  = '<span style="font-size:1.6em;opacity:0.55;">?</span>';
   $('note-left').className  = 'note-circle';
   $('note-right').className = 'note-circle';
   $('status-msg').textContent = '';
@@ -900,9 +1153,16 @@ function handleAnswer(guessSecondHigher) {
 
   if (correct) beepCorrect(); else beepWrong();
 
-  // Reveal right-circle detail
-  const sym = currentRound.secondIsHigher ? '♯' : '♭';
-  $('note-right-detail').textContent = `${sym}${cents}¢`;
+  // Reveal: off note gets ♯/♭ label, reference note gets cleared
+  const sym = currentRound.offIsHigher ? '♯' : '♭';
+  const offLabel = `${sym}${cents}¢`;
+  if (currentRound.offIsSecond) {
+    $('note-left-detail').textContent  = '';
+    $('note-right-detail').textContent = offLabel;
+  } else {
+    $('note-left-detail').textContent  = offLabel;
+    $('note-right-detail').textContent = '';
+  }
 
   // Flash
   const cls = correct ? 'flash-correct' : 'flash-wrong';
@@ -921,21 +1181,32 @@ function handleAnswer(guessSecondHigher) {
 
   if (!correct) {
     roundFailed=true;
+    // Record failure and step back to an easier difference
+    const key = currentNote.name;
+    if (!stats[key]) stats[key]={};
+    stats[key].lastFailureCents = cents;
+    if (centsIdx > 0) centsIdx--;  // step easier (lower index = more cents = easier)
+    saveStats();
     setTimeout(()=>{ $('status-msg').textContent=''; $('round-actions').style.display='flex'; }, 1400);
     return;
   }
 
-  // 3 correct in a row
+  // 3 correct in a row — success!
   if (roundResults.length===3 && roundResults.every(x=>x==='correct')) {
     const key = currentNote.name;
     if (!stats[key]) stats[key]={};
+    // Update best score if this is a new best (lower cents = better)
     if (stats[key].bestCents==null || cents < stats[key].bestCents) {
-      stats[key].bestCents = cents; saveStats();
+      stats[key].bestCents = cents;
     }
+    saveStats();
+    // Step harder for next round
     if (centsIdx < CENTS_SEQ.length-1) {
-      centsIdx++; $('status-msg').textContent='✓ ✓ ✓  Getting harder!';
+      centsIdx++;
+      $('diff-label').textContent = CENTS_SEQ[centsIdx]+'¢ difference';
+      $('status-msg').textContent='Good job!';
     } else {
-      $('status-msg').textContent='✓ ✓ ✓  Master level!';
+      $('status-msg').textContent='Master level!';
     }
     setTimeout(()=>{ clearProgress(); startRound(); }, 1600);
     return;
@@ -965,10 +1236,17 @@ function enterReview() {
   $('progress-row').style.visibility='hidden';
   $('status-msg').textContent='';
 
-  // Show sharp/flat label on right circle
+  // Show sharp/flat label on whichever circle is the off note
   const cents=CENTS_SEQ[centsIdx];
-  const sym = currentRound.secondIsHigher ? '♯' : '♭';
-  $('note-right-detail').textContent = `${sym}${cents}¢`;
+  const sym = currentRound.offIsHigher ? '♯' : '♭';
+  const offLabel = `${sym}${cents}¢`;
+  if (currentRound.offIsSecond) {
+    $('note-left-detail').textContent  = '';
+    $('note-right-detail').textContent = offLabel;
+  } else {
+    $('note-left-detail').textContent  = offLabel;
+    $('note-right-detail').textContent = '';
+  }
   $('note-left').className='note-circle';
   $('note-right').className='note-circle';
 
@@ -986,7 +1264,7 @@ function exitReview() {
 
   $('app').classList.remove('review-mode');
   $('bg-fill').style.backgroundColor='#4d1903';
-  $('phase-label').textContent = noteTestMode ? dn(noteTestMode)+' Test' : 'Listening';
+  $('phase-label').textContent = noteTestMode ? dn(noteTestMode)+' Test' : 'Listen';
   $('tap-instruction').textContent='Tap the higher one';
   $('swipe-hint').style.display='';
   $('review-close-btn').style.display='none';
@@ -1122,10 +1400,20 @@ function closeSettings() { $('settings-overlay').classList.remove('open'); }
 // ══════════════════════════════════════════════════════
 // INFO / STATS
 // ══════════════════════════════════════════════════════
-function openInfo()  { renderStats(); $('info-overlay').classList.add('open'); }
+function openInfo() {
+  $('info-overlay').classList.add('open');
+  // Defer renderStats so the overlay is visible before we measure canvas width
+  setTimeout(() => renderStats(), 0);
+}
 function closeInfo() {
   $('info-overlay').classList.remove('open');
-  if (!noteTestMode) { $('end-test-btn').style.display='none'; $('phase-label').textContent='Listening'; }
+  if (!noteTestMode) { $('end-test-btn').style.display='none'; $('phase-label').textContent='Listen'; }
+}
+
+function noteWeight(noteName) {
+  const bc = stats[noteName]?.bestCents;
+  const base = (bc == null) ? 50 : bc;
+  return isRegressed(noteName) ? base * 1.25 : base;
 }
 
 function renderStats() {
@@ -1133,42 +1421,154 @@ function renderStats() {
   const inRange=new Set(ALL_NOTES.slice(settings.lowestNote,settings.highestNote+1).map(n=>n.name));
   const noted=new Set([...inRange,...Object.keys(stats)]);
   const sorted=ALL_NOTES.filter(n=>noted.has(n.name));
-  if (!sorted.length) { tbody.innerHTML='<tr><td colspan="3" style="opacity:.45;font-style:italic;padding:10px 8px">No data yet</td></tr>'; }
-  else sorted.forEach(note=>{
-    const st=stats[note.name], best=(st?.bestCents!=null)?st.bestCents+'¢':'—';
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="stat-note-name">${dn(note.name)}</td><td class="stat-best">${best}</td>
-      <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote('${note.name}')">Reset</button>
-      <button class="stat-btn stat-retest-btn" onclick="startNoteTest('${note.name}')">Retest</button></td>`;
-    tbody.appendChild(tr);
-  });
+
+  // Compute probabilities over the current pool (lowestNote..highestNote)
+  const pool = ALL_NOTES.slice(settings.lowestNote, settings.highestNote+1);
+  const untested = pool.filter(n => !stats[n.name] || stats[n.name].attempts == null || stats[n.name].attempts === 0);
+  const allTested = untested.length === 0;
+  let totalWeight = 0;
+  if (allTested) {
+    totalWeight = pool.reduce((s, n) => s + noteWeight(n.name), 0);
+  }
+
+  function probFor(noteName) {
+    if (!pool.find(n => n.name === noteName)) return null; // outside range
+    if (!allTested) {
+      // Untested notes share equal probability among untested pool
+      const isUntested = !stats[noteName] || stats[noteName].attempts == null || stats[noteName].attempts === 0;
+      return isUntested ? (100 / untested.length) : 0;
+    }
+    return totalWeight > 0 ? (noteWeight(noteName) / totalWeight) * 100 : 0;
+  }
+
+  if (!sorted.length) {
+    tbody.innerHTML='<tr><td colspan="5" style="opacity:.45;font-style:italic;padding:10px 8px">No data yet</td></tr>';
+  } else {
+    sorted.forEach(note=>{
+      const st=stats[note.name];
+      const best    = (st?.bestCents!=null)       ? st.bestCents+'¢'        : '—';
+      const failed  = (st?.lastFailureCents!=null) ? st.lastFailureCents+'¢' : '—';
+      const regressed = isRegressed(note.name);
+      const p = probFor(note.name);
+      const probStr = p === null ? '—' : p.toFixed(2)+'%';
+      const tr=document.createElement('tr');
+      if (regressed) tr.classList.add('stat-row-regressed');
+      tr.innerHTML=`<td class="stat-note-name">${dn(note.name)}</td>
+        <td class="stat-best">${best}</td>
+        <td class="stat-failed">${failed}</td>
+        <td style="color:#2a2018;font-weight:400;">${probStr}</td>
+        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote('${note.name}')">Reset</button>
+        <button class="stat-btn stat-retest-btn" onclick="startNoteTest('${note.name}')">Retest</button></td>`;
+      tbody.appendChild(tr);
+    });
+  }
   drawChart(sorted);
 }
 
 function drawChart(notes) {
-  const canvas=$('stats-chart'),ctx=canvas.getContext('2d');
-  const dpr=window.devicePixelRatio||1,W=canvas.parentElement.getBoundingClientRect().width,H=160;
-  canvas.width=W*dpr; canvas.height=H*dpr; canvas.style.width=W+'px'; canvas.style.height=H+'px';
-  ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
-  const pn=notes.filter(n=>stats[n.name]?.bestCents!=null);
-  if (!pn.length){ ctx.fillStyle='rgba(0,0,0,0.28)'; ctx.font='13px Inconsolata,monospace'; ctx.textAlign='center'; ctx.fillText('Play some rounds to see progress',W/2,H/2); return; }
-  const pad={l:38,r:12,t:12,b:32},cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
-  const yFor=c=>pad.t+cH*(1-c/50);
-  ctx.strokeStyle='rgba(0,0,0,0.10)'; ctx.lineWidth=1;
-  [10,20,30,40,50].forEach(c=>{ const y=yFor(c); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke(); ctx.fillStyle='rgba(0,0,0,0.38)'; ctx.font='10px Inconsolata,monospace'; ctx.textAlign='right'; ctx.fillText(c+'¢',pad.l-4,y+4); });
-  const bw=Math.max(4,Math.min(28,cW/pn.length-4));
-  pn.forEach((note,i)=>{ const x=pad.l+(i+0.5)*(cW/pn.length),c=stats[note.name].bestCents,y=yFor(c),bh=yFor(0)-y; ctx.fillStyle='#c94a0a'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(x-bw/2,y,bw,bh,3); else ctx.rect(x-bw/2,y,bw,bh); ctx.fill(); ctx.fillStyle='rgba(0,0,0,0.60)'; ctx.font='10px Inconsolata,monospace'; ctx.textAlign='center'; ctx.fillText(dn(note.name),x,H-pad.b+14); });
+  const canvas = $('stats-chart');
+  const ctx    = canvas.getContext('2d');
+  const dpr    = window.devicePixelRatio || 1;
+
+  // getBoundingClientRect returns 0 if overlay was just made visible;
+  // fall back to the parent's offsetWidth, then a sensible default.
+  const parent = canvas.parentElement;
+  const W = parent.getBoundingClientRect().width || parent.offsetWidth || 300;
+  const H = 160;
+
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const pn = notes.filter(n => stats[n.name]?.bestCents != null);
+  if (!pn.length) {
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.font = '13px Inconsolata,monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Play some rounds to see progress', W / 2, H / 2);
+    return;
+  }
+
+  const pad = { l:42, r:12, t:14, b:34 };
+  const cW = W - pad.l - pad.r;
+  const cH = H - pad.t - pad.b;
+
+  // Y axis: 0¢ at bottom (best), 50¢ at top (worst) — lower bar = better score
+  const yFor = c => pad.t + cH * (1 - c / 50);
+  const yBot = yFor(0); // baseline
+
+  // Grid lines + Y labels
+  ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+  ctx.lineWidth = 1;
+  [10, 20, 30, 40, 50].forEach(c => {
+    const y = yFor(c);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(0,0,0,0.38)';
+    ctx.font = '10px Inconsolata,monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(c + '¢', pad.l - 4, y + 4);
+  });
+
+  // Bars
+  const slotW = cW / pn.length;
+  const bw = Math.max(4, Math.min(24, slotW - 6));
+
+  pn.forEach((note, i) => {
+    const x = pad.l + (i + 0.5) * slotW;
+    const c = stats[note.name].bestCents;
+    const y = yFor(c);
+    const bh = yBot - y;
+
+    ctx.fillStyle = '#c94a0a';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - bw/2, y, bw, bh, 3);
+    else ctx.rect(x - bw/2, y, bw, bh);
+    ctx.fill();
+
+    // Note label below bar
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.font = '10px Inconsolata,monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(dn(note.name), x, H - pad.b + 14);
+  });
 }
 
 function startNoteTest(n) {
-  noteTestMode=n; centsIdx=settings.startCentsIdx; roundAttempts=0; roundResults=[];
+  // Always exit review mode cleanly first
+  if (inReview) {
+    inReview = false;
+    $('app').classList.remove('review-mode');
+    $('bg-fill').style.backgroundColor = '#4d1903';
+    $('review-close-btn').style.display = 'none';
+    $('progress-row').style.visibility = 'visible';
+    $('swipe-hint').style.display = '';
+  }
+  noteTestMode = n;
+  roundAttempts = 0; roundResults = [];
   closeInfo();
-  $('end-test-btn').textContent='End '+dn(n)+' Test'; $('end-test-btn').style.display='';
-  $('phase-label').textContent=dn(n)+' Test'; startRound();
+  $('end-test-btn').textContent = 'End '+dn(n)+' Test';
+  $('end-test-btn').style.display = '';
+  $('phase-label').textContent = dn(n)+' Test';
+  $('tap-instruction').textContent = 'Tap the higher one';
+  // Set centsIdx from note history (same logic as startRound)
+  const bestCents = stats[n]?.bestCents;
+  if (bestCents != null) {
+    let idx = CENTS_SEQ.findIndex(c => c <= bestCents);
+    if (idx < 0) idx = CENTS_SEQ.length - 1;
+    centsIdx = idx;
+  } else {
+    centsIdx = settings.startCentsIdx;
+  }
+  // Set currentNote so startRound's prevNote check doesn't reset centsIdx
+  currentNote = ALL_NOTES.find(note => note.name === n);
+  startRound();
 }
 function endNoteTest() {
   noteTestMode=null; centsIdx=settings.startCentsIdx; roundAttempts=0; roundResults=[];
-  $('end-test-btn').style.display='none'; $('phase-label').textContent='Listening'; startRound();
+  $('end-test-btn').style.display='none'; $('phase-label').textContent='Listen'; startRound();
 }
 
 // ══════════════════════════════════════════════════════
@@ -1182,7 +1582,57 @@ $('confirm-no').addEventListener('click',closeConfirm);
 function confirmResetNote(n){ showConfirm('Reset '+dn(n),'Erase statistics for '+dn(n)+'?',()=>{ delete stats[n]; saveStats(); renderStats(); }); }
 function confirmResetAll(){   showConfirm('Reset All','Erase statistics for every note?',()=>{ stats={}; saveStats(); renderStats(); }); }
 
+function fakeHistory() {
+  // Valid differences in 5–50¢ range (subset of CENTS_SEQ)
+  const validCents = CENTS_SEQ.filter(c => c >= 5 && c <= 50); // [50,25,20,15,10,7,5]
+  const rand = arr => arr[Math.floor(Math.random() * arr.length)];
+  ALL_NOTES.forEach(note => {
+    if (!stats[note.name]) stats[note.name] = {};
+    stats[note.name].attempts = Math.floor(Math.random() * 20) + 3;
+    const best = rand(validCents);
+    stats[note.name].bestCents = best;
+    // ~40% chance of a regression: lastFailure is lower (harder) than best
+    if (Math.random() < 0.40) {
+      const harderOptions = validCents.filter(c => c < best);
+      stats[note.name].lastFailureCents = harderOptions.length > 0 ? rand(harderOptions) : best;
+    } else {
+      // Failure at same or easier level
+      const easierOrSame = validCents.filter(c => c >= best);
+      stats[note.name].lastFailureCents = rand(easierOrSame);
+    }
+  });
+  saveStats();
+  renderStats();
+}
+
 function $(id){ return document.getElementById(id); }
+
+// ══════════════════════════════════════════════════════
+// KEYBOARD SUPPORT
+// ══════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key !== ' ' && e.key !== 'Enter') return;
+  e.preventDefault();
+
+  // Settings overlay open → close
+  if ($('settings-overlay').classList.contains('open')) {
+    closeSettings(); return;
+  }
+  // Info overlay open → close
+  if ($('info-overlay').classList.contains('open')) {
+    closeInfo(); return;
+  }
+  // Start screen
+  if ($('start-btn').style.display !== 'none' && $('start-btn').style.display !== '') {
+    handleStart(); return;
+  }
+  // Normal / review mode
+  if (e.key === ' ') {
+    handleTap('left');
+  } else {
+    handleTap('right');
+  }
+});
 
 // ══════════════════════════════════════════════════════
 // BOOT
@@ -1190,20 +1640,36 @@ function $(id){ return document.getElementById(id); }
 loadState();
 centsIdx=settings.startCentsIdx;
 renderSettings();
-$('diff-label').textContent = CENTS_SEQ[centsIdx]+'¢ difference';
 
-// Preload selected SF on first interaction
-let started=false;
-function firstInteraction() {
-  if(started) return; started=true;
-  document.getElementById('app').removeEventListener('touchstart',firstInteraction);
-  document.getElementById('app').removeEventListener('click',firstInteraction);
+function showStartScreen() {
+  // Hide all game UI, show only start button
+  $('tap-instruction').style.display = 'none';
+  $('note-row').style.display        = 'none';
+  $('replay-btn').style.display      = 'none';
+  $('start-btn').style.display       = 'block';
+  $('upper-half').style.visibility   = 'hidden'; // hide diff label
+  $('lower-half').style.visibility   = 'hidden'; // hide controls
+}
+
+function hideStartScreen() {
+  $('tap-instruction').style.display = '';
+  $('note-row').style.display        = '';
+  $('replay-btn').style.display      = '';
+  $('start-btn').style.display       = 'none';
+  $('upper-half').style.visibility   = 'visible';
+  $('lower-half').style.visibility   = 'visible';
+  $('diff-label').textContent        = CENTS_SEQ[centsIdx]+'¢ difference';
+}
+
+function handleStart() {
+  ensureAudio();
+  hideStartScreen();
   const s=SOUNDS[settings.soundIdx];
   if(s.type==='sf') loadSfInstrument(s.sfName).then(()=>renderSoundGrid()).catch(()=>{});
   startRound();
 }
-document.getElementById('app').addEventListener('touchstart',firstInteraction,{passive:true});
-document.getElementById('app').addEventListener('click',firstInteraction);
+
+showStartScreen();
 </script>
 
 <script>
