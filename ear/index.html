@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0059)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_2.html -->
+<!-- saved from url=(0059)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_6.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -16,8 +16,10 @@
   --font: 'Inconsolata', monospace;
   --safe-top: env(safe-area-inset-top, 44px);
   --safe-bot: env(safe-area-inset-bottom, 20px);
-  --safe-l: env(safe-area-inset-left, 0px);
-  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-l:   env(safe-area-inset-left, 0px);
+  --safe-r:   env(safe-area-inset-right, 0px);
+  --orange:   #b83c08;
+  --green:    #1a3d28;
 }
 *, *::before, *::after {
   box-sizing: border-box; margin: 0; padding: 0;
@@ -29,8 +31,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 #bg-fill {
   position: fixed; inset: 0; z-index: -1;
   background-color: #4d1903;
+  transition: background-color 0.5s ease;
 }
 
+/* ══ App shell ══ */
 #app {
   position: fixed; inset: 0;
   display: flex; flex-direction: column; align-items: center;
@@ -38,44 +42,71 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   padding-bottom: calc(var(--safe-bot) + 50px);
   padding-left: var(--safe-l); padding-right: var(--safe-r);
   font-family: var(--font); color: #fff;
-  background-color: #b83c08;
+  background-color: var(--orange);
   overflow: hidden;
+  transition: background-color 0.5s ease;
 }
+#app.review-mode { background-color: var(--green); }
 #app::after {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
+  content: ''; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.55) 100%);
   z-index: 0;
 }
 #app > * { position: relative; z-index: 1; }
 
-/* ── phase label ── */
+/* ── Phase label: sits at top, flex-shrink:0 ── */
 #phase-label {
   font-size: clamp(18px, 5.5vw, 26px); font-weight: 400;
   letter-spacing: 0.22em; text-transform: uppercase;
-  opacity: 0.55; text-align: center; flex-shrink: 0;
-  min-height: 28px; padding: 0 20px;
+  opacity: 0.55; text-align: center; line-height: 1.2;
+  flex-shrink: 0; padding: 0 20px;
 }
 
-/* ── center ── */
-#center-area {
+/*
+  Layout model (flex column):
+    phase-label        — top, fixed height
+    #upper-half        — flex:1, contains diff-label centered vertically inside
+    #circles-zone      — flex:1, contains note-row centered vertically inside
+    #lower-half        — flex:1, contains controls stacked from top
+
+  This makes:
+    - circles exactly in the middle of the screen (between upper and lower halves)
+    - diff-label exactly midway between phase-label and circles (centered in upper-half)
+*/
+
+#upper-half {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  width: 100%;
+}
+#diff-label {
+  font-size: clamp(18px, 5.5vw, 26px); font-weight: 400;
+  letter-spacing: 0.22em; opacity: 0.55; text-align: center;
+  line-height: 1.2; padding: 0 20px;
+}
+
+#circles-zone {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  width: 100%; padding: 0 20px; min-height: 0;
+  width: 100%; flex-shrink: 0;
+}
+
+#lower-half {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  width: 100%; padding-top: 14px;
 }
 
 #tap-instruction {
   font-size: clamp(15px, 4.2vw, 19px); font-weight: 300;
-  letter-spacing: 0.08em; opacity: 0.75;
-  text-align: center; margin-bottom: 20px; flex-shrink: 0;
+  letter-spacing: 0.08em; opacity: 0.72;
+  text-align: center; margin-bottom: 16px; flex-shrink: 0;
 }
 
-/* ── circles ── */
+/* ── Circles ── */
 #note-row {
   display: flex; align-items: center; justify-content: center;
   gap: 22px; flex-shrink: 0;
 }
-
 .note-circle {
   width: min(138px, 37vw); height: min(138px, 37vw);
   border-radius: 50%;
@@ -89,7 +120,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   flex-shrink: 0; gap: 2px; padding: 8px;
 }
 .note-circle:active { transform: scale(0.92); }
-
 .note-circle.playing {
   background: rgba(255,255,255,0.24);
   border-color: rgba(255,255,255,0.75);
@@ -102,7 +132,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   background: rgba(210,45,35,0.34);
   border-color: rgba(240,85,75,0.82);
 }
-
 .nc-name {
   font-size: clamp(28px, 9vw, 42px); font-weight: 600;
   letter-spacing: -0.01em; line-height: 1;
@@ -110,76 +139,99 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 .nc-detail {
   font-size: clamp(12px, 3.3vw, 15px); font-weight: 300;
   opacity: 0.70; letter-spacing: 0.04em; line-height: 1.2;
-  text-align: center;
+  text-align: center; min-height: 1.2em;
 }
 
-/* ── replay ── */
+/* ── Replay button: graphical circle-arrow + play triangle ── */
 #replay-btn {
-  margin-top: 18px;
+  margin-top: 18px; flex-shrink: 0;
+  width: 52px; height: 52px; border-radius: 50%;
   background: rgba(0,0,0,0.22);
   border: 1.5px solid rgba(255,255,255,0.32);
-  border-radius: 999px; color: #fff;
-  font-family: var(--font);
-  font-size: clamp(13px, 3.8vw, 16px); font-weight: 400;
-  letter-spacing: 0.10em; padding: 9px 22px;
-  cursor: pointer; -webkit-appearance: none;
-  transition: background 0.15s, transform 0.1s;
-  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  color: #fff; cursor: pointer; -webkit-appearance: none;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.1s; padding: 0;
 }
-#replay-btn:active { background: rgba(255,255,255,0.18); transform: scale(0.96); }
+#replay-btn:active { background: rgba(255,255,255,0.18); transform: scale(0.92); }
 
-/* ── swipe hint ── */
+/* ── Swipe hint ── */
 #swipe-hint {
-  margin-top: 12px;
+  margin-top: 10px; flex-shrink: 0;
   font-size: clamp(11px, 3vw, 14px); font-weight: 300;
   opacity: 0.42; text-align: center; line-height: 1.5;
-  padding: 0 16px; flex-shrink: 0; letter-spacing: 0.02em;
+  padding: 0 16px; letter-spacing: 0.02em;
 }
 
-/* ── streak ── */
-#streak-row {
+/* ── Progress row ── */
+#progress-row {
   display: flex; align-items: center; justify-content: center;
-  gap: 7px; margin-top: 16px; flex-shrink: 0;
+  gap: 16px; margin-top: 16px; flex-shrink: 0; min-height: 36px;
 }
-.streak-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  background: rgba(255,255,255,0.20);
-  transition: background 0.25s;
+.prog-slot {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
 }
-.streak-dot.correct { background: rgba(100,230,100,0.90); }
-.streak-dot.wrong   { background: rgba(230,80,80,0.90); }
+.prog-check, .prog-cross { animation: popIn 0.22s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes popIn { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
 
+/* ── Status + round actions ── */
 #status-msg {
   font-size: clamp(15px, 4.2vw, 19px); font-weight: 300;
   letter-spacing: 0.06em; text-align: center;
-  color: #e8d5b0; min-height: 26px; margin-top: 10px; flex-shrink: 0;
+  color: #e8d5b0; min-height: 26px; margin-top: 8px; flex-shrink: 0;
+}
+#round-actions {
+  display: none; flex-direction: row; gap: 12px;
+  margin-top: 14px; flex-shrink: 0;
+}
+.round-action-btn {
+  -webkit-appearance: none; font-family: var(--font);
+  font-size: clamp(14px, 4vw, 17px); font-weight: 400;
+  letter-spacing: 0.08em; padding: 10px 22px;
+  border-radius: 999px; cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.round-action-btn:active { transform: scale(0.96); }
+#review-action-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.35); color: #fff;
+}
+#continue-action-btn {
+  background: rgba(0,0,0,0.20);
+  border: 1.5px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.80);
 }
 
-#diff-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  margin-top: 10px; padding: 5px 14px;
-  background: rgba(0,0,0,0.22); border-radius: 999px;
-  font-size: clamp(13px, 3.5vw, 15px); letter-spacing: 0.12em;
-  font-weight: 500; flex-shrink: 0;
+/* ── Review close button (red X circle from reference app) ── */
+#review-close-btn {
+  display: none;
+  position: fixed; top: calc(var(--safe-top) + 8px); right: calc(var(--safe-r) + 10px);
+  /* matches .rev-btn .rev-sm .rev-exit-btn from reference */
+  width: 60px; height: 60px; border-radius: 50%;
+  background: rgba(200,40,40,0.10);
+  border: 1.5px solid rgba(200,40,40,0.40);
+  color: #fff; cursor: pointer; padding: 0; z-index: 20;
+  -webkit-appearance: none;
+  display: none;
+  align-items: center; justify-content: center;
+  transition: background 0.12s, transform 0.1s;
 }
+#review-close-btn:active { background: rgba(200,40,40,0.25); transform: scale(0.90); }
 
-/* ── fixed corner buttons — exact from reference app ── */
+/* ── Fixed corner buttons ── */
 #info-btn {
   position: fixed; bottom: 0; left: calc(var(--safe-l) + 14px);
   background: none; border: none; color: rgba(255,255,255,0.36);
-  cursor: pointer; padding: 8px; z-index: 10;
-  -webkit-appearance: none; transition: color 0.15s;
+  cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
+  transition: color 0.15s;
 }
 #info-btn:active { color: rgba(255,255,255,0.72); }
-
 #settings-btn {
   position: fixed; bottom: 0; right: calc(var(--safe-r) + 14px);
   background: none; border: none; color: rgba(255,255,255,0.36);
-  cursor: pointer; padding: 8px; z-index: 10;
-  -webkit-appearance: none; transition: color 0.15s;
+  cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
+  transition: color 0.15s;
 }
 #settings-btn:active { color: rgba(255,255,255,0.72); }
-
 #end-test-btn {
   position: fixed; bottom: calc(var(--safe-bot) + 6px);
   left: 50%; transform: translateX(-50%);
@@ -191,9 +243,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 }
 #end-test-btn:active { background: rgba(0,0,0,0.50); }
 
-/* ═══════════════════════════
+/* ═══════════════════════════════
    OVERLAYS
-═══════════════════════════ */
+═══════════════════════════════ */
 .overlay {
   display: none; position: fixed; inset: 0; z-index: 200;
   font-family: var(--font);
@@ -202,25 +254,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
 /* Settings */
 #settings-overlay { background: #1a1a1a; color: #fff; }
-
 #s-done-btn {
   position: fixed; top: calc(var(--safe-top) + 8px); right: calc(var(--safe-r) + 10px);
   background: none; border: none; color: #4d9966; cursor: pointer;
   padding: 8px; z-index: 210; -webkit-appearance: none;
 }
-
 #settings-scroll {
   flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
   padding: calc(var(--safe-top) + 58px) 0 calc(var(--safe-bot) + 24px);
   display: flex; flex-direction: column; align-items: center;
 }
 #settings-inner { width: 100%; max-width: 480px; padding: 0 24px; display: flex; flex-direction: column; }
-
-.s-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.s-title-row { display: flex; align-items: center; margin-bottom: 24px; }
 .s-title { font-size: clamp(19px, 5.5vw, 25px); font-weight: 600; letter-spacing: 0.04em; }
 .s-sec {
   font-size: clamp(11px, 3vw, 13px); letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(255,255,255,0.38); margin: 22px 0 8px;
+  color: rgba(255,255,255,0.38); margin: 22px 0 10px;
 }
 .s-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -234,16 +283,32 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.25);
   color: #fff; font-size: 22px; line-height: 1; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  -webkit-appearance: none; transition: background 0.12s;
-  font-family: var(--font); padding-bottom: 2px;
+  -webkit-appearance: none; transition: background 0.12s; font-family: var(--font); padding-bottom: 2px;
 }
 .step-btn:active { background: rgba(255,255,255,0.28); }
 .s-val { font-size: clamp(14px, 3.8vw, 17px); font-weight: 400; min-width: 52px; text-align: center; color: rgba(255,255,255,0.85); }
 
-/* Info */
+/* Sound grid */
+#sound-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 4px;
+}
+.sound-btn {
+  -webkit-appearance: none; font-family: var(--font);
+  font-size: clamp(13px, 3.5vw, 15px); font-weight: 400;
+  letter-spacing: 0.04em; padding: 10px 8px; text-align: center;
+  border-radius: 10px; cursor: pointer;
+  background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.75); transition: background 0.15s, border-color 0.15s;
+}
+.sound-btn.active {
+  background: rgba(180,90,30,0.40); border-color: rgba(220,140,80,0.70); color: #fff;
+}
+.sound-btn:active { opacity: 0.70; }
+.sound-btn.loading { opacity: 0.50; }
+
+/* Info overlay */
 #info-overlay {
-  background: #f5efe6; color: #111;
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: #f5efe6; color: #111; overflow-y: auto; -webkit-overflow-scrolling: touch;
   padding: calc(var(--safe-top) + 8px) 24px calc(var(--safe-bot) + 24px);
   background-image: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.10) 100%);
 }
@@ -257,24 +322,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 #info-inspiration { font-size: clamp(14px, 3.8vw, 17px); font-weight: 300; line-height: 1.65; color: #2a2018; }
 #info-inspiration strong { font-weight: 600; }
 .info-sec { font-size: clamp(11px, 3vw, 13px); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(0,0,0,0.38); margin-top: 4px; }
-
 #stats-table { width: 100%; border-collapse: collapse; font-size: clamp(13px, 3.5vw, 15px); }
 #stats-table th { text-align: left; font-weight: 600; padding: 6px 8px 8px; border-bottom: 2px solid rgba(0,0,0,0.15); font-size: clamp(12px, 3vw, 14px); letter-spacing: 0.06em; }
 #stats-table td { padding: 7px 8px; border-bottom: 1px solid rgba(0,0,0,0.08); vertical-align: middle; color: #2a2018; }
 .stat-note-name { font-weight: 600; }
 .stat-best { font-weight: 500; color: #7a2900; }
-.stat-btn { -webkit-appearance: none; font-family: var(--font); font-size: clamp(11px, 3vw, 13px); letter-spacing: 0.06em; padding: 5px 10px; border-radius: 999px; cursor: pointer; border: none; transition: opacity 0.15s; }
+.stat-btn { -webkit-appearance: none; font-family: var(--font); font-size: clamp(11px, 3vw, 13px); padding: 5px 10px; border-radius: 999px; cursor: pointer; border: none; transition: opacity 0.15s; }
 .stat-btn:active { opacity: 0.6; }
 .stat-reset-btn { background: rgba(180,60,20,0.15); color: #7a2900; }
 .stat-retest-btn { background: rgba(26,93,154,0.15); color: #1a5c9a; margin-left: 4px; }
-#stats-chart-wrap { width: 100%; height: 160px; position: relative; }
+#stats-chart-wrap { width: 100%; height: 160px; }
 #stats-chart { width: 100%; height: 100%; }
 #info-global-reset {
-  -webkit-appearance: none; font-family: var(--font);
-  font-size: clamp(13px, 3.5vw, 15px); letter-spacing: 0.06em;
+  -webkit-appearance: none; font-family: var(--font); font-size: clamp(13px, 3.5vw, 15px);
   padding: 10px 22px; border-radius: 999px; cursor: pointer;
-  border: 1.5px solid rgba(180,60,20,0.40);
-  background: rgba(180,60,20,0.10); color: #7a2900;
+  border: 1.5px solid rgba(180,60,20,0.40); background: rgba(180,60,20,0.10); color: #7a2900;
   align-self: flex-start; margin-top: 4px; transition: background 0.15s;
 }
 #info-global-reset:active { background: rgba(180,60,20,0.22); }
@@ -289,10 +351,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 #confirm-title { font-size: clamp(17px, 5vw, 21px); font-weight: 600; margin-bottom: 10px; }
 #confirm-msg   { font-size: clamp(14px, 4vw, 16px); font-weight: 300; color: rgba(255,255,255,0.70); margin-bottom: 22px; line-height: 1.5; }
 #confirm-btns  { display: flex; flex-direction: column; gap: 10px; }
-#confirm-btns button { -webkit-appearance: none; font-family: var(--font); cursor: pointer; border-radius: 999px; font-size: clamp(14px, 4vw, 16px); padding: 12px; border: none; transition: opacity 0.15s; letter-spacing: 0.04em; }
+#confirm-btns button { -webkit-appearance: none; font-family: var(--font); cursor: pointer; border-radius: 999px; font-size: clamp(14px, 4vw, 16px); padding: 12px; border: none; transition: opacity 0.15s; }
 #confirm-yes { background: #c0392b; color: #fff; }
 #confirm-no  { background: rgba(255,255,255,0.14); color: #fff; }
 </style>
+<script src="./index_files/soundfont-player.min.js.download"></script>
 </head>
 <body>
 <div id="bg-fill"></div>
@@ -300,48 +363,69 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 <!-- ═══ MAIN APP ═══ -->
 <div id="app">
   <div id="phase-label">Listening</div>
-  <div id="center-area">
-    <div id="tap-instruction">Tap the higher one</div>
 
+  <!-- Diff label centered in the upper half (between phase-label and circles) -->
+  <div id="upper-half">
+    <div id="diff-label">50¢ difference</div>
+  </div>
+
+  <!-- Note circles, vertically centered in the middle third -->
+  <div id="circles-zone">
+    <div id="tap-instruction">Tap the higher one</div>
     <div id="note-row">
       <div class="note-circle" id="note-left" onclick="handleTap(&#39;left&#39;)">
         <div class="nc-name" id="note-left-name">?</div>
-        <div class="nc-detail" id="note-left-detail">1st</div>
+        <div class="nc-detail" id="note-left-detail"></div>
       </div>
       <div class="note-circle" id="note-right" onclick="handleTap(&#39;right&#39;)">
         <div class="nc-name" id="note-right-name">?</div>
-        <div class="nc-detail" id="note-right-detail">2nd · 50¢</div>
+        <div class="nc-detail" id="note-right-detail"></div>
       </div>
     </div>
+  </div>
 
-    <button id="replay-btn" onclick="replayNotes()">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-        <polygon points="1,1 12,6.5 1,12" fill="white"></polygon>
+  <!-- Controls below circles, stacked from top of lower third -->
+  <div id="lower-half">
+    <!-- Graphical replay button -->
+    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 11 6.6 A 12 12 0 1 1 11 27.4" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
+        <polyline points="7.3,21.8 11,27.4 4.3,27.0" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"></polyline>
+        <polygon points="14,12 23,17 14,22" fill="white"></polygon>
       </svg>
-      Replay
     </button>
 
     <div id="swipe-hint">You can also swipe up / down to indicate<br>that the 2nd note is higher / lower</div>
 
-    <div id="streak-row">
-      <div class="streak-dot" id="dot0"></div>
-      <div class="streak-dot" id="dot1"></div>
-      <div class="streak-dot" id="dot2"></div>
+    <div id="progress-row">
+      <div class="prog-slot" id="prog0"></div>
+      <div class="prog-slot" id="prog1"></div>
+      <div class="prog-slot" id="prog2"></div>
     </div>
 
     <div id="status-msg">Tap to begin</div>
-    <div id="diff-badge">50¢</div>
+
+    <div id="round-actions">
+      <button class="round-action-btn" id="review-action-btn" onclick="enterReview()">Review</button>
+      <button class="round-action-btn" id="continue-action-btn" onclick="continueAfterFail()">Continue</button>
+    </div>
   </div>
 </div>
 
-<!-- ═══ FIXED BUTTONS — exact SVGs from reference app ═══ -->
-<button id="info-btn" aria-label="About this app" onclick="openInfo()">
+<!-- Review close button: red X circle, exact style from reference app -->
+<button id="review-close-btn" onclick="exitReview()" aria-label="Close review" style="display:none;">
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+    <path d="M4 4 L18 18M18 4 L4 18" stroke="#e03030" stroke-width="2.6" stroke-linecap="round"></path>
+  </svg>
+</button>
+
+<!-- Fixed corner buttons -->
+<button id="info-btn" aria-label="About" onclick="openInfo()">
   <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
     <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
     <text x="19" y="26.5" text-anchor="middle" font-family="Georgia, serif" font-size="21.6" font-style="italic" fill="currentColor">i</text>
   </svg>
 </button>
-
 <button id="settings-btn" aria-label="Settings" onclick="openSettings()">
   <svg width="36" height="36" viewBox="0 0 100 100" fill="none">
     <path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" d="M88 42h-5.8a33 33 0 0 0-3-7.2l4.1-4.1a4 4 0 0 0 0-5.6l-8.4-8.4a4 4 0 0 0-5.6 0l-4.1 4.1A33 33 0 0 0 58 17.8V12a4 4 0 0 0-4-4h-8a4 4 0 0 0-4 4v5.8a33 33 0 0 0-7.2 3l-4.1-4.1a4 4 0 0 0-5.6 0l-8.4 8.4a4 4 0 0 0 0 5.6l4.1 4.1A33 33 0 0 0 17.8 42H12a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h5.8a33 33 0 0 0 3 7.2l-4.1 4.1a4 4 0 0 0 0 5.6l8.4 8.4a4 4 0 0 0 5.6 0l4.1-4.1a33 33 0 0 0 7.2 3V88a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-5.8a33 33 0 0 0 7.2-3l4.1 4.1a4 4 0 0 0 5.6 0l8.4-8.4a4 4 0 0 0 0-5.6l-4.1-4.1a33 33 0 0 0 3-7.2H88a4 4 0 0 0 4-4v-8a4 4 0 0 0-4-4z
@@ -349,12 +433,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <circle cx="50" cy="50" r="10" fill="currentColor"></circle>
   </svg>
 </button>
-
 <button id="end-test-btn" onclick="endNoteTest()"></button>
 
 <!-- ═══ SETTINGS OVERLAY ═══ -->
-<div id="settings-overlay" class="overlay">
-  <button id="s-done-btn" aria-label="Done" onclick="closeSettings()">
+<div id="settings-overlay" class="overlay open">
+  <button id="s-done-btn" onclick="closeSettings()">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="15" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
       <path d="M10 17 L15 22 L24 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -363,6 +446,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <div id="settings-scroll">
     <div id="settings-inner">
       <div class="s-title-row"><span class="s-title">Settings</span></div>
+
+      <div class="s-sec">Note Sound</div>
+      <div id="sound-grid"><button class="sound-btn">Violin</button><button class="sound-btn">Sine Wave</button><button class="sound-btn">Violin (sample)</button><button class="sound-btn">Viola</button><button class="sound-btn">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn active">Guitar harmonics</button><button class="sound-btn loading">Electric Bass</button></div>
 
       <div class="s-sec">Note Range</div>
       <div class="s-row">
@@ -382,13 +468,24 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
         </div>
       </div>
 
-      <div class="s-sec">Starting Difficulty</div>
+      <div class="s-sec">Difficulty</div>
       <div class="s-row">
         <div><div class="s-label">Starting Cents</div><div class="s-sub">Cents apart when you begin</div></div>
         <div class="s-stepper">
-          <button class="step-btn" onclick="adjustSetting(&#39;startCentsIdx&#39;,-1)">−</button>
+          <!-- Reversed: + button = harder (fewer cents), − button = easier (more cents) -->
+          <button class="step-btn" onclick="adjustSetting(&#39;startCentsIdx&#39;,+1)">−</button>
           <div class="s-val" id="s-start-cents">50¢</div>
-          <button class="step-btn" onclick="adjustSetting(&#39;startCentsIdx&#39;,+1)">+</button>
+          <button class="step-btn" onclick="adjustSetting(&#39;startCentsIdx&#39;,-1)">+</button>
+        </div>
+      </div>
+
+      <div class="s-sec">Note Length</div>
+      <div class="s-row">
+        <div><div class="s-label">Duration</div><div class="s-sub">Length of each note</div></div>
+        <div class="s-stepper">
+          <button class="step-btn" onclick="adjustSetting(&#39;noteDurIdx&#39;,-1)">−</button>
+          <div class="s-val" id="s-note-dur">2.2s</div>
+          <button class="step-btn" onclick="adjustSetting(&#39;noteDurIdx&#39;,+1)">+</button>
         </div>
       </div>
 
@@ -449,435 +546,673 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// SOUND DEFINITIONS
+// ══════════════════════════════════════════════════════
+// SOUND DEFINITIONS — soundfont-player uses gleitz MusyngKite by default
+// ══════════════════════════════════════════════════════
+const SOUNDS = [
+  { id:'synth-violin',  label:'Violin',            type:'synth'                              },
+  { id:'sine',          label:'Sine Wave',          type:'sine'                               },
+  { id:'violin',        label:'Violin (sample)',    type:'sf', sfName:'violin'                },
+  { id:'viola',         label:'Viola',              type:'sf', sfName:'viola'                 },
+  { id:'cello',         label:'Cello',              type:'sf', sfName:'cello'                 },
+  { id:'contrabass',    label:'Contrabass',         type:'sf', sfName:'contrabass'            },
+  { id:'gtr-nylon',     label:'Guitar (nylon)',     type:'sf', sfName:'acoustic_guitar_nylon' },
+  { id:'gtr-steel',     label:'Guitar (steel)',     type:'sf', sfName:'acoustic_guitar_steel' },
+  { id:'gtr-harm',      label:'Guitar harmonics',   type:'sf', sfName:'guitar_harmonics'      },
+  { id:'elec-bass',     label:'Electric Bass',      type:'sf', sfName:'electric_bass_finger'  },
+];
+
+// ══════════════════════════════════════════════════════
 // CONSTANTS
-// ═══════════════════════════════════════════════════════
-const CENTS_SEQUENCE = [50, 25, 20, 15, 10, 7, 5, 3, 2, 1];
+// ══════════════════════════════════════════════════════
+const CENTS_SEQ   = [50, 25, 20, 15, 10, 7, 5, 3, 2, 1];
+const DUR_STEPS   = [0.8, 1.2, 1.6, 2.0, 2.2, 2.8, 3.5, 4.5];
+const ATK_PRESETS = [['Soft',0.20],['Med',0.09],['Crisp',0.04]];
+const DEC_PRESETS = [['Long',0.60],['Med',0.28],['Short',0.12]];
+const NOTE_GAP    = 0.42;
 
-// [label, attack_seconds]
-const ATTACK_PRESETS = [['Soft', 0.20], ['Med', 0.09], ['Crisp', 0.04]];
-// [label, release_seconds]
-const DECAY_PRESETS  = [['Long', 0.60], ['Med', 0.28], ['Short', 0.12]];
-
-// G3 = MIDI 55, D6 = MIDI 98
+// All notes G3–D6 (MIDI 55–98)
 const ALL_NOTES = (function(){
-  const nm = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'], out = [];
-  for (let o = 3; o <= 6; o++)
-    for (let n = 0; n < 12; n++) {
-      const midi = (o+1)*12 + n;
-      if (midi >= 55 && midi <= 98) out.push({ name: nm[n]+o, midi });
+  const nm=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'], out=[];
+  for (let o=3; o<=6; o++)
+    for (let n=0; n<12; n++) {
+      const midi=(o+1)*12+n;
+      if (midi>=55 && midi<=98) out.push({name:nm[n]+o, midi});
     }
   return out;
 })();
 
-function midiToHz(m)       { return 440 * Math.pow(2, (m - 69) / 12); }
-function centsToHz(hz, c)  { return hz * Math.pow(2, c / 1200); }
-function dn(name)           { return name.replace('#', '♯'); }
+const midiToHz  = m => 440 * Math.pow(2, (m-69)/12);
+const centsToHz = (hz,c) => hz * Math.pow(2, c/1200);
+const hzToMidi  = hz => 69 + 12*Math.log2(hz/440);
+const dn        = name => name.replace('#','♯');
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 let settings = {
-  lowestNote: 0, highestNote: ALL_NOTES.length - 1,
-  startCentsIdx: 0, attack: 1, decay: 1,
+  lowestNote:0, highestNote:ALL_NOTES.length-1,
+  startCentsIdx:0, noteDurIdx:4, attack:1, decay:1, soundIdx:0,
 };
-let stats = {};
+let stats = {}; // noteName → { bestCents, attempts }
 
-let currentNote = null, secondIsHigher = false;
-let centsIdx = 0, streakHistory = [], noteTestMode = null;
-let awaiting = false, currentRound = {}, audioCtx = null;
+let currentNote    = null;
+let centsIdx       = 0;
+let roundAttempts  = 0;
+let roundResults   = [];
+let noteTestMode   = null;
+let awaiting       = false;
+let inReview       = false;
+let roundFailed    = false;
+let currentRound   = {};
+let audioCtx       = null;
 
-// ═══════════════════════════════════════════════════════
+// Per-note playing handles for review mode single-note replay
+let playingNode1   = null;
+let playingNode2   = null;
+
+// ══════════════════════════════════════════════════════
 // PERSISTENCE
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function loadState() {
   try {
-    const s = localStorage.getItem('vio2-settings'); if (s) Object.assign(settings, JSON.parse(s));
-    const t = localStorage.getItem('vio2-stats');    if (t) stats = JSON.parse(t);
+    const s=localStorage.getItem('vio4-settings'); if(s) Object.assign(settings, JSON.parse(s));
+    const t=localStorage.getItem('vio4-stats');    if(t) stats=JSON.parse(t);
   } catch(e){}
 }
-function saveSettings() { try { localStorage.setItem('vio2-settings', JSON.stringify(settings)); } catch(e){} }
-function saveStats()    { try { localStorage.setItem('vio2-stats',    JSON.stringify(stats));    } catch(e){} }
+function saveSettings() { try{localStorage.setItem('vio4-settings',JSON.stringify(settings));}catch(e){} }
+function saveStats()    { try{localStorage.setItem('vio4-stats',   JSON.stringify(stats));}catch(e){} }
 
-// ═══════════════════════════════════════════════════════
-// AUDIO
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// AUDIO INIT
+// ══════════════════════════════════════════════════════
 function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
-const NOTE_DUR = 2.2;  // note duration in seconds
-const NOTE_GAP = 0.42; // silence between notes
+// ══════════════════════════════════════════════════════
+// SOUNDFONT LOADING via soundfont-player
+// sfInstruments: sfName → Soundfont instrument object
+// ══════════════════════════════════════════════════════
+const sfInstruments = {};
+const sfLoadingP    = {};
 
-function playViolinNote(freq, startTime, duration) {
-  const ctx = audioCtx;
-  const atkSec = ATTACK_PRESETS[settings.attack][1];
-  const relSec = DECAY_PRESETS[settings.decay][1];
-  const peakVol = 0.35, susFrac = 0.65, decSec = 0.10;
-
-  const mg = ctx.createGain();
-  mg.connect(ctx.destination);
-  mg.gain.setValueAtTime(0, startTime);
-  mg.gain.linearRampToValueAtTime(peakVol, startTime + atkSec);
-  mg.gain.linearRampToValueAtTime(peakVol * susFrac, startTime + atkSec + decSec);
-  mg.gain.setValueAtTime(peakVol * susFrac, startTime + duration - relSec);
-  mg.gain.linearRampToValueAtTime(0, startTime + duration);
-
-  // Vibrato
-  const vLFO = ctx.createOscillator(), vGain = ctx.createGain();
-  vLFO.frequency.setValueAtTime(0, startTime);
-  vLFO.frequency.linearRampToValueAtTime(5.5, startTime + 0.38);
-  vGain.gain.setValueAtTime(0, startTime);
-  vGain.gain.linearRampToValueAtTime(freq * 0.008, startTime + 0.38);
-  vLFO.connect(vGain); vLFO.start(startTime); vLFO.stop(startTime + duration + 0.05);
-
-  // Harmonics (violin-like)
-  [[1,1.00],[2,0.58],[3,0.40],[4,0.22],[5,0.16],[6,0.09],[7,0.06],[8,0.04]].forEach(([m,g]) => {
-    const osc = ctx.createOscillator(), hg = ctx.createGain(), bp = ctx.createBiquadFilter();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(freq * m, startTime);
-    vGain.connect(osc.frequency);
-    bp.type = 'bandpass'; bp.frequency.setValueAtTime(freq * m, startTime); bp.Q.setValueAtTime(1.8, startTime);
-    hg.gain.setValueAtTime(g, startTime);
-    osc.connect(bp); bp.connect(hg); hg.connect(mg);
-    osc.start(startTime); osc.stop(startTime + duration + 0.1);
+async function loadSfInstrument(sfName) {
+  if (sfInstruments[sfName]) return sfInstruments[sfName];
+  if (sfLoadingP[sfName])    return sfLoadingP[sfName];
+  sfLoadingP[sfName] = Soundfont.instrument(audioCtx, sfName, {
+    soundfont: 'MusyngKite',
+    gain: 3.0,
+  }).then(inst => {
+    sfInstruments[sfName] = inst;
+    return inst;
   });
-
-  // Bow noise
-  const bLen = Math.ceil(ctx.sampleRate * (duration + 0.2));
-  const bBuf = ctx.createBuffer(1, bLen, ctx.sampleRate);
-  const bd   = bBuf.getChannelData(0);
-  for (let i = 0; i < bLen; i++) bd[i] = (Math.random()*2-1)*0.025;
-  const bs = ctx.createBufferSource(), bf = ctx.createBiquadFilter(), bg = ctx.createGain();
-  bs.buffer = bBuf; bf.type = 'bandpass'; bf.frequency.setValueAtTime(freq, startTime); bf.Q.setValueAtTime(3, startTime);
-  bg.gain.setValueAtTime(0, startTime);
-  bg.gain.linearRampToValueAtTime(0.5, startTime + atkSec);
-  bg.gain.setValueAtTime(0.5, startTime + duration - relSec);
-  bg.gain.linearRampToValueAtTime(0, startTime + duration);
-  bs.connect(bf); bf.connect(bg); bg.connect(mg);
-  bs.start(startTime); bs.stop(startTime + duration + 0.1);
+  return sfLoadingP[sfName];
 }
 
-function beepCorrect() {
-  const ctx = audioCtx, t = ctx.currentTime + 0.02;
-  [523.25, 659.25].forEach((f, i) => {
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = 'sine'; o.frequency.setValueAtTime(f, t + i*0.12);
-    g.gain.setValueAtTime(0.16, t + i*0.12); g.gain.exponentialRampToValueAtTime(0.001, t + i*0.12 + 0.22);
-    o.connect(g); g.connect(ctx.destination); o.start(t + i*0.12); o.stop(t + i*0.12 + 0.25);
+// ══════════════════════════════════════════════════════
+// PLAY FUNCTIONS — all return a handle with stopAt(t)
+// ══════════════════════════════════════════════════════
+function playSfNote(inst, midiF, startTime, duration) {
+  // soundfont-player: inst.play(note, time, options) — accepts fractional midi for detuning
+  // Returns an AudioNode with .stop(when)
+  const node = inst.play(midiF, startTime, { duration: duration, gain: 1.0 });
+  return {
+    stopAt(t) { try { node.stop(t); } catch(e){} }
+  };
+}
+
+function playSynthViolin(freqHz, startTime, duration) {
+  const ctx    = audioCtx;
+  const atk    = ATK_PRESETS[settings.attack][1];
+  const rel    = DEC_PRESETS[settings.decay][1];
+  const peak   = 0.35, sus=0.65, dec=0.10;
+
+  const mg = ctx.createGain(); mg.connect(ctx.destination);
+  mg.gain.setValueAtTime(0,startTime);
+  mg.gain.linearRampToValueAtTime(peak, startTime+atk);
+  mg.gain.linearRampToValueAtTime(peak*sus, startTime+atk+dec);
+  mg.gain.setValueAtTime(peak*sus, startTime+duration-rel);
+  mg.gain.linearRampToValueAtTime(0, startTime+duration);
+
+  const vLFO=ctx.createOscillator(), vG=ctx.createGain();
+  vLFO.frequency.setValueAtTime(0,startTime); vLFO.frequency.linearRampToValueAtTime(5.5,startTime+0.38);
+  vG.gain.setValueAtTime(0,startTime); vG.gain.linearRampToValueAtTime(freqHz*0.008,startTime+0.38);
+  vLFO.connect(vG); vLFO.start(startTime); vLFO.stop(startTime+duration+0.05);
+
+  [[1,1.00],[2,0.58],[3,0.40],[4,0.22],[5,0.16],[6,0.09],[7,0.06],[8,0.04]].forEach(([m,g])=>{
+    const osc=ctx.createOscillator(),hg=ctx.createGain(),bp=ctx.createBiquadFilter();
+    osc.type='sawtooth'; osc.frequency.setValueAtTime(freqHz*m,startTime);
+    vG.connect(osc.frequency);
+    bp.type='bandpass'; bp.frequency.setValueAtTime(freqHz*m,startTime); bp.Q.setValueAtTime(1.8,startTime);
+    hg.gain.setValueAtTime(g,startTime);
+    osc.connect(bp); bp.connect(hg); hg.connect(mg);
+    osc.start(startTime); osc.stop(startTime+duration+0.1);
   });
+
+  const bLen=Math.ceil(ctx.sampleRate*(duration+0.2));
+  const bBuf=ctx.createBuffer(1,bLen,ctx.sampleRate);
+  const bd=bBuf.getChannelData(0);
+  for(let i=0;i<bLen;i++) bd[i]=(Math.random()*2-1)*0.025;
+  const bs=ctx.createBufferSource(),bf=ctx.createBiquadFilter(),bg=ctx.createGain();
+  bs.buffer=bBuf; bf.type='bandpass'; bf.frequency.setValueAtTime(freqHz,startTime); bf.Q.setValueAtTime(3,startTime);
+  bg.gain.setValueAtTime(0,startTime); bg.gain.linearRampToValueAtTime(0.5,startTime+atk);
+  bg.gain.setValueAtTime(0.5,startTime+duration-rel); bg.gain.linearRampToValueAtTime(0,startTime+duration);
+  bs.connect(bf); bf.connect(bg); bg.connect(mg);
+  bs.start(startTime); bs.stop(startTime+duration+0.1);
+
+  return { gain:mg, stopAt(t){ mg.gain.cancelScheduledValues(t); mg.gain.setValueAtTime(mg.gain.value,t); mg.gain.linearRampToValueAtTime(0,t+0.06); } };
+}
+
+function playSineTone(freqHz, startTime, duration) {
+  const ctx = audioCtx;
+  const atk = ATK_PRESETS[settings.attack][1];
+  const rel = DEC_PRESETS[settings.decay][1];
+  const osc=ctx.createOscillator(), g=ctx.createGain();
+  osc.type='sine'; osc.frequency.setValueAtTime(freqHz,startTime);
+  g.gain.setValueAtTime(0,startTime); g.gain.linearRampToValueAtTime(0.40,startTime+atk);
+  g.gain.setValueAtTime(0.40,startTime+duration-rel); g.gain.linearRampToValueAtTime(0,startTime+duration);
+  osc.connect(g); g.connect(ctx.destination);
+  osc.start(startTime); osc.stop(startTime+duration+0.1);
+  return { gain:g, stopAt(t){ g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.04); try{osc.stop(t+0.05);}catch(e){} } };
+}
+
+// Unified play — returns a handle with stopAt()
+async function playNote(midiF, startTime, duration) {
+  const sound = SOUNDS[settings.soundIdx];
+  const hz    = midiToHz(midiF);
+  if (sound.type==='synth') return playSynthViolin(hz, startTime, duration);
+  if (sound.type==='sine')  return playSineTone(hz, startTime, duration);
+  // SF via soundfont-player
+  const inst = sfInstruments[sound.sfName];
+  if (inst) return playSfNote(inst, midiF, startTime, duration);
+  return playSynthViolin(hz, startTime, duration); // fallback while loading
+}
+
+// ══════════════════════════════════════════════════════
+// FEEDBACK BEEPS
+// ══════════════════════════════════════════════════════
+function beepCorrect() {
+  const ctx=audioCtx,t=ctx.currentTime+0.02;
+  [523.25,659.25].forEach((f,i)=>{ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(f,t+i*0.12); g.gain.setValueAtTime(0.16,t+i*0.12); g.gain.exponentialRampToValueAtTime(0.001,t+i*0.12+0.22); o.connect(g); g.connect(ctx.destination); o.start(t+i*0.12); o.stop(t+i*0.12+0.25); });
 }
 function beepWrong() {
-  const ctx = audioCtx, t = ctx.currentTime + 0.02;
-  [220, 196].forEach((f, i) => {
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = 'triangle'; o.frequency.setValueAtTime(f, t + i*0.10);
-    g.gain.setValueAtTime(0.16, t + i*0.10); g.gain.exponentialRampToValueAtTime(0.001, t + i*0.10 + 0.28);
-    o.connect(g); g.connect(ctx.destination); o.start(t + i*0.10); o.stop(t + i*0.10 + 0.32);
-  });
+  const ctx=audioCtx,t=ctx.currentTime+0.02;
+  [220,196].forEach((f,i)=>{ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(f,t+i*0.10); g.gain.setValueAtTime(0.16,t+i*0.10); g.gain.exponentialRampToValueAtTime(0.001,t+i*0.10+0.28); o.connect(g); g.connect(ctx.destination); o.start(t+i*0.10); o.stop(t+i*0.10+0.32); });
 }
 
-// ═══════════════════════════════════════════════════════
-// GAME
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// NOTE SELECTION (smart weighting)
+// Prefer untested notes first. Once all tested, weight by
+// bestCents descending (harder notes = higher bestCents = more likely).
+// ══════════════════════════════════════════════════════
 function pickNote() {
-  if (noteTestMode) return ALL_NOTES.find(n => n.name === noteTestMode);
-  const pool = ALL_NOTES.slice(settings.lowestNote, settings.highestNote + 1);
-  return pool[Math.floor(Math.random() * pool.length)];
+  if (noteTestMode) return ALL_NOTES.find(n=>n.name===noteTestMode);
+
+  const pool = ALL_NOTES.slice(settings.lowestNote, settings.highestNote+1);
+
+  // Any untested?
+  const untested = pool.filter(n => !stats[n.name] || stats[n.name].attempts == null || stats[n.name].attempts === 0);
+  if (untested.length > 0) {
+    return untested[Math.floor(Math.random()*untested.length)];
+  }
+
+  // All tested — weight by bestCents (higher = harder = more likely)
+  // Notes with no bestCents (tried but never succeeded) get max weight (50)
+  const weights = pool.map(n => {
+    const bc = stats[n.name]?.bestCents;
+    return (bc == null) ? 50 : bc; // bigger cents = harder = more practice needed
+  });
+  const total = weights.reduce((a,b)=>a+b, 0);
+  let r = Math.random() * total;
+  for (let i=0; i<pool.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return pool[i];
+  }
+  return pool[pool.length-1];
 }
+
+function markAttempt(noteName) {
+  if (!stats[noteName]) stats[noteName] = {};
+  stats[noteName].attempts = (stats[noteName].attempts || 0) + 1;
+}
+
+// ══════════════════════════════════════════════════════
+// GAME LOGIC
+// ══════════════════════════════════════════════════════
+function noteDur() { return DUR_STEPS[settings.noteDurIdx]; }
 
 function startRound() {
-  awaiting = false;
-  const note  = pickNote(); currentNote = note;
-  const cents = CENTS_SEQUENCE[centsIdx];
-  secondIsHigher = Math.random() < 0.5;
+  awaiting=false; inReview=false; roundFailed=false;
+  roundAttempts=0; roundResults=[];
+  $('round-actions').style.display='none';
 
-  const baseHz  = midiToHz(note.midi);
-  const note1Hz = baseHz;
+  const note = pickNote(); currentNote=note;
+  markAttempt(note.name);
+  saveStats();
+
+  setupAttempt(); // sets secondIsHigher randomly and prepares currentRound
+}
+
+// Called for each new attempt within a round (same note, same cents level)
+function setupAttempt() {
+  const cents = CENTS_SEQ[centsIdx];
+  // Each attempt: independently random sharp or flat
+  const secondIsHigher = Math.random() < 0.5;
+  currentRound.secondIsHigher = secondIsHigher;
+
+  const baseHz  = midiToHz(currentNote.midi);
   const note2Hz = secondIsHigher ? centsToHz(baseHz, cents) : centsToHz(baseHz, -cents);
-  currentRound  = { note1Hz, note2Hz, note, cents };
+  currentRound.note1Midi = currentNote.midi;
+  currentRound.note2Midi = hzToMidi(note2Hz); // fractional midi for pitch shifting
+  currentRound.cents     = cents;
 
-  const nd = dn(note.name);
+  const nd = dn(currentNote.name);
   $('note-left-name').textContent   = nd;
-  $('note-left-detail').textContent  = '1st';
+  $('note-left-detail').textContent  = '';
   $('note-right-name').textContent   = nd;
-  $('note-right-detail').textContent = `2nd · ${cents}¢`;
+  $('note-right-detail').textContent = '';
   $('note-left').className  = 'note-circle';
   $('note-right').className = 'note-circle';
   $('status-msg').textContent = '';
   $('status-msg').style.color = '#e8d5b0';
-  $('diff-badge').textContent = cents + '¢';
+  $('diff-label').textContent = CENTS_SEQ[centsIdx] + '¢ difference';
+  $('tap-instruction').style.display='';
+  $('swipe-hint').style.display='';
+  playBothNotes();
+}
 
+let playTimers = []; // pending setTimeout IDs for note highlighting
+function clearPlayTimers() { playTimers.forEach(clearTimeout); playTimers=[]; }
+
+function playBothNotes() {
+  clearPlayTimers();
   ensureAudio();
+  const dur = noteDur();
   const now = audioCtx.currentTime + 0.06;
+  const t2  = now + dur + NOTE_GAP;
 
-  // Visual highlight during playback
-  const t1ms  = 60;
-  const t1end = t1ms + NOTE_DUR * 1000;
-  const t2ms  = t1ms + (NOTE_DUR + NOTE_GAP) * 1000;
-  const t2end = t2ms + NOTE_DUR * 1000;
+  const t1ms    = 60;
+  const t1endMs = t1ms + dur*1000;
+  const t2ms    = t1ms + (dur+NOTE_GAP)*1000;
+  const t2endMs = t2ms + dur*1000;
 
-  setTimeout(() => $('note-left').classList.add('playing'), t1ms);
-  setTimeout(() => $('note-left').classList.remove('playing'), t1end);
-  setTimeout(() => $('note-right').classList.add('playing'), t2ms);
-  setTimeout(() => {
+  $('note-left').classList.remove('playing','flash-correct','flash-wrong');
+  $('note-right').classList.remove('playing','flash-correct','flash-wrong');
+
+  playTimers.push(setTimeout(()=>$('note-left').classList.add('playing'), t1ms));
+  playTimers.push(setTimeout(()=>$('note-left').classList.remove('playing'), t1endMs));
+  playTimers.push(setTimeout(()=>{
+    $('note-right').classList.add('playing');
+    // Allow guessing as soon as the second note begins
+    if (!roundFailed && !inReview) awaiting=true;
+  }, t2ms));
+  playTimers.push(setTimeout(()=>{
     $('note-right').classList.remove('playing');
-    awaiting = true;
-  }, t2end);
+  }, t2endMs));
 
-  playViolinNote(note1Hz, now, NOTE_DUR);
-  playViolinNote(note2Hz, now + NOTE_DUR + NOTE_GAP, NOTE_DUR);
+  playNote(currentRound.note1Midi, now, dur);
+  playNote(currentRound.note2Midi, t2, dur);
 }
 
-function replayNotes() {
-  if (!currentRound.note1Hz) return;
+function replayBoth() {
+  if (!currentRound.note1Midi) return;
+  playBothNotes();
+}
+
+// Review: tap a single circle — stops that note if playing, restarts it
+function playOneNote(side) {
   ensureAudio();
-  const now = audioCtx.currentTime + 0.06;
-  $('note-left').classList.remove('playing');
-  $('note-right').classList.remove('playing');
-  const t1ms = 60, t2ms = 60 + (NOTE_DUR + NOTE_GAP) * 1000;
-  setTimeout(() => $('note-left').classList.add('playing'),    t1ms);
-  setTimeout(() => $('note-left').classList.remove('playing'), t1ms + NOTE_DUR*1000);
-  setTimeout(() => $('note-right').classList.add('playing'),   t2ms);
-  setTimeout(() => $('note-right').classList.remove('playing'),t2ms + NOTE_DUR*1000);
-  playViolinNote(currentRound.note1Hz, now, NOTE_DUR);
-  playViolinNote(currentRound.note2Hz, now + NOTE_DUR + NOTE_GAP, NOTE_DUR);
+  const dur = noteDur();
+  const now = audioCtx.currentTime + 0.02;
+  const midiF = (side==='left') ? currentRound.note1Midi : currentRound.note2Midi;
+
+  if (side==='left') {
+    if (playingNode1) { try{ playingNode1.stopAt(audioCtx.currentTime); }catch(e){} playingNode1=null; }
+    $('note-left').classList.remove('playing');
+    setTimeout(()=>{ $('note-left').classList.add('playing'); }, 10);
+    setTimeout(()=>{ $('note-left').classList.remove('playing'); }, 10+dur*1000);
+    playNote(midiF, now, dur).then(h=>{ playingNode1=h; });
+  } else {
+    if (playingNode2) { try{ playingNode2.stopAt(audioCtx.currentTime); }catch(e){} playingNode2=null; }
+    $('note-right').classList.remove('playing');
+    setTimeout(()=>{ $('note-right').classList.add('playing'); }, 10);
+    setTimeout(()=>{ $('note-right').classList.remove('playing'); }, 10+dur*1000);
+    playNote(midiF, now, dur).then(h=>{ playingNode2=h; });
+  }
 }
 
-function handleTap(side) { if (!awaiting) return; handleAnswer(side === 'right'); }
+function handleTap(side) {
+  if (inReview) { playOneNote(side); return; }
+  if (!awaiting || roundFailed) return;
+  handleAnswer(side==='right');
+}
 
 function handleAnswer(guessSecondHigher) {
-  if (!awaiting) return;
-  awaiting = false;
+  if (!awaiting||roundFailed) return;
+  awaiting=false;
 
-  const correct = (guessSecondHigher === secondIsHigher);
-  const cents   = CENTS_SEQUENCE[centsIdx];
+  const correct = (guessSecondHigher === currentRound.secondIsHigher);
+  const cents   = CENTS_SEQ[centsIdx];
 
-  // Feedback sound
   if (correct) beepCorrect(); else beepWrong();
 
-  // Update right-circle label: replace "?" with ♯ or ♭
-  const sym = secondIsHigher ? '♯' : '♭';
-  $('note-right-detail').textContent = `2nd · ${sym}${cents}¢`;
+  // Reveal right-circle detail
+  const sym = currentRound.secondIsHigher ? '♯' : '♭';
+  $('note-right-detail').textContent = `${sym}${cents}¢`;
 
-  // Flash circles
+  // Flash
   const cls = correct ? 'flash-correct' : 'flash-wrong';
   $('note-left').classList.add(cls);
   $('note-right').classList.add(cls);
 
+  roundAttempts++;
+  roundResults.push(correct?'correct':'wrong');
+  renderProgress();
+
   if (correct) {
-    $('status-msg').textContent = '✓ Correct';
-    $('status-msg').style.color = '#a0f0a0';
+    $('status-msg').textContent='Correct'; $('status-msg').style.color='#a0f0a0';
   } else {
-    $('status-msg').textContent = '✗ Wrong';
-    $('status-msg').style.color = '#f09090';
+    $('status-msg').textContent='Wrong'; $('status-msg').style.color='#f09090';
   }
 
-  // Streak
-  streakHistory.push(correct ? 'correct' : 'wrong');
-  if (streakHistory.length > 3) streakHistory.shift();
-  updateStreakDots();
+  if (!correct) {
+    roundFailed=true;
+    setTimeout(()=>{ $('status-msg').textContent=''; $('round-actions').style.display='flex'; }, 1400);
+    return;
+  }
 
-  // 3-in-a-row
-  if (streakHistory.length === 3 && streakHistory.every(x => x === 'correct')) {
+  // 3 correct in a row
+  if (roundResults.length===3 && roundResults.every(x=>x==='correct')) {
     const key = currentNote.name;
-    if (!stats[key] || stats[key].bestCents == null || cents < stats[key].bestCents) {
-      if (!stats[key]) stats[key] = {};
+    if (!stats[key]) stats[key]={};
+    if (stats[key].bestCents==null || cents < stats[key].bestCents) {
       stats[key].bestCents = cents; saveStats();
     }
-    if (centsIdx < CENTS_SEQUENCE.length - 1) {
-      centsIdx++;
-      $('status-msg').textContent = '✓ ✓ ✓  Getting harder!';
+    if (centsIdx < CENTS_SEQ.length-1) {
+      centsIdx++; $('status-msg').textContent='✓ ✓ ✓  Getting harder!';
     } else {
-      $('status-msg').textContent = '✓ ✓ ✓  Master level!';
+      $('status-msg').textContent='✓ ✓ ✓  Master level!';
     }
-    streakHistory = [];
+    setTimeout(()=>{ clearProgress(); startRound(); }, 1600);
+    return;
   }
 
-  setTimeout(startRound, 1900);
+  // Correct, but round not done yet — next attempt
+  setTimeout(()=>{
+    awaiting=false;
+    $('note-left').className='note-circle'; $('note-right').className='note-circle';
+    $('status-msg').textContent='';
+    setupAttempt(); // re-randomizes sharp/flat
+  }, 1600);
 }
 
-function updateStreakDots() {
-  for (let i = 0; i < 3; i++) {
-    const d = $('dot'+i); d.className = 'streak-dot';
-    if (streakHistory[i]) d.classList.add(streakHistory[i]);
+// ══════════════════════════════════════════════════════
+// REVIEW MODE
+// ══════════════════════════════════════════════════════
+function enterReview() {
+  inReview=true; roundFailed=false;
+  $('round-actions').style.display='none';
+  $('app').classList.add('review-mode');
+  $('bg-fill').style.backgroundColor='#0d2a1a';
+  $('phase-label').textContent='Review';
+  $('tap-instruction').textContent='Tap a note to replay it';
+  $('swipe-hint').style.display='none';
+  $('review-close-btn').style.display='flex';
+  $('progress-row').style.visibility='hidden';
+  $('status-msg').textContent='';
+
+  // Show sharp/flat label on right circle
+  const cents=CENTS_SEQ[centsIdx];
+  const sym = currentRound.secondIsHigher ? '♯' : '♭';
+  $('note-right-detail').textContent = `${sym}${cents}¢`;
+  $('note-left').className='note-circle';
+  $('note-right').className='note-circle';
+
+  // Play both automatically on entry
+  playBothNotes();
+}
+
+function exitReview() {
+  inReview=false;
+  // Stop any individual note playback
+  if (playingNode1) { try{playingNode1.stopAt(audioCtx.currentTime);}catch(e){} playingNode1=null; }
+  if (playingNode2) { try{playingNode2.stopAt(audioCtx.currentTime);}catch(e){} playingNode2=null; }
+  clearPlayTimers();
+  $('note-left').classList.remove('playing'); $('note-right').classList.remove('playing');
+
+  $('app').classList.remove('review-mode');
+  $('bg-fill').style.backgroundColor='#4d1903';
+  $('phase-label').textContent = noteTestMode ? dn(noteTestMode)+' Test' : 'Listening';
+  $('tap-instruction').textContent='Tap the higher one';
+  $('swipe-hint').style.display='';
+  $('review-close-btn').style.display='none';
+  $('progress-row').style.visibility='visible';
+  clearProgress();
+  setTimeout(startRound, 400);
+}
+
+function continueAfterFail() {
+  roundFailed=false;
+  $('round-actions').style.display='none';
+  clearProgress();
+  setTimeout(startRound, 200);
+}
+
+// ══════════════════════════════════════════════════════
+// PROGRESS INDICATORS
+// ══════════════════════════════════════════════════════
+function clearProgress() {
+  for(let i=0;i<3;i++) $('prog'+i).innerHTML='';
+}
+
+function renderProgress() {
+  // Only render newly added result
+  const i = roundResults.length-1;
+  if (i<0||i>2) return;
+  const slot=$('prog'+i);
+  if (slot.children.length) return; // already set
+  if (roundResults[i]==='correct') {
+    slot.innerHTML=`<svg class="prog-check" width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="12" fill="rgba(60,200,80,0.25)" stroke="rgba(80,220,100,0.70)" stroke-width="1.5"/>
+      <path d="M8 14 L12 18 L20 10" stroke="#6fe882" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  } else {
+    slot.innerHTML=`<svg class="prog-cross" width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="12" fill="rgba(210,50,40,0.25)" stroke="rgba(230,80,70,0.70)" stroke-width="1.5"/>
+      <path d="M9 9 L19 19M19 9 L9 19" stroke="#f07070" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`;
   }
 }
 
-// ═══════════════════════════════════════════════════════
-// SWIPE
-// ═══════════════════════════════════════════════════════
-let touchStartY = 0;
-document.getElementById('app').addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
-document.getElementById('app').addEventListener('touchend', e => {
-  if (!awaiting) return;
-  const dy = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(dy) < 45) return;
-  handleAnswer(dy > 0);
-}, { passive: true });
+// ══════════════════════════════════════════════════════
+// SWIPE + SHAKE
+// ══════════════════════════════════════════════════════
+let touchStartY=0, touchStartX=0;
+document.getElementById('app').addEventListener('touchstart', e=>{
+  touchStartY=e.touches[0].clientY; touchStartX=e.touches[0].clientX;
+}, {passive:true});
+document.getElementById('app').addEventListener('touchend', e=>{
+  if (inReview||roundFailed||!awaiting) return;
+  const dy=touchStartY-e.changedTouches[0].clientY;
+  const dx=touchStartX-e.changedTouches[0].clientX;
+  if (Math.abs(dy)<45||Math.abs(dx)>Math.abs(dy)) return;
+  handleAnswer(dy>0);
+}, {passive:true});
 
-// ═══════════════════════════════════════════════════════
+let lastShakeT=0;
+if (window.DeviceMotionEvent) {
+  window.addEventListener('devicemotion', e=>{
+    const a=e.accelerationIncludingGravity; if(!a) return;
+    const mag=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+    const now=Date.now();
+    if (mag>25 && now-lastShakeT>1000) {
+      lastShakeT=now;
+      if (roundFailed&&!inReview) enterReview();
+      else if (inReview) playBothNotes();
+    }
+  }, {passive:true});
+}
+
+// ══════════════════════════════════════════════════════
 // SETTINGS
-// ═══════════════════════════════════════════════════════
-let previewTimer = null;
-function adjustSetting(key, dir) {
-  if      (key === 'lowestNote')   settings.lowestNote    = Math.max(0, Math.min(settings.highestNote-1, settings.lowestNote+dir));
-  else if (key === 'highestNote')  settings.highestNote   = Math.max(settings.lowestNote+1, Math.min(ALL_NOTES.length-1, settings.highestNote+dir));
-  else if (key === 'startCentsIdx') settings.startCentsIdx = Math.max(0, Math.min(CENTS_SEQUENCE.length-1, settings.startCentsIdx+dir));
-  else if (key === 'attack') { settings.attack = Math.max(0, Math.min(ATTACK_PRESETS.length-1, settings.attack+dir)); schedulePreview(); }
-  else if (key === 'decay')  { settings.decay  = Math.max(0, Math.min(DECAY_PRESETS.length-1, settings.decay+dir));  schedulePreview(); }
+// ══════════════════════════════════════════════════════
+let previewTimer=null;
+function adjustSetting(key,dir) {
+  if      (key==='lowestNote')    settings.lowestNote    = Math.max(0, Math.min(settings.highestNote-1, settings.lowestNote+dir));
+  else if (key==='highestNote')   settings.highestNote   = Math.max(settings.lowestNote+1, Math.min(ALL_NOTES.length-1, settings.highestNote+dir));
+  else if (key==='startCentsIdx') settings.startCentsIdx = Math.max(0, Math.min(CENTS_SEQ.length-1, settings.startCentsIdx+dir));
+  else if (key==='noteDurIdx')    settings.noteDurIdx    = Math.max(0, Math.min(DUR_STEPS.length-1, settings.noteDurIdx+dir));
+  else if (key==='attack') { settings.attack=Math.max(0,Math.min(ATK_PRESETS.length-1,settings.attack+dir)); schedulePreview(); }
+  else if (key==='decay')  { settings.decay =Math.max(0,Math.min(DEC_PRESETS.length-1,settings.decay+dir));  schedulePreview(); }
   saveSettings(); renderSettings();
 }
 
 function schedulePreview() {
   if (previewTimer) clearTimeout(previewTimer);
-  previewTimer = setTimeout(() => {
-    ensureAudio();
-    playViolinNote(midiToHz(69), audioCtx.currentTime + 0.04, NOTE_DUR); // A4
-  }, 150);
+  previewTimer=setTimeout(()=>{ ensureAudio(); const dur=noteDur(); playNote(69, audioCtx.currentTime+0.04, dur); }, 150);
 }
 
 function renderSettings() {
   $('s-lowest').textContent      = dn(ALL_NOTES[settings.lowestNote].name);
   $('s-highest').textContent     = dn(ALL_NOTES[settings.highestNote].name);
-  $('s-start-cents').textContent = CENTS_SEQUENCE[settings.startCentsIdx] + '¢';
-  $('s-attack').textContent      = ATTACK_PRESETS[settings.attack][0];
-  $('s-decay').textContent       = DECAY_PRESETS[settings.decay][0];
+  $('s-start-cents').textContent = CENTS_SEQ[settings.startCentsIdx]+'¢';
+  $('s-note-dur').textContent    = DUR_STEPS[settings.noteDurIdx].toFixed(1)+'s';
+  $('s-attack').textContent      = ATK_PRESETS[settings.attack][0];
+  $('s-decay').textContent       = DEC_PRESETS[settings.decay][0];
+  renderSoundGrid();
 }
 
-function openSettings()  { ensureAudio(); renderSettings(); $('settings-overlay').classList.add('open'); }
+function renderSoundGrid() {
+  const grid=$('sound-grid'); grid.innerHTML='';
+  SOUNDS.forEach((s,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='sound-btn'+(idx===settings.soundIdx?' active':'');
+    btn.textContent=s.label;
+    if (s.type==='sf'&&!sfInstruments[s.sfName]) btn.classList.add('loading');
+    btn.onclick=()=>selectSound(idx);
+    grid.appendChild(btn);
+  });
+}
+
+async function selectSound(idx) {
+  settings.soundIdx=idx; saveSettings(); renderSoundGrid();
+  ensureAudio();
+  const sound=SOUNDS[idx];
+  if (sound.type==='sf'&&!sfInstruments[sound.sfName]) {
+    try { await loadSfInstrument(sound.sfName); } catch(e){ console.warn('SF load failed:',e); }
+    renderSoundGrid();
+  }
+  const dur=noteDur();
+  playNote(69, audioCtx.currentTime+0.06, dur); // A4 preview
+}
+
+function openSettings() {
+  ensureAudio();
+  const s=SOUNDS[settings.soundIdx];
+  if (s.type==='sf'&&!sfInstruments[s.sfName]) loadSfInstrument(s.sfName).then(()=>renderSoundGrid()).catch(()=>{});
+  renderSettings();
+  $('settings-overlay').classList.add('open');
+}
 function closeSettings() { $('settings-overlay').classList.remove('open'); }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // INFO / STATS
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function openInfo()  { renderStats(); $('info-overlay').classList.add('open'); }
 function closeInfo() {
   $('info-overlay').classList.remove('open');
-  if (noteTestMode) { /* keep test mode if active */ } else {
-    $('end-test-btn').style.display = 'none';
-    $('phase-label').textContent = 'Listening';
-  }
+  if (!noteTestMode) { $('end-test-btn').style.display='none'; $('phase-label').textContent='Listening'; }
 }
 
 function renderStats() {
-  const tbody = $('stats-tbody'); tbody.innerHTML = '';
-  const inRange = new Set(ALL_NOTES.slice(settings.lowestNote, settings.highestNote+1).map(n=>n.name));
-  const noted   = new Set([...inRange, ...Object.keys(stats)]);
-  const sorted  = ALL_NOTES.filter(n => noted.has(n.name));
-
-  if (!sorted.length) {
-    tbody.innerHTML = '<tr><td colspan="3" style="opacity:.45;font-style:italic;padding:10px 8px">No data yet</td></tr>';
-  } else {
-    sorted.forEach(note => {
-      const st = stats[note.name], best = (st && st.bestCents != null) ? st.bestCents+'¢' : '—';
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td class="stat-note-name">${dn(note.name)}</td><td class="stat-best">${best}</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote('${note.name}')">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest('${note.name}')">Retest</button></td>`;
-      tbody.appendChild(tr);
-    });
-  }
+  const tbody=$('stats-tbody'); tbody.innerHTML='';
+  const inRange=new Set(ALL_NOTES.slice(settings.lowestNote,settings.highestNote+1).map(n=>n.name));
+  const noted=new Set([...inRange,...Object.keys(stats)]);
+  const sorted=ALL_NOTES.filter(n=>noted.has(n.name));
+  if (!sorted.length) { tbody.innerHTML='<tr><td colspan="3" style="opacity:.45;font-style:italic;padding:10px 8px">No data yet</td></tr>'; }
+  else sorted.forEach(note=>{
+    const st=stats[note.name], best=(st?.bestCents!=null)?st.bestCents+'¢':'—';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="stat-note-name">${dn(note.name)}</td><td class="stat-best">${best}</td>
+      <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote('${note.name}')">Reset</button>
+      <button class="stat-btn stat-retest-btn" onclick="startNoteTest('${note.name}')">Retest</button></td>`;
+    tbody.appendChild(tr);
+  });
   drawChart(sorted);
 }
 
 function drawChart(notes) {
-  const canvas = $('stats-chart'), ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1, W = canvas.parentElement.getBoundingClientRect().width, H = 160;
-  canvas.width = W*dpr; canvas.height = H*dpr; canvas.style.width = W+'px'; canvas.style.height = H+'px';
-  ctx.scale(dpr, dpr); ctx.clearRect(0, 0, W, H);
-
-  const pn = notes.filter(n => stats[n.name]?.bestCents != null);
-  if (!pn.length) {
-    ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.font = '13px Inconsolata,monospace'; ctx.textAlign = 'center';
-    ctx.fillText('Play some rounds to see progress', W/2, H/2); return;
-  }
-  const pad = {l:38,r:12,t:12,b:32}, cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
-  const yFor = c => pad.t + cH*(1 - c/50);
-  ctx.strokeStyle = 'rgba(0,0,0,0.10)'; ctx.lineWidth = 1;
-  [10,20,30,40,50].forEach(c => {
-    const y = yFor(c); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
-    ctx.fillStyle = 'rgba(0,0,0,0.38)'; ctx.font = '10px Inconsolata,monospace';
-    ctx.textAlign = 'right'; ctx.fillText(c+'¢', pad.l-4, y+4);
-  });
-  const bw = Math.max(4, Math.min(28, cW/pn.length - 4));
-  pn.forEach((note, i) => {
-    const x = pad.l + (i+0.5)*(cW/pn.length), c = stats[note.name].bestCents;
-    const y = yFor(c), bh = yFor(0)-y;
-    ctx.fillStyle = '#c94a0a'; ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(x-bw/2,y,bw,bh,3); else ctx.rect(x-bw/2,y,bw,bh);
-    ctx.fill();
-    ctx.fillStyle = 'rgba(0,0,0,0.60)'; ctx.font = '10px Inconsolata,monospace'; ctx.textAlign = 'center';
-    ctx.fillText(dn(note.name), x, H-pad.b+14);
-  });
+  const canvas=$('stats-chart'),ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1,W=canvas.parentElement.getBoundingClientRect().width,H=160;
+  canvas.width=W*dpr; canvas.height=H*dpr; canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
+  const pn=notes.filter(n=>stats[n.name]?.bestCents!=null);
+  if (!pn.length){ ctx.fillStyle='rgba(0,0,0,0.28)'; ctx.font='13px Inconsolata,monospace'; ctx.textAlign='center'; ctx.fillText('Play some rounds to see progress',W/2,H/2); return; }
+  const pad={l:38,r:12,t:12,b:32},cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const yFor=c=>pad.t+cH*(1-c/50);
+  ctx.strokeStyle='rgba(0,0,0,0.10)'; ctx.lineWidth=1;
+  [10,20,30,40,50].forEach(c=>{ const y=yFor(c); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke(); ctx.fillStyle='rgba(0,0,0,0.38)'; ctx.font='10px Inconsolata,monospace'; ctx.textAlign='right'; ctx.fillText(c+'¢',pad.l-4,y+4); });
+  const bw=Math.max(4,Math.min(28,cW/pn.length-4));
+  pn.forEach((note,i)=>{ const x=pad.l+(i+0.5)*(cW/pn.length),c=stats[note.name].bestCents,y=yFor(c),bh=yFor(0)-y; ctx.fillStyle='#c94a0a'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(x-bw/2,y,bw,bh,3); else ctx.rect(x-bw/2,y,bw,bh); ctx.fill(); ctx.fillStyle='rgba(0,0,0,0.60)'; ctx.font='10px Inconsolata,monospace'; ctx.textAlign='center'; ctx.fillText(dn(note.name),x,H-pad.b+14); });
 }
 
-function startNoteTest(noteName) {
-  noteTestMode = noteName; centsIdx = settings.startCentsIdx; streakHistory = [];
+function startNoteTest(n) {
+  noteTestMode=n; centsIdx=settings.startCentsIdx; roundAttempts=0; roundResults=[];
   closeInfo();
-  $('end-test-btn').textContent = `End ${dn(noteName)} Test`;
-  $('end-test-btn').style.display = '';
-  $('phase-label').textContent = dn(noteName) + ' Test';
-  startRound();
+  $('end-test-btn').textContent='End '+dn(n)+' Test'; $('end-test-btn').style.display='';
+  $('phase-label').textContent=dn(n)+' Test'; startRound();
 }
 function endNoteTest() {
-  noteTestMode = null; centsIdx = settings.startCentsIdx; streakHistory = [];
-  $('end-test-btn').style.display = 'none';
-  $('phase-label').textContent = 'Listening';
-  startRound();
+  noteTestMode=null; centsIdx=settings.startCentsIdx; roundAttempts=0; roundResults=[];
+  $('end-test-btn').style.display='none'; $('phase-label').textContent='Listening'; startRound();
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // CONFIRM
-// ═══════════════════════════════════════════════════════
-let confirmCb = null;
-function showConfirm(title, msg, cb) {
-  $('confirm-title').textContent = title; $('confirm-msg').textContent = msg;
-  confirmCb = cb; $('confirm-overlay').classList.add('open');
-}
-function closeConfirm() { $('confirm-overlay').classList.remove('open'); confirmCb = null; }
-$('confirm-yes').addEventListener('click', () => { closeConfirm(); if (confirmCb) confirmCb(); });
-$('confirm-no').addEventListener('click', closeConfirm);
+// ══════════════════════════════════════════════════════
+let confirmCb=null;
+function showConfirm(t,m,cb){ $('confirm-title').textContent=t; $('confirm-msg').textContent=m; confirmCb=cb; $('confirm-overlay').classList.add('open'); }
+function closeConfirm(){ $('confirm-overlay').classList.remove('open'); confirmCb=null; }
+$('confirm-yes').addEventListener('click',()=>{ closeConfirm(); if(confirmCb) confirmCb(); });
+$('confirm-no').addEventListener('click',closeConfirm);
+function confirmResetNote(n){ showConfirm('Reset '+dn(n),'Erase statistics for '+dn(n)+'?',()=>{ delete stats[n]; saveStats(); renderStats(); }); }
+function confirmResetAll(){   showConfirm('Reset All','Erase statistics for every note?',()=>{ stats={}; saveStats(); renderStats(); }); }
 
-function confirmResetNote(n) {
-  showConfirm('Reset '+dn(n), 'Erase all statistics for '+dn(n)+'? Cannot be undone.', () => { delete stats[n]; saveStats(); renderStats(); });
-}
-function confirmResetAll() {
-  showConfirm('Reset All Statistics', 'Erase statistics for every note? Cannot be undone.', () => { stats = {}; saveStats(); renderStats(); });
-}
+function $(id){ return document.getElementById(id); }
 
-function $(id) { return document.getElementById(id); }
-
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // BOOT
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 loadState();
-centsIdx = settings.startCentsIdx;
+centsIdx=settings.startCentsIdx;
 renderSettings();
-$('diff-badge').textContent = CENTS_SEQUENCE[centsIdx] + '¢';
-$('note-right-detail').textContent = `2nd · ${CENTS_SEQUENCE[centsIdx]}¢`;
+$('diff-label').textContent = CENTS_SEQ[centsIdx]+'¢ difference';
 
-let started = false;
+// Preload selected SF on first interaction
+let started=false;
 function firstInteraction() {
-  if (started) return; started = true;
-  document.getElementById('app').removeEventListener('touchstart', firstInteraction);
-  document.getElementById('app').removeEventListener('click', firstInteraction);
+  if(started) return; started=true;
+  document.getElementById('app').removeEventListener('touchstart',firstInteraction);
+  document.getElementById('app').removeEventListener('click',firstInteraction);
+  const s=SOUNDS[settings.soundIdx];
+  if(s.type==='sf') loadSfInstrument(s.sfName).then(()=>renderSoundGrid()).catch(()=>{});
   startRound();
 }
-document.getElementById('app').addEventListener('touchstart', firstInteraction, { passive: true });
-document.getElementById('app').addEventListener('click', firstInteraction);
+document.getElementById('app').addEventListener('touchstart',firstInteraction,{passive:true});
+document.getElementById('app').addEventListener('click',firstInteraction);
 </script>
 
 <script>
 (function(){
-  const sz=180, c=document.createElement('canvas');
-  c.width=c.height=sz; const x=c.getContext('2d');
-  x.fillStyle='#b83c08'; x.fillRect(0,0,sz,sz);
+  const sz=180,c=document.createElement('canvas'); c.width=c.height=sz;
+  const x=c.getContext('2d'); x.fillStyle='#b83c08'; x.fillRect(0,0,sz,sz);
   const vg=x.createRadialGradient(sz/2,sz/2,sz*.25,sz/2,sz/2,sz*.72);
   vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.42)');
-  x.fillStyle=vg; x.fillRect(0,0,sz,sz);
-  x.fillStyle='rgba(255,255,255,0.92)';
+  x.fillStyle=vg; x.fillRect(0,0,sz,sz); x.fillStyle='rgba(255,255,255,0.92)';
   x.font='bold 72px Palatino,serif'; x.textAlign='center'; x.textBaseline='middle';
   x.fillText('♩',sz/2,sz/2+4);
   const l=document.getElementById('apple-touch-icon'); if(l) l.href=c.toDataURL('image/png');
