@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_57.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_60.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -529,7 +529,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       <div class="s-title-row"><span class="s-title">Settings</span></div>
 
       <div class="s-sec">Note Sound</div>
-      <div id="sound-grid"><button class="sound-btn loading">Violin (sample)</button><button class="sound-btn">Violin (synth)</button><button class="sound-btn active">Sine Wave</button><button class="sound-btn loading">Viola</button><button class="sound-btn loading">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn loading">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn loading">Piano</button><button class="sound-btn loading">Electric Bass</button></div>
+      <div id="sound-grid"><button class="sound-btn active loading">Violin (sample)</button><button class="sound-btn">Violin (synth)</button><button class="sound-btn">Sine Wave</button><button class="sound-btn loading">Viola</button><button class="sound-btn loading">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn loading">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn loading">Piano</button><button class="sound-btn loading">Electric Bass</button></div>
 
       <div class="s-sec">Note Range</div>
       <div class="s-row">
@@ -573,7 +573,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
         <div><div class="s-label">Duration</div><div class="s-sub">Length of each note</div></div>
         <div class="s-stepper">
           <button class="step-btn" onclick="adjustSetting(&#39;noteDurIdx&#39;,-1)">−</button>
-          <div class="s-val" id="s-note-dur">2.2s</div>
+          <div class="s-val" id="s-note-dur">2.0s</div>
           <button class="step-btn" onclick="adjustSetting(&#39;noteDurIdx&#39;,+1)">+</button>
         </div>
       </div>
@@ -1469,22 +1469,26 @@ function openSettings() {
   const s=SOUNDS[settings.soundIdx];
   if (s.type==='sf'&&!sfInstruments[s.sfName]) loadSfInstrument(s.sfName).then(()=>renderSoundGrid()).catch(()=>{});
   renderSettings();
+  setBg('#1a1a1a');
   $('settings-overlay').classList.add('open');
 }
-function closeSettings() { $('settings-overlay').classList.remove('open'); }
+function closeSettings() {
+  $('settings-overlay').classList.remove('open');
+  setBg(retestNote ? '#020215' : '#4d1903');
+}
 
 // ══════════════════════════════════════════════════════
 // INFO / STATS
 // ══════════════════════════════════════════════════════
 function openInfo() {
+  setBg('#f5efe6'); // info overlay bg
   $('info-overlay').classList.add('open');
-  // iOS WebKit needs a full layout pass before canvas dimensions are available.
-  // Using rAF inside setTimeout ensures the overlay is painted before we measure.
   setTimeout(() => requestAnimationFrame(() => renderStats()), 50);
 }
 function closeInfo() {
   $('info-overlay').classList.remove('open');
   $('phase-label').textContent = 'Listen';
+  setBg(retestNote ? '#020215' : '#4d1903');
 }
 
 function noteWeight(noteName) {
@@ -1771,6 +1775,7 @@ centsIdx=settings.startCentsIdx;
 renderSettings();
 updateRetestUI();
 $('status-msg').textContent = '';
+setBg('#4d1903'); // sync Safari bottom bar on initial load
 
 // Show start screen after DOM is fully ready
 document.addEventListener('DOMContentLoaded', showStartScreen);
