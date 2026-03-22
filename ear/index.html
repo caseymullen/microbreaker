@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_74.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_75.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -1664,8 +1664,19 @@ function startRetest(n) {
     ensureAudio();
     hideStartScreen();
     const s = SOUNDS[settings.soundIdx];
-    if (s.type === 'sf') loadSfInstrument(s.sfName).then(()=>renderSoundGrid()).catch(()=>{});
+    if (s.type === 'sf') {
+      $('status-msg').textContent = 'Loading…';
+      $('status-msg').style.color = 'rgba(255,255,255,0.45)';
+      loadSfInstrument(s.sfName)
+        .then(() => { renderSoundGrid(); $('status-msg').textContent = ''; _startRetestInner(n); })
+        .catch(() => { $('status-msg').textContent = ''; _startRetestInner(n); });
+      return;
+    }
   }
+  _startRetestInner(n);
+}
+
+function _startRetestInner(n) {
   // Exit review mode cleanly if active
   if (inReview) {
     inReview = false;
