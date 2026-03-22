@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_60.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_74.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -262,14 +262,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
 /* ── Fixed corner buttons ── */
 #info-btn {
-  position: fixed; bottom: 0; left: calc(var(--safe-l) + 14px);
+  position: fixed; bottom: 0; right: calc(var(--safe-r) + 14px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s;
 }
 #info-btn:active { color: rgba(255,255,255,0.72); }
 #settings-btn {
-  position: fixed; bottom: 0; right: calc(var(--safe-r) + 14px);
+  position: fixed; bottom: 0; left: calc(var(--safe-l) + 14px);
   background: none; border: none; color: rgba(255,255,255,0.36);
   cursor: pointer; padding: 8px; z-index: 10; -webkit-appearance: none;
   transition: color 0.15s;
@@ -389,11 +389,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 #info-inspiration { font-size: clamp(14px, 3.8vw, 17px); font-weight: 300; line-height: 1.65; color: #2a2018; }
 #info-inspiration strong { font-weight: 600; }
 .info-sec { font-size: clamp(11px, 3vw, 13px); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(0,0,0,0.38); margin-top: 4px; }
-#stats-table { width: 100%; border-collapse: collapse; font-size: clamp(13px, 3.5vw, 15px); }
+#stats-table { width: auto; border-collapse: collapse; font-size: clamp(13px, 3.5vw, 15px); table-layout: fixed; }
+#stats-table col { width: 25%; }
 #stats-table th { text-align: right; font-weight: 600; padding: 6px 8px 8px; border-bottom: 2px solid rgba(0,0,0,0.15); font-size: clamp(12px, 3vw, 14px); letter-spacing: 0.06em; }
-#stats-table th:last-child { text-align: left; }
 #stats-table td { padding: 7px 8px; border-bottom: 1px solid rgba(0,0,0,0.08); vertical-align: middle; color: #2a2018; text-align: right; }
-#stats-table td:last-child { text-align: left; }
 .stat-note-name { font-weight: 600; }
 .stat-best { font-weight: 500; color: #7a2900; }
 .stat-failed { font-weight: 500; color: #7a2900; }
@@ -533,7 +532,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
       <div class="s-sec">Note Range</div>
       <div class="s-row">
-        <div><div class="s-label">Lowest Note</div><div class="s-sub">G3 – D6</div></div>
+        <div><div class="s-label">Lowest Note</div><div class="s-sub">The lowest note that will be tested</div></div>
         <div class="s-stepper">
           <button class="step-btn" onclick="adjustSetting(&#39;lowestNote&#39;,-1)">−</button>
           <div class="s-val" id="s-lowest">G3</div>
@@ -541,17 +540,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
         </div>
       </div>
       <div class="s-row">
-        <div><div class="s-label">Highest Note</div><div class="s-sub">G3 – D6</div></div>
+        <div><div class="s-label">Highest Note</div><div class="s-sub">The highest note that will be tested</div></div>
         <div class="s-stepper">
           <button class="step-btn" onclick="adjustSetting(&#39;highestNote&#39;,-1)">−</button>
-          <div class="s-val" id="s-highest">B6</div>
+          <div class="s-val" id="s-highest">D6</div>
           <button class="step-btn" onclick="adjustSetting(&#39;highestNote&#39;,+1)">+</button>
         </div>
       </div>
 
       <div class="s-sec">Difficulty</div>
       <div class="s-row">
-        <div><div class="s-label">Starting Cents</div><div class="s-sub">Cents apart when you begin</div></div>
+        <div><div class="s-label">Starting Difference</div><div class="s-sub">The initial difference in notes</div></div>
         <div class="s-stepper">
           <!-- Reversed: + button = harder (fewer cents), − button = easier (more cents) -->
           <button class="step-btn" onclick="adjustSetting(&#39;startCentsIdx&#39;,+1)">−</button>
@@ -560,10 +559,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
         </div>
       </div>
       <div class="s-row">
-        <div><div class="s-label">Tests per Round</div><div class="s-sub">Correct determinations needed to advance</div></div>
+        <div><div class="s-label">Tests per Round</div><div class="s-sub">Correct tests needed to advance</div></div>
         <div class="s-stepper">
           <button class="step-btn" onclick="adjustSetting(&#39;testsPerRound&#39;,-1)">−</button>
-          <div class="s-val" id="s-tests-per-round">4</div>
+          <div class="s-val" id="s-tests-per-round">3</div>
           <button class="step-btn" onclick="adjustSetting(&#39;testsPerRound&#39;,+1)">+</button>
         </div>
       </div>
@@ -650,16 +649,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <p style="font-size:clamp(13px,3.5vw,15px);color:rgba(0,0,0,0.70);line-height:1.6;margin-top:-4px;">
       By regularly practicing this skill, you will become better at hearing when the note that you are playing is sharp or flat.
     </p>
+    <p style="font-size:clamp(13px,3.5vw,15px);color:rgba(0,0,0,0.70);line-height:1.6;margin-top:-4px;">
+      The more you use the app, the better picture you build of your aural acuity in different note ranges. Are you significantly better at low notes than high ones? You can decrease the number of tests per round in settings to find your initial level a little faster, but you could just be getting "lucky". Once you have found your approximate level, increase the number of rounds per test to reduce the "luck" factor.
+    </p>
     <div class="info-sec">Average Score</div>
     <div id="overall-score" style="font-size:clamp(28px,8vw,40px);font-weight:600;letter-spacing:-0.01em;color:#7a2900;text-align:center;padding:8px 0 4px;">—</div>
 
+    <div class="info-sec">Score Chart</div>
+    <div id="stats-chart-wrap"><canvas id="stats-chart"></canvas></div>
+
     <div class="info-sec">Scores</div>
     <table id="stats-table">
+      <colgroup><col><col><col><col></colgroup>
       <thead><tr><th>Note</th><th>Best</th><th>Failed</th><th></th></tr></thead>
       <tbody id="stats-tbody"></tbody>
     </table>
-    <div class="info-sec">Progress Chart</div>
-    <div id="stats-chart-wrap"><canvas id="stats-chart"></canvas></div>
     <button id="info-global-reset" onclick="confirmResetAll()">Reset All Scores</button>
     <button id="info-fake-history" onclick="fakeHistory()" style="-webkit-appearance:none;font-family:var(--font);font-size:clamp(13px,3.5vw,15px);
       padding:10px 22px;border-radius:999px;cursor:pointer;
@@ -722,13 +726,13 @@ const ATK_PRESETS = [['Soft',0.20],['Med',0.09],['Crisp',0.04]];
 const DEC_PRESETS = [['Long',0.60],['Med',0.28],['Short',0.12]];
 const NOTE_GAP    = 0.42;
 
-// All notes G3–D6 (MIDI 55–98)
+// All notes A1–G7 (MIDI 33–103)
 const ALL_NOTES = (function(){
   const nm=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'], out=[];
-  for (let o=3; o<=6; o++)
+  for (let o=1; o<=7; o++)
     for (let n=0; n<12; n++) {
       const midi=(o+1)*12+n;
-      if (midi>=55 && midi<=98) out.push({name:nm[n]+o, midi});
+      if (midi>=33 && midi<=103) out.push({name:nm[n]+o, midi});
     }
   return out;
 })();
@@ -742,7 +746,7 @@ const dn        = name => name.replace('#','♯');
 // STATE
 // ══════════════════════════════════════════════════════
 let settings = {
-  lowestNote:0, highestNote:ALL_NOTES.length-1,
+  lowestNote:22, highestNote:53,
   startCentsIdx:0, noteDurIdx:3, attack:1, decay:1, soundIdx:0, testsPerRound:3, shakeToReplay:false,
 };
 let stats = {}; // noteName → { bestCents, attempts }
@@ -1033,7 +1037,7 @@ let playTimers = []; // pending setTimeout IDs for note highlighting
 function clearPlayTimers() { playTimers.forEach(clearTimeout); playTimers=[]; }
 
 function playBothNotes() {
-  clearPlayTimers();
+  stopAllSounds();
   ensureAudio();
   const dur = noteDur();
   const now = audioCtx.currentTime + 0.06;
@@ -1058,31 +1062,37 @@ function playBothNotes() {
     $('note-right').classList.remove('playing');
   }, t2endMs));
 
-  playNote(currentRound.note1Midi, now, dur);
-  playNote(currentRound.note2Midi, t2, dur);
+  playNote(currentRound.note1Midi, now, dur).then(h=>{ playingNode1=h; });
+  playNote(currentRound.note2Midi, t2, dur).then(h=>{ playingNode2=h; });
+}
+
+function stopAllSounds() {
+  if (playingNode1) { try{ playingNode1.stopAt(audioCtx.currentTime); }catch(e){} playingNode1=null; }
+  if (playingNode2) { try{ playingNode2.stopAt(audioCtx.currentTime); }catch(e){} playingNode2=null; }
+  clearPlayTimers();
+  $('note-left').classList.remove('playing');
+  $('note-right').classList.remove('playing');
 }
 
 function replayBoth() {
   if (!currentRound.note1Midi) return;
+  stopAllSounds();
   playBothNotes();
 }
 
-// Review: tap a single circle — stops that note if playing, restarts it
+// Review: tap a single circle — stops all sounds, then plays that note
 function playOneNote(side) {
   ensureAudio();
+  stopAllSounds();
   const dur = noteDur();
   const now = audioCtx.currentTime + 0.02;
   const midiF = (side==='left') ? currentRound.note1Midi : currentRound.note2Midi;
 
   if (side==='left') {
-    if (playingNode1) { try{ playingNode1.stopAt(audioCtx.currentTime); }catch(e){} playingNode1=null; }
-    $('note-left').classList.remove('playing');
     setTimeout(()=>{ $('note-left').classList.add('playing'); }, 10);
     setTimeout(()=>{ $('note-left').classList.remove('playing'); }, 10+dur*1000);
     playNote(midiF, now, dur).then(h=>{ playingNode1=h; });
   } else {
-    if (playingNode2) { try{ playingNode2.stopAt(audioCtx.currentTime); }catch(e){} playingNode2=null; }
-    $('note-right').classList.remove('playing');
     setTimeout(()=>{ $('note-right').classList.add('playing'); }, 10);
     setTimeout(()=>{ $('note-right').classList.remove('playing'); }, 10+dur*1000);
     playNote(midiF, now, dur).then(h=>{ playingNode2=h; });
@@ -1243,11 +1253,7 @@ function enterReview() {
 
 function exitReview() {
   inReview=false;
-  // Stop any individual note playback
-  if (playingNode1) { try{playingNode1.stopAt(audioCtx.currentTime);}catch(e){} playingNode1=null; }
-  if (playingNode2) { try{playingNode2.stopAt(audioCtx.currentTime);}catch(e){} playingNode2=null; }
-  clearPlayTimers();
-  $('note-left').classList.remove('playing'); $('note-right').classList.remove('playing');
+  stopAllSounds();
 
   $('app').classList.remove('review-mode');
   if (retestNote) $('app').classList.add('retest-mode');
@@ -1389,12 +1395,12 @@ function onShakeToggle(checked) {
 function openResetDefaults() { $('reset-overlay').classList.add('open'); }
 function closeResetDefaults() { $('reset-overlay').classList.remove('open'); }
 function confirmResetDefaults() {
-  closeResetDefaults();
-  settings = { startCentsIdx:0, noteDurIdx:3, attack:1, decay:1, soundIdx:0, testsPerRound:3, shakeToReplay:false };
+  $('reset-overlay').classList.remove('open');
+  settings = { lowestNote:22, highestNote:53, startCentsIdx:0, noteDurIdx:3, attack:1, decay:1, soundIdx:0, testsPerRound:3, shakeToReplay:false };
   saveSettings();
   centsIdx = settings.startCentsIdx;
   renderSettings();
-  closeSettings();
+  // Don't close settings — let user see the updated values and close manually
 }
 
 // If shake was previously enabled and permission doesn't need requesting, restore it
@@ -1416,7 +1422,7 @@ function adjustSetting(key,dir) {
   if      (key==='lowestNote')    settings.lowestNote    = Math.max(0, Math.min(settings.highestNote-1, settings.lowestNote+dir));
   else if (key==='highestNote')   settings.highestNote   = Math.max(settings.lowestNote+1, Math.min(ALL_NOTES.length-1, settings.highestNote+dir));
   else if (key==='startCentsIdx') settings.startCentsIdx = Math.max(0, Math.min(CENTS_SEQ.length-1, settings.startCentsIdx+dir));
-  else if (key==='testsPerRound') settings.testsPerRound = Math.max(2, Math.min(7, settings.testsPerRound+dir));
+  else if (key==='testsPerRound') settings.testsPerRound = Math.max(1, Math.min(7, settings.testsPerRound+dir));
   else if (key==='noteDurIdx')    settings.noteDurIdx    = Math.max(0, Math.min(DUR_STEPS.length-1, settings.noteDurIdx+dir));
   else if (key==='attack') { settings.attack=Math.max(0,Math.min(ATK_PRESETS.length-1,settings.attack+dir)); schedulePreview(); }
   else if (key==='decay')  { settings.decay =Math.max(0,Math.min(DEC_PRESETS.length-1,settings.decay+dir));  schedulePreview(); }
@@ -1464,8 +1470,11 @@ async function selectSound(idx) {
   playNote(69, audioCtx.currentTime+0.06, dur); // A4 preview
 }
 
+let settingsOpenTestsPerRound = 3; // snapshot of testsPerRound when settings opened
+
 function openSettings() {
   ensureAudio();
+  settingsOpenTestsPerRound = settings.testsPerRound;
   const s=SOUNDS[settings.soundIdx];
   if (s.type==='sf'&&!sfInstruments[s.sfName]) loadSfInstrument(s.sfName).then(()=>renderSoundGrid()).catch(()=>{});
   renderSettings();
@@ -1475,6 +1484,17 @@ function openSettings() {
 function closeSettings() {
   $('settings-overlay').classList.remove('open');
   setBg(retestNote ? '#020215' : '#4d1903');
+  // If tests-per-round changed during an active round, restart cleanly
+  if (settings.testsPerRound !== settingsOpenTestsPerRound && !inReview) {
+    clearProgress();          // rebuilds slots with new count
+    roundResults = [];
+    roundAttempts = 0;
+    roundFailed = false;
+    awaiting = false;
+    $('round-actions').style.display = 'none';
+    $('status-msg').textContent = '';
+    setTimeout(setupAttempt, 300); // fresh attempt on same note at same difficulty
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1805,9 +1825,23 @@ function hideStartScreen() {
 function handleStart() {
   ensureAudio();
   hideStartScreen();
-  const s=SOUNDS[settings.soundIdx];
-  if(s.type==='sf') loadSfInstrument(s.sfName).then(()=>renderSoundGrid()).catch(()=>{});
-  startRound();
+  const s = SOUNDS[settings.soundIdx];
+  if (s.type === 'sf') {
+    $('status-msg').textContent = 'Loading…';
+    $('status-msg').style.color = 'rgba(255,255,255,0.45)';
+    loadSfInstrument(s.sfName)
+      .then(() => {
+        renderSoundGrid();
+        $('status-msg').textContent = '';
+        startRound();
+      })
+      .catch(() => {
+        $('status-msg').textContent = '';
+        startRound();
+      });
+  } else {
+    startRound();
+  }
 }
 </script>
 
