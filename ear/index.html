@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_52.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_53.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -124,13 +124,30 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 }
 #start-btn:active { background: rgba(255,255,255,0.26); transform: scale(0.96); }
 
-#tap-instruction {
-  font-size: clamp(15px, 4.2vw, 19px); font-weight: 300;
-  letter-spacing: 0.08em; opacity: 0.72;
-  text-align: center; margin-bottom: 16px; flex-shrink: 0;
+/* ── Hint font (swipe hint, tap instruction, review instruction) ── */
+.hint-text {
+  font-family: var(--font);
+  font-size: clamp(11px, 3.5vmin, 14px); /* vmin prevents landscape blowup */
+  font-weight: 300;
+  color: #fff;
+  opacity: 0.55;
+  text-align: center;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
 }
 
-/* ── Circles ── */
+#tap-instruction {
+  margin-bottom: 14px; flex-shrink: 0;
+}
+
+/* ── Swipe hint ── */
+#swipe-hint {
+  position: fixed;
+  bottom: calc(var(--safe-bot) + 54px);
+  left: 0; right: 0;
+  padding: 0 16px;
+  pointer-events: none; z-index: 5;
+}
 #note-row {
   display: flex; align-items: center; justify-content: center;
   gap: 22px; flex-shrink: 0;
@@ -173,7 +190,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 /* ── Replay button ── */
 #replay-btn {
   flex-shrink: 0;
-  width: 52px; height: 52px; border-radius: 50%;
+  width: 69px; height: 69px; border-radius: 50%;
   background: rgba(0,0,0,0.22);
   border: 1.5px solid rgba(255,255,255,0.32);
   color: #fff; cursor: pointer; -webkit-appearance: none;
@@ -182,18 +199,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 }
 #replay-btn:active { background: rgba(255,255,255,0.18); transform: scale(0.92); }
 
-/* ── Swipe hint ── */
-#swipe-hint {
-  position: fixed;
-  bottom: calc(var(--safe-bot) + 54px);
-  left: 0; right: 0;
-  font-family: var(--font);
-  font-size: clamp(11px, 3vw, 14px); font-weight: 300;
-  color: #fff;
-  opacity: 0.42; text-align: center; line-height: 1.5;
-  padding: 0 16px; letter-spacing: 0.02em;
-  pointer-events: none; z-index: 5;
-}
 /* ── Progress row ── */
 #progress-row {
   display: flex; align-items: center; justify-content: center;
@@ -401,30 +406,30 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 <div id="bg-fill" style="background-color: rgb(77, 25, 3);"></div>
 
 <!-- ═══ MAIN APP ═══ -->
-<div id="app">
+<div id="app" class="">
   <div id="phase-label">Listen</div>
 
   <!-- Diff label centered in the upper half (between phase-label and circles) -->
   <div id="upper-half" style="visibility: visible;">
-    <div id="diff-label"><strong>15¢</strong> difference</div>
+    <div id="diff-label"><strong>25¢</strong> difference</div>
   </div>
 
   <!-- Note circles, vertically centered in the middle third -->
   <div id="circles-zone">
-    <div id="tap-instruction" style="">Tap the higher one</div>
+    <div id="tap-instruction" class="hint-text" style="">Tap the higher one</div>
     <div id="note-row" style="">
       <div class="note-circle" id="note-left" onclick="handleTap(&#39;left&#39;)">
-        <div class="nc-name" id="note-left-name">A♯6</div>
+        <div class="nc-name" id="note-left-name">A♯3</div>
         <div class="nc-detail" id="note-left-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
       </div>
       <div class="note-circle" id="note-right" onclick="handleTap(&#39;right&#39;)">
-        <div class="nc-name" id="note-right-name">A♯6</div>
+        <div class="nc-name" id="note-right-name">A♯3</div>
         <div class="nc-detail" id="note-right-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
       </div>
     </div>
     <!-- Replay button: center aligned with bottom of note circles -->
-    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: -26px;">
-      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: -34px;">
+      <svg width="45" height="45" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M 20.1 5.4 A 12 12 0 1 1 5.4 13.9" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
         <!-- Filled arrowhead triangle. tip=(5.4,13.9), barbs same as before but wider -->
         <polygon points="11.9,18.9 5.4,13.9 1.0,20.8" fill="white"></polygon>
@@ -438,13 +443,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <!-- Controls below circles, stacked from top of lower third -->
   <div id="lower-half" style="visibility: visible;">
     <!-- Review close button: shown below replay during review mode -->
-    <button id="review-close-btn" onclick="exitReview()" aria-label="Close review">
+    <button id="review-close-btn" onclick="exitReview()" aria-label="Close review" style="display: none;">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <path d="M4 4 L18 18M18 4 L4 18" stroke="#e03030" stroke-width="2.6" stroke-linecap="round"></path>
       </svg>
     </button>
 
-    <div id="progress-row"><div class="prog-slot" id="prog0"></div><div class="prog-slot" id="prog1"></div><div class="prog-slot" id="prog2"></div></div>
+    <div id="progress-row" style="visibility: visible;"><div class="prog-slot" id="prog0"><svg class="prog-check" width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="12" fill="rgba(60,200,80,0.25)" stroke="rgba(80,220,100,0.70)" stroke-width="1.5"></circle>
+      <path d="M8 14 L12 18 L20 10" stroke="#6fe882" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg></div><div class="prog-slot" id="prog1"></div><div class="prog-slot" id="prog2"></div></div>
 
     <div id="status-msg" style="color: rgb(232, 213, 176);"></div>
 
@@ -457,7 +465,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <!-- Swipe hint: fixed at bottom, above info/settings buttons -->
-<div id="swipe-hint">You can also swipe up / down to indicate<br>that the 2nd note is higher / lower</div>
+<div id="swipe-hint" class="hint-text" style="">You can also swipe up / down to indicate<br>that the 2nd note is higher / lower</div>
 
 <!-- Fixed corner buttons -->
 <button id="info-btn" aria-label="About" onclick="openInfo()">
@@ -593,27 +601,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       By regularly practicing with this app, you will become better at hearing when the note that you are playing is sharp or flat.
     </p>
     <div class="info-sec">Average Score</div>
-    <div id="overall-score" style="font-size:clamp(28px,8vw,40px);font-weight:600;letter-spacing:-0.01em;color:#7a2900;text-align:center;padding:8px 0 4px;">13.5¢</div>
+    <div id="overall-score" style="font-size:clamp(28px,8vw,40px);font-weight:600;letter-spacing:-0.01em;color:#7a2900;text-align:center;padding:8px 0 4px;">—</div>
 
     <div class="info-sec">Scores</div>
     <table id="stats-table">
       <thead><tr><th>Note</th><th>Best</th><th>Failed</th><th></th></tr></thead>
-      <tbody id="stats-tbody"><tr><td class="stat-note-name">E4</td>
-        <td class="stat-best">—</td>
-        <td class="stat-failed">25¢</td>
-        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D6</td>
-        <td class="stat-best">—</td>
-        <td class="stat-failed">7¢</td>
-        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D6&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">F♯6</td>
-        <td class="stat-best">7¢</td>
-        <td class="stat-failed">5¢</td>
-        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯6</td>
-        <td class="stat-best">20¢</td>
-        <td class="stat-failed">—</td>
-        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#6&#39;)">Retest</button></td></tr></tbody>
+      <tbody id="stats-tbody"></tbody>
     </table>
     <div class="info-sec">Progress Chart</div>
-    <div id="stats-chart-wrap"><canvas id="stats-chart" width="648" height="120" style="width: 648px; height: 120px;"></canvas></div>
+    <div id="stats-chart-wrap"><canvas id="stats-chart"></canvas></div>
     <button id="info-global-reset" onclick="confirmResetAll()">Reset All Scores</button>
     <button id="info-fake-history" onclick="fakeHistory()" style="-webkit-appearance:none;font-family:var(--font);font-size:clamp(13px,3.5vw,15px);
       padding:10px 22px;border-radius:999px;cursor:pointer;
@@ -1725,6 +1721,7 @@ function showStartScreen() {
   $('tap-instruction').style.display = 'none';
   $('note-row').style.display        = 'none';
   $('replay-btn').style.display      = 'none';
+  $('swipe-hint').style.display      = 'none';
   $('start-btn').style.display       = 'block';
   $('upper-half').style.visibility   = 'hidden'; // hide diff label
   $('lower-half').style.visibility   = 'hidden'; // hide controls
@@ -1734,6 +1731,7 @@ function hideStartScreen() {
   $('tap-instruction').style.display = '';
   $('note-row').style.display        = '';
   $('replay-btn').style.display      = '';
+  $('swipe-hint').style.display      = '';
   $('start-btn').style.display       = 'none';
   $('upper-half').style.visibility   = 'visible';
   $('lower-half').style.visibility   = 'visible';
