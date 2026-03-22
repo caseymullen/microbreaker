@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_48.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_52.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -89,8 +89,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 */
 
 #upper-half {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  width: 100%;
+  flex: 1; display: flex; align-items: flex-end; justify-content: center;
+  width: 100%; padding-bottom: 10px;
 }
 #diff-label {
   font-size: clamp(18px, 5.5vw, 26px); font-weight: 400;
@@ -107,7 +107,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 #lower-half {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: flex-start;
-  width: 100%; padding-top: 14px;
+  width: 100%; padding-top: 4px;
 }
 
 /* ── Start button ── */
@@ -184,12 +184,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
 /* ── Swipe hint ── */
 #swipe-hint {
-  margin-top: 10px; flex-shrink: 0;
+  position: fixed;
+  bottom: calc(var(--safe-bot) + 54px);
+  left: 0; right: 0;
+  font-family: var(--font);
   font-size: clamp(11px, 3vw, 14px); font-weight: 300;
+  color: #fff;
   opacity: 0.42; text-align: center; line-height: 1.5;
   padding: 0 16px; letter-spacing: 0.02em;
+  pointer-events: none; z-index: 5;
 }
-
 /* ── Progress row ── */
 #progress-row {
   display: flex; align-items: center; justify-content: center;
@@ -401,25 +405,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <div id="phase-label">Listen</div>
 
   <!-- Diff label centered in the upper half (between phase-label and circles) -->
-  <div id="upper-half" style="visibility: hidden;">
-    <div id="diff-label"></div>
+  <div id="upper-half" style="visibility: visible;">
+    <div id="diff-label"><strong>15¢</strong> difference</div>
   </div>
 
   <!-- Note circles, vertically centered in the middle third -->
   <div id="circles-zone">
-    <div id="tap-instruction" style="display: none;">Tap the higher one</div>
-    <div id="note-row" style="display: none;">
+    <div id="tap-instruction" style="">Tap the higher one</div>
+    <div id="note-row" style="">
       <div class="note-circle" id="note-left" onclick="handleTap(&#39;left&#39;)">
-        <div class="nc-name" id="note-left-name">?</div>
-        <div class="nc-detail" id="note-left-detail"></div>
+        <div class="nc-name" id="note-left-name">A♯6</div>
+        <div class="nc-detail" id="note-left-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
       </div>
       <div class="note-circle" id="note-right" onclick="handleTap(&#39;right&#39;)">
-        <div class="nc-name" id="note-right-name">?</div>
-        <div class="nc-detail" id="note-right-detail"></div>
+        <div class="nc-name" id="note-right-name">A♯6</div>
+        <div class="nc-detail" id="note-right-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
       </div>
     </div>
     <!-- Replay button: center aligned with bottom of note circles -->
-    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: -26px; display: none;">
+    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: -26px;">
       <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M 20.1 5.4 A 12 12 0 1 1 5.4 13.9" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
         <!-- Filled arrowhead triangle. tip=(5.4,13.9), barbs same as before but wider -->
@@ -428,13 +432,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       </svg>
     </button>
     <!-- Start button shown before first round -->
-    <button id="start-btn" onclick="handleStart()" style="display: block;">Start</button>
+    <button id="start-btn" onclick="handleStart()" style="display: none;">Start</button>
   </div>
 
   <!-- Controls below circles, stacked from top of lower third -->
-  <div id="lower-half" style="visibility: hidden;">
-    <div id="swipe-hint">You can also swipe up / down to indicate<br>that the 2nd note is higher / lower</div>
-
+  <div id="lower-half" style="visibility: visible;">
     <!-- Review close button: shown below replay during review mode -->
     <button id="review-close-btn" onclick="exitReview()" aria-label="Close review">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -442,18 +444,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       </svg>
     </button>
 
-    <div id="progress-row">
-    </div>
+    <div id="progress-row"><div class="prog-slot" id="prog0"></div><div class="prog-slot" id="prog1"></div><div class="prog-slot" id="prog2"></div></div>
 
-    <div id="status-msg"></div>
+    <div id="status-msg" style="color: rgb(232, 213, 176);"></div>
 
-    <div id="round-actions">
+    <div id="round-actions" style="display: none;">
       <button class="round-action-btn" id="review-action-btn" onclick="enterReview()">Review</button>
       <button class="round-action-btn" id="continue-action-btn" onclick="continueAfterFail()">Continue</button>
     </div>
     <button id="exit-retest-btn" onclick="exitRetest()" style="display: none;">Exit re-test</button>
   </div>
 </div>
+
+<!-- Swipe hint: fixed at bottom, above info/settings buttons -->
+<div id="swipe-hint">You can also swipe up / down to indicate<br>that the 2nd note is higher / lower</div>
 
 <!-- Fixed corner buttons -->
 <button id="info-btn" aria-label="About" onclick="openInfo()">
@@ -484,7 +488,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       <div class="s-title-row"><span class="s-title">Settings</span></div>
 
       <div class="s-sec">Note Sound</div>
-      <div id="sound-grid"><button class="sound-btn">Violin (synth)</button><button class="sound-btn">Sine Wave</button><button class="sound-btn active loading">Violin (sample)</button><button class="sound-btn loading">Viola</button><button class="sound-btn loading">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn loading">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn loading">Piano</button><button class="sound-btn loading">Electric Bass</button></div>
+      <div id="sound-grid"><button class="sound-btn">Violin (synth)</button><button class="sound-btn">Sine Wave</button><button class="sound-btn active">Violin (sample)</button><button class="sound-btn loading">Viola</button><button class="sound-btn loading">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn loading">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn loading">Piano</button><button class="sound-btn loading">Electric Bass</button></div>
 
       <div class="s-sec">Note Range</div>
       <div class="s-row">
@@ -585,23 +589,37 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <p style="font-size:clamp(13px,3.5vw,15px);color:rgba(0,0,0,0.70);line-height:1.6;margin-top:-4px;">
       The app tests your discrimination on a single note until it gets to a difference that you cannot reliably hear. The app remembers your best score for every note. Once you have a score for every note, it randomly selects notes to re-test, though it favors notes where your score was not as good. You can manually re-test a specific note, below.
     </p>
-    <div class="info-sec">Overall Score</div>
-    <div id="overall-score" style="font-size:clamp(28px,8vw,40px);font-weight:600;letter-spacing:-0.01em;color:#7a2900;text-align:center;padding:8px 0 4px;">—</div>
-    <div id="overall-score-sub" style="font-size:clamp(11px,3vw,13px);color:rgba(0,0,0,0.40);text-align:center;margin-top:-4px;">average best score (lower is better)</div>
+    <p style="font-size:clamp(13px,3.5vw,15px);color:rgba(0,0,0,0.70);line-height:1.6;margin-top:-4px;">
+      By regularly practicing with this app, you will become better at hearing when the note that you are playing is sharp or flat.
+    </p>
+    <div class="info-sec">Average Score</div>
+    <div id="overall-score" style="font-size:clamp(28px,8vw,40px);font-weight:600;letter-spacing:-0.01em;color:#7a2900;text-align:center;padding:8px 0 4px;">13.5¢</div>
 
-    <div class="info-sec">History</div>
+    <div class="info-sec">Scores</div>
     <table id="stats-table">
-      <thead><tr><th>Note</th><th>Best</th><th>Failed</th><th>Prob</th><th>Actions</th></tr></thead>
-      <tbody id="stats-tbody"></tbody>
+      <thead><tr><th>Note</th><th>Best</th><th>Failed</th><th></th></tr></thead>
+      <tbody id="stats-tbody"><tr><td class="stat-note-name">E4</td>
+        <td class="stat-best">—</td>
+        <td class="stat-failed">25¢</td>
+        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;E4&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">D6</td>
+        <td class="stat-best">—</td>
+        <td class="stat-failed">7¢</td>
+        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;D6&#39;)">Retest</button></td></tr><tr class="stat-row-regressed"><td class="stat-note-name">F♯6</td>
+        <td class="stat-best">7¢</td>
+        <td class="stat-failed">5¢</td>
+        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;F#6&#39;)">Retest</button></td></tr><tr><td class="stat-note-name">A♯6</td>
+        <td class="stat-best">20¢</td>
+        <td class="stat-failed">—</td>
+        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest(&#39;A#6&#39;)">Retest</button></td></tr></tbody>
     </table>
     <div class="info-sec">Progress Chart</div>
-    <div id="stats-chart-wrap"><canvas id="stats-chart"></canvas></div>
-    <button id="info-global-reset" onclick="confirmResetAll()">Reset All History</button>
+    <div id="stats-chart-wrap"><canvas id="stats-chart" width="648" height="120" style="width: 648px; height: 120px;"></canvas></div>
+    <button id="info-global-reset" onclick="confirmResetAll()">Reset All Scores</button>
     <button id="info-fake-history" onclick="fakeHistory()" style="-webkit-appearance:none;font-family:var(--font);font-size:clamp(13px,3.5vw,15px);
       padding:10px 22px;border-radius:999px;cursor:pointer;
       border:1.5px solid rgba(60,100,180,0.40);background:rgba(60,100,180,0.10);color:#1a3a7a;
       align-self:flex-start;margin-top:0;transition:background 0.15s;">
-      Fake History
+      Fake Scores
     </button>
 
     <p style="font-size:clamp(11px,3vw,13px);color:rgba(0,0,0,0.40);line-height:1.6;margin-top:4px;">
@@ -890,6 +908,7 @@ function startRound() {
   awaiting=false; inReview=false; roundFailed=false;
   roundAttempts=0; roundResults=[];
   $('round-actions').style.display='none';
+  clearProgress();
 
   const prevNote = currentNote;
   const note = pickNote(); currentNote=note;
@@ -943,7 +962,7 @@ function setupAttempt() {
   $('note-right').className = 'note-circle';
   $('status-msg').textContent = '';
   $('status-msg').style.color = '#e8d5b0';
-  $('diff-label').textContent = fmtC(CENTS_SEQ[centsIdx]) + ' difference';
+  $('diff-label').innerHTML = '<strong>' + fmtC(CENTS_SEQ[centsIdx]) + '</strong> difference';
   $('tap-instruction').style.display='';
   $('swipe-hint').style.display='';
   playBothNotes();
@@ -1098,7 +1117,7 @@ function handleAnswer(guessSecondHigher) {
       // Keep going harder with same note
       if (centsIdx < CENTS_SEQ.length-1) {
         centsIdx++;
-        $('diff-label').textContent = fmtC(CENTS_SEQ[centsIdx])+' difference';
+        $('diff-label').innerHTML = '<strong>' + fmtC(CENTS_SEQ[centsIdx]) + '</strong> difference';
         $('status-msg').textContent='Good job! Going harder…';
         setTimeout(()=>{ clearProgress(); startRound(); }, 1600);
       } else {
@@ -1108,7 +1127,7 @@ function handleAnswer(guessSecondHigher) {
     } else {
       if (centsIdx < CENTS_SEQ.length-1) {
         centsIdx++;
-        $('diff-label').textContent = fmtC(CENTS_SEQ[centsIdx])+' difference';
+        $('diff-label').innerHTML = '<strong>' + fmtC(CENTS_SEQ[centsIdx]) + '</strong> difference';
         $('status-msg').textContent='Good job!';
       } else {
         $('status-msg').textContent='Master level!';
@@ -1450,30 +1469,24 @@ function renderStats() {
   if (allWithBest.length > 0) {
     const avg = allWithBest.reduce((s, n) => s + stats[n.name].bestCents, 0) / allWithBest.length;
     $('overall-score').textContent = avg.toFixed(1) + '¢';
-    $('overall-score-sub').textContent = `average best score across ${allWithBest.length} note${allWithBest.length===1?'':'s'} (lower is better)`;
   } else {
     $('overall-score').textContent = '—';
-    $('overall-score-sub').textContent = 'average best score (lower is better)';
   }
 
   if (!sorted.length) {
-    tbody.innerHTML='<tr><td colspan="5" style="opacity:.45;font-style:italic;padding:10px 8px">No data yet</td></tr>';
+    tbody.innerHTML='<tr><td colspan="4" style="opacity:.45;font-style:italic;padding:10px 8px">No data yet</td></tr>';
   } else {
     sorted.forEach(note=>{
       const st=stats[note.name];
       const best    = (st?.bestCents!=null)       ? fmtC(st.bestCents)        : '—';
       const failed  = (st?.lastFailureCents!=null) ? fmtC(st.lastFailureCents) : '—';
       const regressed = isRegressed(note.name);
-      const p = probFor(note.name);
-      const probStr = p === null ? '—' : p.toFixed(2)+'%';
       const tr=document.createElement('tr');
       if (regressed) tr.classList.add('stat-row-regressed');
       tr.innerHTML=`<td class="stat-note-name">${dn(note.name)}</td>
         <td class="stat-best">${best}</td>
         <td class="stat-failed">${failed}</td>
-        <td style="color:#2a2018;font-weight:400;">${probStr}</td>
-        <td><button class="stat-btn stat-reset-btn" onclick="confirmResetNote('${note.name}')">Reset</button>
-        <button class="stat-btn stat-retest-btn" onclick="startNoteTest('${note.name}')">Retest</button></td>`;
+        <td><button class="stat-btn stat-retest-btn" onclick="startNoteTest('${note.name}')">Retest</button></td>`;
       tbody.appendChild(tr);
     });
   }
@@ -1638,8 +1651,8 @@ function showConfirm(t,m,cb){ $('confirm-title').textContent=t; $('confirm-msg')
 function closeConfirm(){ $('confirm-overlay').classList.remove('open'); confirmCb=null; }
 $('confirm-yes').addEventListener('click',()=>{ const cb=confirmCb; closeConfirm(); if(cb) cb(); });
 $('confirm-no').addEventListener('click',closeConfirm);
-function confirmResetNote(n){ showConfirm('Reset '+dn(n),'Erase history for '+dn(n)+'?',()=>{ delete stats[n]; saveStats(); renderStats(); }); }
-function confirmResetAll(){   showConfirm('Reset All','Erase history for every note?',()=>{ stats={}; try{localStorage.removeItem('vio4-stats');}catch(e){} renderStats(); }); }
+function confirmResetNote(n){ showConfirm('Reset '+dn(n),'Erase scores for '+dn(n)+'?',()=>{ delete stats[n]; saveStats(); renderStats(); }); }
+function confirmResetAll(){   showConfirm('Reset All','Erase scores for every note?',()=>{ stats={}; try{localStorage.removeItem('vio4-stats');}catch(e){} renderStats(); }); }
 
 function fakeHistory() {
   // Valid differences in 5–50¢ range (subset of CENTS_SEQ)
@@ -1724,7 +1737,7 @@ function hideStartScreen() {
   $('start-btn').style.display       = 'none';
   $('upper-half').style.visibility   = 'visible';
   $('lower-half').style.visibility   = 'visible';
-  $('diff-label').textContent        = fmtC(CENTS_SEQ[centsIdx])+' difference';
+  $('diff-label').innerHTML         = '<strong>' + fmtC(CENTS_SEQ[centsIdx]) + '</strong> difference';
 }
 
 function handleStart() {
