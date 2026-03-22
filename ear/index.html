@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_47.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_48.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -550,6 +550,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
           <button class="step-btn" onclick="adjustSetting(&#39;decay&#39;,+1)">+</button>
         </div>
       </div>
+
+      <div class="s-sec">Gestures</div>
+      <div class="s-row">
+        <div><div class="s-label">Shake to Replay</div><div class="s-sub">Shake phone to replay notes</div></div>
+        <button id="s-shake-btn" onclick="toggleShake()" style="-webkit-appearance:none;font-family:var(--font);font-size:clamp(13px,3.5vw,15px);
+          padding:8px 20px;border-radius:999px;cursor:pointer;transition:background 0.15s,color 0.15s;
+          border:1.5px solid rgba(255,255,255,0.30);background:rgba(0,0,0,0.25);color:rgba(255,255,255,0.55);">Off</button>
+      </div>
     </div>
   </div>
 </div>
@@ -573,6 +581,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     </div>
     <p id="info-inspiration">
       This app was inspired by the work of <strong>Molly Gebrian</strong> to help musicians develop a more discriminating ear.
+    </p>
+    <p style="font-size:clamp(13px,3.5vw,15px);color:rgba(0,0,0,0.70);line-height:1.6;margin-top:-4px;">
+      The app tests your discrimination on a single note until it gets to a difference that you cannot reliably hear. The app remembers your best score for every note. Once you have a score for every note, it randomly selects notes to re-test, though it favors notes where your score was not as good. You can manually re-test a specific note, below.
     </p>
     <div class="info-sec">Overall Score</div>
     <div id="overall-score" style="font-size:clamp(28px,8vw,40px);font-weight:600;letter-spacing:-0.01em;color:#7a2900;text-align:center;padding:8px 0 4px;">—</div>
@@ -668,7 +679,7 @@ const dn        = name => name.replace('#','♯');
 // ══════════════════════════════════════════════════════
 let settings = {
   lowestNote:0, highestNote:ALL_NOTES.length-1,
-  startCentsIdx:0, noteDurIdx:3, attack:1, decay:1, soundIdx:2, testsPerRound:3,
+  startCentsIdx:0, noteDurIdx:3, attack:1, decay:1, soundIdx:2, testsPerRound:3, shakeToReplay:false,
 };
 let stats = {}; // noteName → { bestCents, attempts }
 
@@ -710,6 +721,17 @@ function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
 }
+
+// iOS suspends AudioContext when app loses focus — resume it when focus returns
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && audioCtx) audioCtx.resume();
+});
+window.addEventListener('pageshow', () => {
+  if (audioCtx) audioCtx.resume();
+});
+window.addEventListener('focus', () => {
+  if (audioCtx) audioCtx.resume();
+});
 
 // ══════════════════════════════════════════════════════
 // SOUNDFONT LOADING via soundfont-player
@@ -1238,26 +1260,75 @@ document.getElementById('app').addEventListener('touchend', e=>{
 }, {passive:true});
 
 let lastShakeT=0;
+let shakeListenerActive = false;
 function setupShake() {
+  if (shakeListenerActive) return;
+  shakeListenerActive = true;
   window.addEventListener('devicemotion', e=>{
+    if (!settings.shakeToReplay) return;
     const a=e.accelerationIncludingGravity; if(!a) return;
     const mag=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
     const now=Date.now();
     if (mag>15 && now-lastShakeT>800) {
       lastShakeT=now;
-      if (roundFailed&&!inReview) enterReview();
-      else if (inReview) playBothNotes();
+      if (inReview) playBothNotes();
+      else if (roundFailed) enterReview();
+      else replayBoth();
     }
   }, {passive:true});
 }
-if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-  // iOS 13+ requires explicit permission — request on first user gesture
-  document.addEventListener('click', function reqMotion() {
-    DeviceMotionEvent.requestPermission().then(r=>{ if(r==='granted') setupShake(); }).catch(()=>{});
-    document.removeEventListener('click', reqMotion);
-  }, {once:true});
-} else if (window.DeviceMotionEvent) {
-  setupShake();
+
+function toggleShake() {
+  if (settings.shakeToReplay) {
+    // Turn off
+    settings.shakeToReplay = false;
+    saveSettings();
+    renderShakeBtn();
+  } else {
+    // Turn on — request permission if needed
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      DeviceMotionEvent.requestPermission().then(r => {
+        if (r === 'granted') {
+          settings.shakeToReplay = true;
+          saveSettings();
+          setupShake();
+          renderShakeBtn();
+        }
+      }).catch(()=>{});
+    } else {
+      settings.shakeToReplay = true;
+      saveSettings();
+      setupShake();
+      renderShakeBtn();
+    }
+  }
+}
+
+function renderShakeBtn() {
+  const btn = $('s-shake-btn');
+  if (!btn) return;
+  if (settings.shakeToReplay) {
+    btn.textContent = 'On';
+    btn.style.background = 'rgba(80,180,100,0.30)';
+    btn.style.color = '#8fe8a0';
+    btn.style.borderColor = 'rgba(80,180,100,0.50)';
+  } else {
+    btn.textContent = 'Off';
+    btn.style.background = 'rgba(0,0,0,0.25)';
+    btn.style.color = 'rgba(255,255,255,0.55)';
+    btn.style.borderColor = 'rgba(255,255,255,0.30)';
+  }
+}
+
+// If shake was previously enabled and permission doesn't need requesting, restore it
+if (settings.shakeToReplay) {
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+    // iOS requires a fresh permission request each session — reset to off
+    settings.shakeToReplay = false;
+    saveSettings();
+  } else {
+    setupShake();
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1289,6 +1360,7 @@ function renderSettings() {
   $('s-attack').textContent      = ATK_PRESETS[settings.attack][0];
   $('s-decay').textContent       = DEC_PRESETS[settings.decay][0];
   renderSoundGrid();
+  renderShakeBtn();
 }
 
 function renderSoundGrid() {
