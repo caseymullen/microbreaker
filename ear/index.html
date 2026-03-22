@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_46.html -->
+<!-- saved from url=(0060)file:///C:/Users/CaseyM/Downloads/violin-ear-trainer_47.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -401,25 +401,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <div id="phase-label">Listen</div>
 
   <!-- Diff label centered in the upper half (between phase-label and circles) -->
-  <div id="upper-half" style="visibility: visible;">
-    <div id="diff-label">15¢ difference</div>
+  <div id="upper-half" style="visibility: hidden;">
+    <div id="diff-label"></div>
   </div>
 
   <!-- Note circles, vertically centered in the middle third -->
   <div id="circles-zone">
-    <div id="tap-instruction" style="">Tap the higher one</div>
-    <div id="note-row" style="">
+    <div id="tap-instruction" style="display: none;">Tap the higher one</div>
+    <div id="note-row" style="display: none;">
       <div class="note-circle" id="note-left" onclick="handleTap(&#39;left&#39;)">
-        <div class="nc-name" id="note-left-name">D6</div>
-        <div class="nc-detail" id="note-left-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
+        <div class="nc-name" id="note-left-name">?</div>
+        <div class="nc-detail" id="note-left-detail"></div>
       </div>
       <div class="note-circle" id="note-right" onclick="handleTap(&#39;right&#39;)">
-        <div class="nc-name" id="note-right-name">D6</div>
-        <div class="nc-detail" id="note-right-detail"><span style="font-size:1.6em;opacity:0.55;">?</span></div>
+        <div class="nc-name" id="note-right-name">?</div>
+        <div class="nc-detail" id="note-right-detail"></div>
       </div>
     </div>
     <!-- Replay button: center aligned with bottom of note circles -->
-    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: -26px;">
+    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: -26px; display: none;">
       <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M 20.1 5.4 A 12 12 0 1 1 5.4 13.9" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
         <!-- Filled arrowhead triangle. tip=(5.4,13.9), barbs same as before but wider -->
@@ -428,11 +428,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       </svg>
     </button>
     <!-- Start button shown before first round -->
-    <button id="start-btn" onclick="handleStart()" style="display: none;">Start</button>
+    <button id="start-btn" onclick="handleStart()" style="display: block;">Start</button>
   </div>
 
   <!-- Controls below circles, stacked from top of lower third -->
-  <div id="lower-half" style="visibility: visible;">
+  <div id="lower-half" style="visibility: hidden;">
     <div id="swipe-hint">You can also swipe up / down to indicate<br>that the 2nd note is higher / lower</div>
 
     <!-- Review close button: shown below replay during review mode -->
@@ -443,14 +443,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     </button>
 
     <div id="progress-row">
-      <div class="prog-slot" id="prog0"></div>
-      <div class="prog-slot" id="prog1"></div>
-      <div class="prog-slot" id="prog2"></div>
     </div>
 
-    <div id="status-msg" style="color: rgb(232, 213, 176);"></div>
+    <div id="status-msg"></div>
 
-    <div id="round-actions" style="display: none;">
+    <div id="round-actions">
       <button class="round-action-btn" id="review-action-btn" onclick="enterReview()">Review</button>
       <button class="round-action-btn" id="continue-action-btn" onclick="continueAfterFail()">Continue</button>
     </div>
@@ -487,7 +484,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       <div class="s-title-row"><span class="s-title">Settings</span></div>
 
       <div class="s-sec">Note Sound</div>
-      <div id="sound-grid"><button class="sound-btn">Violin (synth)</button><button class="sound-btn">Sine Wave</button><button class="sound-btn active">Violin (sample)</button><button class="sound-btn loading">Viola</button><button class="sound-btn loading">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn loading">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn loading">Piano</button><button class="sound-btn loading">Electric Bass</button></div>
+      <div id="sound-grid"><button class="sound-btn">Violin (synth)</button><button class="sound-btn">Sine Wave</button><button class="sound-btn active loading">Violin (sample)</button><button class="sound-btn loading">Viola</button><button class="sound-btn loading">Cello</button><button class="sound-btn loading">Contrabass</button><button class="sound-btn loading">Guitar (nylon)</button><button class="sound-btn loading">Guitar (steel)</button><button class="sound-btn loading">Piano</button><button class="sound-btn loading">Electric Bass</button></div>
 
       <div class="s-sec">Note Range</div>
       <div class="s-row">
@@ -515,6 +512,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
           <button class="step-btn" onclick="adjustSetting(&#39;startCentsIdx&#39;,+1)">−</button>
           <div class="s-val" id="s-start-cents">25¢</div>
           <button class="step-btn" onclick="adjustSetting(&#39;startCentsIdx&#39;,-1)">+</button>
+        </div>
+      </div>
+      <div class="s-row">
+        <div><div class="s-label">Tests per Round</div><div class="s-sub">Correct guesses needed to advance</div></div>
+        <div class="s-stepper">
+          <button class="step-btn" onclick="adjustSetting(&#39;testsPerRound&#39;,-1)">−</button>
+          <div class="s-val" id="s-tests-per-round">3</div>
+          <button class="step-btn" onclick="adjustSetting(&#39;testsPerRound&#39;,+1)">+</button>
         </div>
       </div>
 
@@ -576,10 +581,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
     <div class="info-sec">History</div>
     <table id="stats-table">
       <thead><tr><th>Note</th><th>Best</th><th>Failed</th><th>Prob</th><th>Actions</th></tr></thead>
-      <tbody id="stats-tbody"><tr><td colspan="5" style="opacity:.45;font-style:italic;padding:10px 8px">No data yet</td></tr></tbody>
+      <tbody id="stats-tbody"></tbody>
     </table>
     <div class="info-sec">Progress Chart</div>
-    <div id="stats-chart-wrap"><canvas id="stats-chart" width="648" height="120" style="width: 648px; height: 120px;"></canvas></div>
+    <div id="stats-chart-wrap"><canvas id="stats-chart"></canvas></div>
     <button id="info-global-reset" onclick="confirmResetAll()">Reset All History</button>
     <button id="info-fake-history" onclick="fakeHistory()" style="-webkit-appearance:none;font-family:var(--font);font-size:clamp(13px,3.5vw,15px);
       padding:10px 22px;border-radius:999px;cursor:pointer;
@@ -601,10 +606,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <!-- ═══ CONFIRM ═══ -->
-<div id="confirm-overlay" class="">
+<div id="confirm-overlay">
   <div id="confirm-box">
-    <div id="confirm-title">Reset All</div>
-    <div id="confirm-msg">Erase history for every note?</div>
+    <div id="confirm-title"></div>
+    <div id="confirm-msg"></div>
     <div id="confirm-btns">
       <button id="confirm-yes">Yes, Reset</button>
       <button id="confirm-no" onclick="closeConfirm()">Cancel</button>
@@ -634,8 +639,9 @@ const SOUNDS = [
 // ══════════════════════════════════════════════════════
 // CONSTANTS
 // ══════════════════════════════════════════════════════
-const CENTS_SEQ   = [25, 20, 15, 10, 7, 5, 3, 2, 1];
+const CENTS_SEQ   = [25, 20, 15, 10, 7, 5, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5];
 const MAX_CENTS   = CENTS_SEQ[0]; // 25 — largest/easiest difference
+const fmtC        = c => Number.isInteger(c) ? c+'¢' : c.toFixed(1)+'¢'; // format cents value
 const DUR_STEPS   = [0.8, 1.2, 1.6, 2.0, 2.2, 2.8, 3.5, 4.5];
 const ATK_PRESETS = [['Soft',0.20],['Med',0.09],['Crisp',0.04]];
 const DEC_PRESETS = [['Long',0.60],['Med',0.28],['Short',0.12]];
@@ -662,7 +668,7 @@ const dn        = name => name.replace('#','♯');
 // ══════════════════════════════════════════════════════
 let settings = {
   lowestNote:0, highestNote:ALL_NOTES.length-1,
-  startCentsIdx:0, noteDurIdx:4, attack:1, decay:1, soundIdx:2,
+  startCentsIdx:0, noteDurIdx:3, attack:1, decay:1, soundIdx:2, testsPerRound:3,
 };
 let stats = {}; // noteName → { bestCents, attempts }
 
@@ -915,7 +921,7 @@ function setupAttempt() {
   $('note-right').className = 'note-circle';
   $('status-msg').textContent = '';
   $('status-msg').style.color = '#e8d5b0';
-  $('diff-label').textContent = CENTS_SEQ[centsIdx] + '¢ difference';
+  $('diff-label').textContent = fmtC(CENTS_SEQ[centsIdx]) + ' difference';
   $('tap-instruction').style.display='';
   $('swipe-hint').style.display='';
   playBothNotes();
@@ -998,7 +1004,7 @@ function handleAnswer(guessSecondHigher) {
 
   // Reveal: off note gets ♯/♭ label, reference note gets cleared
   const sym = currentRound.offIsHigher ? '♯' : '♭';
-  const offLabel = `${sym}${cents}¢`;
+  const offLabel = `${sym}${fmtC(cents)}`;
   if (currentRound.offIsSecond) {
     $('note-left-detail').textContent  = '';
     $('note-right-detail').textContent = offLabel;
@@ -1038,7 +1044,7 @@ function handleAnswer(guessSecondHigher) {
         // Had at least one success, now failed: retest is over
         retestEnding = true;
         const bestCents = stats[key]?.bestCents;
-        const bestStr   = bestCents != null ? bestCents + '¢' : '—';
+        const bestStr   = bestCents != null ? fmtC(bestCents) : '—';
         $('status-msg').textContent = `New best for ${dn(key)}: ${bestStr}`;
         $('status-msg').style.color = '#a0f0a0';
         setTimeout(()=>{ $('round-actions').style.display='flex'; }, 1400);
@@ -1056,7 +1062,7 @@ function handleAnswer(guessSecondHigher) {
   }
 
   // 3 correct in a row — success!
-  if (roundResults.length===3 && roundResults.every(x=>x==='correct')) {
+  if (roundResults.length===settings.testsPerRound && roundResults.every(x=>x==='correct')) {
     const key = currentNote.name;
     if (!stats[key]) stats[key]={};
     if (stats[key].bestCents==null || cents < stats[key].bestCents) {
@@ -1070,7 +1076,7 @@ function handleAnswer(guessSecondHigher) {
       // Keep going harder with same note
       if (centsIdx < CENTS_SEQ.length-1) {
         centsIdx++;
-        $('diff-label').textContent = CENTS_SEQ[centsIdx]+'¢ difference';
+        $('diff-label').textContent = fmtC(CENTS_SEQ[centsIdx])+' difference';
         $('status-msg').textContent='Good job! Going harder…';
         setTimeout(()=>{ clearProgress(); startRound(); }, 1600);
       } else {
@@ -1080,7 +1086,7 @@ function handleAnswer(guessSecondHigher) {
     } else {
       if (centsIdx < CENTS_SEQ.length-1) {
         centsIdx++;
-        $('diff-label').textContent = CENTS_SEQ[centsIdx]+'¢ difference';
+        $('diff-label').textContent = fmtC(CENTS_SEQ[centsIdx])+' difference';
         $('status-msg').textContent='Good job!';
       } else {
         $('status-msg').textContent='Master level!';
@@ -1119,7 +1125,7 @@ function enterReview() {
   // Show sharp/flat label on whichever circle is the off note
   const cents=CENTS_SEQ[centsIdx];
   const sym = currentRound.offIsHigher ? '♯' : '♭';
-  const offLabel = `${sym}${cents}¢`;
+  const offLabel = `${sym}${fmtC(cents)}`;
   if (currentRound.offIsSecond) {
     $('note-left-detail').textContent  = '';
     $('note-right-detail').textContent = offLabel;
@@ -1188,15 +1194,21 @@ function continueAfterFail() {
 // PROGRESS INDICATORS
 // ══════════════════════════════════════════════════════
 function clearProgress() {
-  for(let i=0;i<3;i++) $('prog'+i).innerHTML='';
+  const row = $('progress-row');
+  row.innerHTML = '';
+  for (let i = 0; i < settings.testsPerRound; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'prog-slot';
+    slot.id = 'prog' + i;
+    row.appendChild(slot);
+  }
 }
 
 function renderProgress() {
-  // Only render newly added result
-  const i = roundResults.length-1;
-  if (i<0||i>2) return;
-  const slot=$('prog'+i);
-  if (slot.children.length) return; // already set
+  const i = roundResults.length - 1;
+  if (i < 0 || i >= settings.testsPerRound) return;
+  const slot = $('prog' + i);
+  if (!slot || slot.children.length) return;
   if (roundResults[i]==='correct') {
     slot.innerHTML=`<svg class="prog-check" width="28" height="28" viewBox="0 0 28 28" fill="none">
       <circle cx="14" cy="14" r="12" fill="rgba(60,200,80,0.25)" stroke="rgba(80,220,100,0.70)" stroke-width="1.5"/>
@@ -1226,17 +1238,26 @@ document.getElementById('app').addEventListener('touchend', e=>{
 }, {passive:true});
 
 let lastShakeT=0;
-if (window.DeviceMotionEvent) {
+function setupShake() {
   window.addEventListener('devicemotion', e=>{
     const a=e.accelerationIncludingGravity; if(!a) return;
     const mag=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
     const now=Date.now();
-    if (mag>25 && now-lastShakeT>1000) {
+    if (mag>15 && now-lastShakeT>800) {
       lastShakeT=now;
       if (roundFailed&&!inReview) enterReview();
       else if (inReview) playBothNotes();
     }
   }, {passive:true});
+}
+if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+  // iOS 13+ requires explicit permission — request on first user gesture
+  document.addEventListener('click', function reqMotion() {
+    DeviceMotionEvent.requestPermission().then(r=>{ if(r==='granted') setupShake(); }).catch(()=>{});
+    document.removeEventListener('click', reqMotion);
+  }, {once:true});
+} else if (window.DeviceMotionEvent) {
+  setupShake();
 }
 
 // ══════════════════════════════════════════════════════
@@ -1247,6 +1268,7 @@ function adjustSetting(key,dir) {
   if      (key==='lowestNote')    settings.lowestNote    = Math.max(0, Math.min(settings.highestNote-1, settings.lowestNote+dir));
   else if (key==='highestNote')   settings.highestNote   = Math.max(settings.lowestNote+1, Math.min(ALL_NOTES.length-1, settings.highestNote+dir));
   else if (key==='startCentsIdx') settings.startCentsIdx = Math.max(0, Math.min(CENTS_SEQ.length-1, settings.startCentsIdx+dir));
+  else if (key==='testsPerRound') settings.testsPerRound = Math.max(2, Math.min(7, settings.testsPerRound+dir));
   else if (key==='noteDurIdx')    settings.noteDurIdx    = Math.max(0, Math.min(DUR_STEPS.length-1, settings.noteDurIdx+dir));
   else if (key==='attack') { settings.attack=Math.max(0,Math.min(ATK_PRESETS.length-1,settings.attack+dir)); schedulePreview(); }
   else if (key==='decay')  { settings.decay =Math.max(0,Math.min(DEC_PRESETS.length-1,settings.decay+dir));  schedulePreview(); }
@@ -1261,7 +1283,8 @@ function schedulePreview() {
 function renderSettings() {
   $('s-lowest').textContent      = dn(ALL_NOTES[settings.lowestNote].name);
   $('s-highest').textContent     = dn(ALL_NOTES[settings.highestNote].name);
-  $('s-start-cents').textContent = CENTS_SEQ[settings.startCentsIdx]+'¢';
+  $('s-start-cents').textContent = fmtC(CENTS_SEQ[settings.startCentsIdx]);
+  $('s-tests-per-round').textContent = settings.testsPerRound;
   $('s-note-dur').textContent    = DUR_STEPS[settings.noteDurIdx].toFixed(1)+'s';
   $('s-attack').textContent      = ATK_PRESETS[settings.attack][0];
   $('s-decay').textContent       = DEC_PRESETS[settings.decay][0];
@@ -1366,8 +1389,8 @@ function renderStats() {
   } else {
     sorted.forEach(note=>{
       const st=stats[note.name];
-      const best    = (st?.bestCents!=null)       ? st.bestCents+'¢'        : '—';
-      const failed  = (st?.lastFailureCents!=null) ? st.lastFailureCents+'¢' : '—';
+      const best    = (st?.bestCents!=null)       ? fmtC(st.bestCents)        : '—';
+      const failed  = (st?.lastFailureCents!=null) ? fmtC(st.lastFailureCents) : '—';
       const regressed = isRegressed(note.name);
       const p = probFor(note.name);
       const probStr = p === null ? '—' : p.toFixed(2)+'%';
@@ -1431,7 +1454,7 @@ function drawChart(notes) {
     ctx.fillStyle  = 'rgba(0,0,0,0.38)';
     ctx.font       = '9px Inconsolata,monospace';
     ctx.textAlign  = 'center';
-    ctx.fillText(c + '¢', x, H - pad.b + 12);
+    ctx.fillText(fmtC(c), x, H - pad.b + 12);
   });
 
   // Baseline at x=0
@@ -1464,7 +1487,7 @@ function drawChart(notes) {
     // Value label at end of bar
     ctx.fillStyle  = 'rgba(0,0,0,0.50)';
     ctx.textAlign  = 'left';
-    ctx.fillText(c + '¢', pad.l + bw + 4, y + 4);
+    ctx.fillText(fmtC(c), pad.l + bw + 4, y + 4);
   });
 }
 
@@ -1629,7 +1652,7 @@ function hideStartScreen() {
   $('start-btn').style.display       = 'none';
   $('upper-half').style.visibility   = 'visible';
   $('lower-half').style.visibility   = 'visible';
-  $('diff-label').textContent        = CENTS_SEQ[centsIdx]+'¢ difference';
+  $('diff-label').textContent        = fmtC(CENTS_SEQ[centsIdx])+' difference';
 }
 
 function handleStart() {
