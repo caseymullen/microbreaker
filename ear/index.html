@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/CaseyM/Downloads/ear-tuner_4.html -->
+<!-- saved from url=(0050)file:///C:/Users/CaseyM/Downloads/ear-tuner_6.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -837,8 +837,15 @@ window.addEventListener('orientationchange', () => {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && audioCtx) audioCtx.resume();
 });
-window.addEventListener('pageshow', () => {
+window.addEventListener('pageshow', (e) => {
   if (audioCtx) audioCtx.resume();
+  // iOS BFCache restores DOM inline styles including visibility:hidden set by openInfo
+  // Always reset to ensure app is visible on restore
+  if ($('app')) {
+    $('app').style.visibility = '';
+    $('swipe-hint').style.visibility = '';
+    $('info-overlay').classList.remove('open');
+  }
 });
 window.addEventListener('focus', () => {
   if (audioCtx) audioCtx.resume();
