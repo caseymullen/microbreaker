@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/CaseyM/Downloads/ear-tuner_6.html -->
+<!-- saved from url=(0051)file:///C:/Users/CaseyM/Downloads/ear-tuner_11.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -387,13 +387,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 #info-inspiration { font-size: clamp(13px, 3.5vw, 15px); font-weight: 300; line-height: 1.65; color: #2a2018; }
 #info-inspiration strong { font-weight: 600; }
 .info-p { font-size: clamp(13px, 3.5vw, 15px); font-weight: 300; color: rgba(0,0,0,0.70); line-height: 1.65; margin: 0; }
-#info-more-wrap { display: flex; flex-direction: column; gap: 0; }
+#info-more-wrap { display: flex; flex-direction: column; gap: 0; margin-top: -22px; }
 #info-more-content { display: none; flex-direction: column; gap: 18px; margin-top: 0; }
 #info-more-content.open { display: flex; margin-top: 18px; }
 #info-more-btn {
   -webkit-appearance: none; font-family: var(--font);
-  font-size: 18px; font-weight: 600; letter-spacing: 0.05em;
-  background: none; border: none; color: rgba(0,0,0,0.35);
+  font-size: clamp(13px, 3.5vw, 15px); font-weight: 400; letter-spacing: 0.02em;
+  background: none; border: none; color: rgba(0,0,0,0.40);
   cursor: pointer; padding: 2px 0; text-align: left;
   align-self: flex-start; transition: color 0.15s;
 }
@@ -660,7 +660,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       <strong>Ear Tuner</strong> measures your aural acuity — your ability to tell which of two notes is slightly higher or lower — and helps you improve it. The app tests you with notes that are closer and closer together, until you can no longer reliably tell which is higher.
     </p>
     <div id="info-more-wrap">
-      <button id="info-more-btn" onclick="toggleInfoMore()">…</button>
+      <button id="info-more-btn" onclick="toggleInfoMore()">More…</button>
       <div id="info-more-content">
         <p class="info-p">
           The app remembers your best score for every note. Once you have a score for every note, it randomly selects notes to re-test, favoring notes where your score is weakest. You can manually re-test a specific note in the <strong>Scores</strong> table, below.
@@ -670,6 +670,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
         </p>
         <p class="info-p">
           Decrease the number of tests per round (in Settings) to find your initial level faster — though fewer tests means more luck. Increase the number of tests per round to improve accuracy.
+        </p>
+        <p class="info-p">
+          The minimum difference that a person requires to distinguish between two notes varies. An untrained person may need 10–20 cents. An average musician might need 5–6 cents. A top-notch fretless string player may only need 2–3 cents.
         </p>
         <p class="info-p">
           <strong>Ear Tuner</strong> was inspired by <strong><a href="https://www.mollygebrian.com/" target="_blank" style="color:#7a2900;text-decoration:underline;text-underline-offset:3px;">Molly Gebrian</a>'s</strong> tips for improving intonation.
@@ -1542,7 +1545,7 @@ function toggleInfoMore() {
   const content = $('info-more-content');
   const btn = $('info-more-btn');
   const isOpen = content.classList.toggle('open');
-  btn.textContent = isOpen ? '▲' : '…';
+  btn.textContent = isOpen ? 'Less…' : 'More…';
 }
 
 function openInfo() {
@@ -1552,7 +1555,7 @@ function openInfo() {
   $('swipe-hint').style.visibility = 'hidden';
   // Reset collapsed state
   $('info-more-content').classList.remove('open');
-  $('info-more-btn').textContent = '…';
+  $('info-more-btn').textContent = 'More…';
   setTimeout(() => requestAnimationFrame(() => {
     renderStats();
     // Trigger chart canvas resize after layout is complete
