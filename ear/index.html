@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/CaseyM/Downloads/ear-tuner_11.html -->
+<!-- saved from url=(0051)file:///C:/Users/CaseyM/Downloads/ear-tuner_12.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -398,6 +398,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   align-self: flex-start; transition: color 0.15s;
 }
 #info-more-btn:active { color: rgba(0,0,0,0.70); }
+#info-more-btn span { color: rgba(0,0,0,0.40); font-size: clamp(13px,3.5vw,15px); }
 /* On non-phone screens (e.g. iPad, desktop) always show all paragraphs */
 @media (min-width: 600px) {
   #info-more-content { display: flex !important; margin-top: 18px; }
@@ -660,7 +661,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
       <strong>Ear Tuner</strong> measures your aural acuity — your ability to tell which of two notes is slightly higher or lower — and helps you improve it. The app tests you with notes that are closer and closer together, until you can no longer reliably tell which is higher.
     </p>
     <div id="info-more-wrap">
-      <button id="info-more-btn" onclick="toggleInfoMore()">More…</button>
+      <button id="info-more-btn" onclick="toggleInfoMore()">... more</button>
       <div id="info-more-content">
         <p class="info-p">
           The app remembers your best score for every note. Once you have a score for every note, it randomly selects notes to re-test, favoring notes where your score is weakest. You can manually re-test a specific note in the <strong>Scores</strong> table, below.
@@ -745,7 +746,7 @@ const SOUNDS = [
 // ══════════════════════════════════════════════════════
 // CONSTANTS
 // ══════════════════════════════════════════════════════
-const CENTS_SEQ   = [100, 50, 25, 20, 15, 10, 7, 5, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5];
+const CENTS_SEQ   = [100, 50, 25, 20, 15, 10, 7, 6, 5, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5];
 const MAX_CENTS   = CENTS_SEQ[0]; // 100 — largest/easiest difference
 const fmtC        = c => Number.isInteger(c) ? c+'¢' : c.toFixed(1)+'¢'; // format cents value
 const DUR_STEPS   = [0.8, 1.2, 1.6, 2.0, 2.2, 2.8, 3.5, 4.5];
@@ -1545,7 +1546,7 @@ function toggleInfoMore() {
   const content = $('info-more-content');
   const btn = $('info-more-btn');
   const isOpen = content.classList.toggle('open');
-  btn.textContent = isOpen ? 'Less…' : 'More…';
+  btn.innerHTML = isOpen ? '&#9650; <span>Show less</span>' : '... more';
 }
 
 function openInfo() {
@@ -1555,7 +1556,7 @@ function openInfo() {
   $('swipe-hint').style.visibility = 'hidden';
   // Reset collapsed state
   $('info-more-content').classList.remove('open');
-  $('info-more-btn').textContent = 'More…';
+  $('info-more-btn').innerHTML = '... more';
   setTimeout(() => requestAnimationFrame(() => {
     renderStats();
     // Trigger chart canvas resize after layout is complete
