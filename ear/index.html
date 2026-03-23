@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/CaseyM/Downloads/ear-tuner_14.html -->
+<!-- saved from url=(0051)file:///C:/Users/CaseyM/Downloads/ear-tuner_16.html -->
 <html lang="en" style="background-color: rgb(77, 25, 3);"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
@@ -249,7 +249,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   border: 1.5px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.85);
 }
 
-/* ── Fixed corner buttons ── */
+/* Invisible tap area covering lower half */
+#tap-area {
+  position: absolute; inset: 0;
+  background: none; border: none; cursor: pointer;
+  z-index: 0; -webkit-appearance: none;
+}
+#lower-half { position: relative; }
+#lower-half > *:not(#tap-area) { position: relative; z-index: 1; }
 #info-btn {
   position: fixed; bottom: 0; right: calc(var(--safe-r) + 14px);
   background: none; border: none; color: rgba(255,255,255,0.36);
@@ -458,9 +465,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <div id="phase-label">Listen</div>
 
   <!-- Diff label: two lines — value in Nunito above, "difference" in Inconsolata below -->
-  <div id="upper-half" style="visibility: hidden;">
+  <div id="upper-half" style="visibility: visible;">
     <div id="diff-label-wrap">
-      <div id="diff-value"></div>
+      <div id="diff-value">100¢</div>
       <div id="diff-word">difference</div>
     </div>
   </div>
@@ -468,36 +475,41 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   <!-- Note circles, vertically centered in the middle third -->
   <div id="circles-zone">
     <div style="margin-bottom:14px;flex-shrink:0;"></div>
-    <div id="note-row" style="display: none;">
-      <div class="note-circle" id="note-left" onclick="handleTap(&#39;left&#39;)">
-        <div class="nc-name" id="note-left-name">?</div>
-        <div class="nc-detail" id="note-left-detail"></div>
+    <div id="note-row" style="">
+      <div class="note-circle flash-wrong" id="note-left" onclick="handleTap(&#39;left&#39;)">
+        <div class="nc-name" id="note-left-name">G♯4</div>
+        <div class="nc-detail" id="note-left-detail">♭100¢</div>
       </div>
-      <div class="note-circle" id="note-right" onclick="handleTap(&#39;right&#39;)">
-        <div class="nc-name" id="note-right-name">?</div>
+      <div class="note-circle flash-wrong" id="note-right" onclick="handleTap(&#39;right&#39;)">
+        <div class="nc-name" id="note-right-name">G♯4</div>
         <div class="nc-detail" id="note-right-detail"></div>
       </div>
     </div>
     <!-- Replay button: center aligned with bottom of note circles -->
-    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: 0px; display: none;">
+    <button id="replay-btn" onclick="replayBoth()" aria-label="Replay" style="margin-top: 0px;">
       <svg width="48" height="48" viewBox="-10 25 1220 1220" fill="rgba(255,255,255,0.75)" xmlns="http://www.w3.org/2000/svg">
         <path d="m529.2 441.6c-30-18-69.602 3.6016-69.602 39.602v318c0 36 38.398 57.602 69.602 39.602l262.8-158.4c28.801-18 28.801-60 0-78z"></path>
         <path d="m1053.6 362.4c-19.199-30-58.801-40.801-88.801-21.602-31.199 19.199-40.801 58.801-21.602 91.199 43.199 70.801 64.801 157.2 56.398 248.4-19.199 193.2-177.6 346.8-372 360-235.2 15.602-430.8-171.6-428.4-404.4 2.3984-216 178.8-393.6 393.6-397.2 12 0 22.801 0 34.801 1.1992v50.398c0 20.398 22.801 32.398 39.602 21.602l187.2-116.4c15.602-9.6016 15.602-33.602 0-43.199l-188.4-118.8c-16.801-10.801-39.602 1.1992-39.602 21.602v52.801c-8.3984-0.003906-16.797-0.003906-26.398-0.003906-306 0-553.2 260.4-529.2 571.2 19.199 260.4 229.2 470.4 488.4 489.6 310.8 22.801 572.4-223.2 572.4-529.2 0.003906-102-28.797-196.8-77.996-277.2z"></path>
       </svg>
     </button>
     <!-- Start button shown before first round -->
-    <button id="start-btn" onclick="handleStart()" style="display: block;">Start</button>
+    <button id="start-btn" onclick="handleStart()" style="display: none;">Start</button>
   </div>
 
   <!-- Controls below circles, stacked from top of lower third -->
-  <div id="lower-half" style="visibility: hidden;">
-    <div id="progress-row">
-    </div>
+  <div id="lower-half" style="visibility: visible;">
+    <!-- Invisible tap area covering lower half — acts as retry, sits behind other buttons -->
+    <button id="tap-area" onclick="handleTapArea()"></button>
+    <div id="progress-row"><div class="prog-slot" id="prog0"><svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="12" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.20)" stroke-width="1.5"></circle>
+    </svg></div><div class="prog-slot" id="prog1"><svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="12" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.20)" stroke-width="1.5"></circle>
+    </svg></div></div>
 
-    <div id="status-msg"></div>
+    <div id="status-msg" style="color: rgb(240, 144, 144);">Wrong</div>
 
-    <div id="round-actions">
-      <button class="round-action-btn" id="retry-action-btn" onclick="retryRound()">Retry</button>
+    <div id="round-actions" style="display: flex;">
+      <button class="round-action-btn" id="retry-action-btn" onclick="retryRound()" style="display: none;">Retry</button>
       <button class="round-action-btn" id="continue-action-btn" onclick="continueAfterFail()">Continue</button>
       <button class="round-action-btn" id="back-action-btn" onclick="continueAfterFail()" style="display:none;">Back</button>
     </div>
@@ -506,7 +518,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <!-- Swipe hint: fixed at bottom, above info/settings buttons -->
-<div id="swipe-hint" class="hint-text" style="display: none;">Tap the higher note, or swipe up/down to indicate that the 2nd note is higher/lower.</div>
+<div id="swipe-hint" class="hint-text" style="">Tap a note to play it.</div>
 
 <!-- Retest close button: shown top-right during retest mode -->
 <button id="retest-close-btn" onclick="exitRetest(true); setTimeout(startRound,100);" aria-label="Exit retest" style="display: none;">
@@ -775,7 +787,7 @@ const dn        = name => name.replace('#','♯');
 // ══════════════════════════════════════════════════════
 let settings = {
   lowestNote:22, highestNote:53,
-  startCentsIdx:2, noteDurIdx:3, attack:1, decay:1, soundIdx:0, testsPerRound:3, shakeToReplay:false,
+  startCentsIdx:5, noteDurIdx:3, attack:1, decay:1, soundIdx:0, testsPerRound:3, shakeToReplay:false,
 };
 let stats = {}; // noteName → { bestCents, attempts }
 
@@ -963,7 +975,7 @@ function beepCorrect() {
 }
 function beepWrong() {
   const ctx=audioCtx,t=ctx.currentTime+0.02;
-  [220,196].forEach((f,i)=>{ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(f,t+i*0.10); g.gain.setValueAtTime(0.16,t+i*0.10); g.gain.exponentialRampToValueAtTime(0.001,t+i*0.10+0.28); o.connect(g); g.connect(ctx.destination); o.start(t+i*0.10); o.stop(t+i*0.10+0.32); });
+  [220,196].forEach((f,i)=>{ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(f,t+i*0.15); g.gain.setValueAtTime(0.16,t+i*0.15); g.gain.exponentialRampToValueAtTime(0.001,t+i*0.15+0.42); o.connect(g); g.connect(ctx.destination); o.start(t+i*0.15); o.stop(t+i*0.15+0.48); });
 }
 
 // ══════════════════════════════════════════════════════
@@ -1137,6 +1149,10 @@ function playOneNote(side) {
   }
 }
 
+function handleTapArea() {
+  replayBoth();
+}
+
 function handleTap(side) {
   if (roundFailed) { playOneNote(side); return; }
   if (!awaiting) return;
@@ -1295,8 +1311,13 @@ function continueAfterFail() {
   } else if (retestNote) {
     setTimeout(startRound, 200);
   } else {
-    // Pick a new note after failure in listening mode
-    setTimeout(startRound, 200);
+    // Stay on same note if no bestScore yet; otherwise pick a new note
+    const hasBest = currentNote && stats[currentNote.name]?.bestCents != null;
+    if (hasBest) {
+      setTimeout(startRound, 200);
+    } else {
+      setTimeout(setupAttempt, 200);
+    }
   }
 }
 
@@ -1379,10 +1400,29 @@ document.getElementById('app').addEventListener('touchstart', e=>{
   touchStartY=e.touches[0].clientY; touchStartX=e.touches[0].clientX;
 }, {passive:true});
 document.getElementById('app').addEventListener('touchend', e=>{
-  if (roundFailed||!awaiting) return;
   const dy=touchStartY-e.changedTouches[0].clientY;
   const dx=touchStartX-e.changedTouches[0].clientX;
-  if (Math.abs(dy)<45||Math.abs(dx)>Math.abs(dy)) return;
+  const absDx=Math.abs(dx), absDy=Math.abs(dy);
+
+  if (absDx > 45 && absDx > absDy) {
+    if (dx < 0 && roundFailed) {
+      // Swipe right → Continue/Back
+      const actionsVisible = $('round-actions').style.display === 'flex';
+      const continueVisible = actionsVisible && $('continue-action-btn').style.display !== 'none';
+      const backVisible = actionsVisible && $('back-action-btn').style.display !== 'none';
+      if (continueVisible || backVisible) { continueAfterFail(); return; }
+    }
+    if (dx > 0 && roundFailed && retestNote) {
+      // Swipe left → Retry (retest only, when Retry button is visible)
+      const retryVisible = $('retry-action-btn').style.display !== 'none' &&
+                           $('round-actions').style.display === 'flex';
+      if (retryVisible) { retryRound(); return; }
+    }
+  }
+
+  // Swipe up/down for answer during listening
+  if (roundFailed||!awaiting) return;
+  if (absDy<45||absDx>absDy) return;
   handleAnswer(dy>0);
 }, {passive:true});
 
@@ -1438,7 +1478,7 @@ function openResetDefaults() { $('reset-overlay').classList.add('open'); }
 function closeResetDefaults() { $('reset-overlay').classList.remove('open'); }
 function confirmResetDefaults() {
   $('reset-overlay').classList.remove('open');
-  settings = { lowestNote:22, highestNote:53, startCentsIdx:2, noteDurIdx:3, attack:1, decay:1, soundIdx:0, testsPerRound:3, shakeToReplay:false };
+  settings = { lowestNote:22, highestNote:53, startCentsIdx:5, noteDurIdx:3, attack:1, decay:1, soundIdx:0, testsPerRound:3, shakeToReplay:false };
   saveSettings();
   centsIdx = settings.startCentsIdx;
   renderSettings();
